@@ -1,4 +1,4 @@
-package io.github.drakonforge.exampleplugin;
+package io.github.drakonforge.cherishedcreatures;
 
 import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.Message;

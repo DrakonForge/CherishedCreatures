@@ -1,4 +1,4 @@
-package io.github.drakonforge.exampleplugin;
+package io.github.drakonforge.cherishedcreatures;
 
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
@@ -10,16 +10,16 @@ import javax.annotation.Nonnull;
  * This class serves as the entrypoint for your plugin. Use the setup method to register into game registries or add
  * event listeners.
  */
-public class ExamplePlugin extends JavaPlugin {
+public class CherishedCreaturesPlugin extends JavaPlugin {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-    private static ExamplePlugin instance;
+    private static CherishedCreaturesPlugin instance;
 
-    public static ExamplePlugin getInstance() {
+    public static CherishedCreaturesPlugin getInstance() {
         return instance;
     }
 
-    public ExamplePlugin(@Nonnull JavaPluginInit init) {
+    public CherishedCreaturesPlugin(@Nonnull JavaPluginInit init) {
         super(init);
     }
 

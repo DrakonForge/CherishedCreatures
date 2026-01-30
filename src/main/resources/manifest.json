@@ -1,8 +1,8 @@
 {
     "Group": "DrakonForge",
-    "Name": "ExamplePlugin",
+    "Name": "CherishedCreatures",
     "Version": "1.0.0",
-    "Description": "An example plugin for Hytale modding.",
+    "Description": "A pet bonding and companionship system.",
     "Authors": [
         {
             "Name": "Drakon",
@@ -19,5 +19,5 @@
     },
     "DisabledByDefault": false,
     "IncludesAssetPack": true,
-    "Main": "io.github.drakonforge.exampleplugin.ExamplePlugin"
+    "Main": "io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin"
 }
