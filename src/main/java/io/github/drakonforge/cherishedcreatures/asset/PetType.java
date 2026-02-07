@@ -37,6 +37,12 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     public static final AssetCodec<String, PetType> CODEC = CODEC_BUILDER.build();
     private static AssetStore<String, PetType, DefaultAssetMap<String, PetType>> ASSET_STORE;
 
+    public enum JoinsFlock {
+        ALWAYS,
+        FOLLOW_ONLY,
+        NEVER
+    }
+
     public static AssetStore<String, PetType, DefaultAssetMap<String, PetType>> getAssetStore() {
         if (ASSET_STORE == null) {
             ASSET_STORE = AssetRegistry.getAssetStore(PetType.class);
@@ -60,6 +66,7 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected Object2BooleanMap<PetFeatureFlag> featureFlags;
     // TODO: Optimize this out to a set or bit flag later
     protected String[] bondingActivities = { BondingActivity.ADVENTURING, BondingActivity.PETTING };
+    protected JoinsFlock joinsFlock = JoinsFlock.FOLLOW_ONLY;
 
     public boolean hasFeatureFlag(PetFeatureFlag flag) {
         return featureFlags.getOrDefault(flag, flag.getDefaultValue());
