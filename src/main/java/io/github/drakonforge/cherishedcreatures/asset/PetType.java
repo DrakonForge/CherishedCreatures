@@ -9,18 +9,20 @@ import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
-import io.sentry.protocol.FeatureFlag;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 
-public class PetConfigAsset implements JsonAssetWithMap<String, DefaultAssetMap<String, PetConfigAsset>> {
+public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String, PetType>> {
 
-    private static final AssetBuilderCodec.Builder<String, PetConfigAsset> CODEC_BUILDER = AssetBuilderCodec.builder(
-            PetConfigAsset.class, PetConfigAsset::new, Codec.STRING, (asset, id) -> asset.id = id, PetConfigAsset::getId, (asset, data) -> asset.extraData = data, asset -> asset.extraData);
-    public static final AssetCodec<String, PetConfigAsset> CODEC = CODEC_BUILDER.build();
-    private static AssetStore<String, PetConfigAsset, DefaultAssetMap<String, PetConfigAsset>> ASSET_STORE;
+    private static final AssetBuilderCodec.Builder<String, PetType> CODEC_BUILDER = AssetBuilderCodec.builder(
+            PetType.class, PetType::new, Codec.STRING, (asset, id) -> asset.id = id, PetType::getId, (asset, data) -> asset.extraData = data, asset -> asset.extraData);
+    public static final AssetCodec<String, PetType> CODEC = CODEC_BUILDER.build();
+    private static AssetStore<String, PetType, DefaultAssetMap<String, PetType>> ASSET_STORE;
+
+    public static final PetType DEFAULT = new PetType();
 
     public enum PetFeatureFlag {
-        Bonding(false);
+        Bonding(false),
+        FollowModeControls(true);
 
         private final boolean defaultValue;
 
@@ -33,19 +35,20 @@ public class PetConfigAsset implements JsonAssetWithMap<String, DefaultAssetMap<
         }
     }
 
-    public static AssetStore<String, PetConfigAsset, DefaultAssetMap<String, PetConfigAsset>> getAssetStore() {
+    public static AssetStore<String, PetType, DefaultAssetMap<String, PetType>> getAssetStore() {
         if (ASSET_STORE == null) {
-            ASSET_STORE = AssetRegistry.getAssetStore(PetConfigAsset.class);
+            ASSET_STORE = AssetRegistry.getAssetStore(PetType.class);
         }
         return ASSET_STORE;
     }
 
     public static void register() {
-        if (AssetRegistry.getAssetStore(PetConfigAsset.class) != null) {
+        if (AssetRegistry.getAssetStore(PetType.class) != null) {
             return;
         }
         AssetRegistry.register(
-                HytaleAssetStore.builder(PetConfigAsset.class, new DefaultAssetMap<>()).setPath("PetConfig").setCodec(CODEC).setKeyFunction(PetConfigAsset::getId).build());
+                HytaleAssetStore.builder(PetType.class, new DefaultAssetMap<>()).setPath("PetType").setCodec(CODEC).setKeyFunction(
+                        PetType::getId).build());
     }
 
     protected String id;

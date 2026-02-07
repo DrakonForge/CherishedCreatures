@@ -10,6 +10,8 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.event.UpdatePetTrackerEvent;
+import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
+import io.github.drakonforge.cherishedcreatures.util.PetHelpers.TameResult;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -33,23 +35,15 @@ public class PetsTameCommand extends AbstractTargetEntityCommand {
             return;
         }
 
-        PlayerPetTracker petTracker = store.getComponent(ref, PlayerPetTracker.getComponentType());
-        if (petTracker == null) {
-            commandContext.sendMessage(Message.raw("Pet tracker is null"));
-            return;
-        }
-
         commandContext.sendMessage(Message.raw("Found " + objectList.size() + " targeted entities"));
         int numAdded = 0;
         for (Ref<EntityStore> entityRef : objectList) {
-            TrackedPetEntry entry = TrackedPetEntry.createEntryFor(store, entityRef);
-            if (entry == null) {
-                commandContext.sendMessage(Message.raw("Failed to create pet entry for entity ref"));
-                continue;
+            TameResult result = PetHelpers.attemptTame(store, ref, entityRef);
+            if (result == TameResult.SUCCESS) {
+                numAdded++;
+            } else {
+                commandContext.sendMessage(Message.raw("Taming failed with status " + result.name()));
             }
-            petTracker.addPetEntry(entry);
-            // TODO: Probably actually want to add pets components and stuff
-            numAdded++;
         }
 
         if (numAdded > 0) {

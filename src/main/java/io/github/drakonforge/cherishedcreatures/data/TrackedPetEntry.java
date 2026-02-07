@@ -4,6 +4,8 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
+import com.hypixel.hytale.component.Component;
+import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -11,7 +13,10 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.asset.PetType;
+import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import java.util.UUID;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bson.BsonDocument;
 
@@ -34,6 +39,8 @@ public class TrackedPetEntry implements Cloneable {
         ALIVE, DEAD
     }
 
+    private TrackedPetEntry() {}
+
     @Nullable
     public static TrackedPetEntry createEntryFor(Store<EntityStore> store, Ref<EntityStore> ref) {
         TrackedPetEntry entry = new TrackedPetEntry();
@@ -41,6 +48,7 @@ public class TrackedPetEntry implements Cloneable {
         if (uuidComponent == null) {
             return null;
         }
+        // TODO: Validate for Pet and PetType components here?
         entry.uuid = uuidComponent.getUuid();
         entry.entityRef = ref;
         entry.saveEntity(store);
@@ -76,7 +84,7 @@ public class TrackedPetEntry implements Cloneable {
      */
     @Nullable
     private Holder<EntityStore> holder = null;
-    private Status status = Status.ALIVE;
+    private Status status = Status.ALIVE; // TODO: Not actually sure if we should store this separately
 
     public UUID getUuid() {
         return uuid;
@@ -116,6 +124,25 @@ public class TrackedPetEntry implements Cloneable {
 
     public Status getStatus() {
         return status;
+    }
+
+    @Nonnull
+    public PetType getPetType(Store<EntityStore> store) {
+        PetTypeComponent petComponent = getComponent(store, PetTypeComponent.getComponentType());
+        if (petComponent == null) {
+            LOGGER.atWarning().log("Pet type component did not exist for tracked pet entry");
+            return PetType.DEFAULT;
+        }
+        return petComponent.getPetType();
+    }
+
+    @Nullable
+    public <T extends Component<EntityStore>> T getComponent(Store<EntityStore> store, ComponentType<EntityStore, T> componentType) {
+        if (entityRef != null && entityRef.isValid()) {
+            return store.getComponent(entityRef, componentType);
+        }
+        Holder<EntityStore> holder = getOrCreateHolder(store);
+        return holder.getComponent(componentType);
     }
 
     public boolean isActive() {

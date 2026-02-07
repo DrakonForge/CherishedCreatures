@@ -10,7 +10,7 @@ import io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin;
 import java.util.UUID;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-// Base pet info
+// Base pet info for a tamed pet
 public class PetComponent implements Component<EntityStore> {
 
     public static final BuilderCodec<PetComponent> CODEC = BuilderCodec.builder(PetComponent.class,
