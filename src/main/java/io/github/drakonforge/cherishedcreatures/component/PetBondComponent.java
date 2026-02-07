@@ -19,6 +19,24 @@ public class PetBondComponent implements Component<EntityStore> {
     private int bondingLevel;
     private float bondingXp;
 
+    public void addBondingXp(float baseAmount) {
+        // TODO: Bonding XP multipliers
+        bondingXp += baseAmount;
+        recalculateBondingLevel();
+    }
+
+    public void recalculateBondingLevel() {
+        // TODO: If level changed, fire an event
+    }
+
+    public int getBondingLevel() {
+        return bondingLevel;
+    }
+
+    public float getBondingXp() {
+        return bondingXp;
+    }
+
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
