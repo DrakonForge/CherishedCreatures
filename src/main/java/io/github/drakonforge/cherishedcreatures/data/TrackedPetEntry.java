@@ -3,6 +3,7 @@ package io.github.drakonforge.cherishedcreatures.data;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -24,7 +25,13 @@ public class TrackedPetEntry implements Cloneable {
             .add()
             .append(new KeyedCodec<>("SavedEntity", Codec.BSON_DOCUMENT), (data, bson) -> data.savedEntity = bson, data -> data.savedEntity)
             .add()
+            .append(new KeyedCodec<>("Status", new EnumCodec<>(Status.class)), (data, status) -> data.status = status, data -> data.status)
+            .add()
             .build();
+
+    public enum Status {
+        ALIVE, DEAD
+    }
 
     @Nullable
     public static TrackedPetEntry createEntryFor(Store<EntityStore> store, Ref<EntityStore> ref) {
@@ -54,12 +61,11 @@ public class TrackedPetEntry implements Cloneable {
     // TODO: Create codec
 
     private UUID uuid = null;
-
     @Nullable
     private BsonDocument savedEntity = null;
-
     @Nullable
     private Ref<EntityStore> entityRef = null;
+    private Status status = Status.ALIVE;
 
     public UUID getUuid() {
         return uuid;
@@ -81,12 +87,20 @@ public class TrackedPetEntry implements Cloneable {
         this.entityRef = entityRef;
     }
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public void saveEntity(Store<EntityStore> store) {
         if (entityRef == null) {
             throw new IllegalStateException("No entity to save");
         }
         LOGGER.atInfo().log("Saved pet data");
         this.savedEntity = saveEntityToBson(store, entityRef);
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     public boolean isActive() {
