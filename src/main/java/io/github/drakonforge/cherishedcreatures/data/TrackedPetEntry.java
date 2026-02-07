@@ -23,6 +23,7 @@ public class TrackedPetEntry implements Cloneable {
             .append(new KeyedCodec<>("UUID", Codec.UUID_STRING, true),
                     (data, uuid) -> data.uuid = uuid, TrackedPetEntry::getUuid)
             .add()
+            // TODO: Deprecated :(
             .append(new KeyedCodec<>("SavedEntity", Codec.BSON_DOCUMENT), (data, bson) -> data.savedEntity = bson, data -> data.savedEntity)
             .add()
             .append(new KeyedCodec<>("Status", new EnumCodec<>(Status.class)), (data, status) -> data.status = status, data -> data.status)

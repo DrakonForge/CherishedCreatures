@@ -3,6 +3,7 @@ package io.github.drakonforge.cherishedcreatures;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.ResourceType;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -19,8 +20,12 @@ import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetStateComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
+import io.github.drakonforge.cherishedcreatures.system.EntityReceivePetUpdatesSystem;
 import io.github.drakonforge.cherishedcreatures.system.RegisterPlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.system.ResolvePetTrackerChangesSystem;
+import io.github.drakonforge.cherishedcreatures.system.ResolvePetUpdatesOwnerSystem;
+import io.github.drakonforge.cherishedcreatures.system.ResolvePetUpdatesPetSystem;
 import javax.annotation.Nonnull;
 
 /**
@@ -35,6 +40,8 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
     public static CherishedCreaturesPlugin get() {
         return instance;
     }
+
+    private ResourceType<EntityStore, PetUpdateQueue> petUpdateQueueResourceType;
 
     private ComponentType<EntityStore, PlayerPetTracker> playerPetTrackerComponentType;
     private ComponentType<EntityStore, PetComponent> petComponentType;
@@ -80,7 +87,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
                     numFound += 1;
                 }
             }
+
             LOGGER.atInfo().log("Retrieved " + numFound + "/" + playerPetTracker.getNumPetEntries() + " pets for " + playerName);
+            store.getResource(this.getPetUpdateQueueResourceType()).deliverUpdatesForPlayer(store, playerRef);
         });
 
         // Commands
@@ -88,6 +97,8 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
         // Components
         ComponentRegistryProxy<EntityStore> entityStoreRegistry = this.getEntityStoreRegistry();
+        this.petUpdateQueueResourceType = entityStoreRegistry.registerResource(PetUpdateQueue.class, "PetUpdateQueue", PetUpdateQueue.CODEC);
+
         this.playerPetTrackerComponentType = entityStoreRegistry.registerComponent(PlayerPetTracker.class, "PlayerPetTracker", PlayerPetTracker.CODEC);
         this.petComponentType = entityStoreRegistry.registerComponent(PetComponent.class, "PetComponent", PetComponent.CODEC);
         this.petStateComponentType = entityStoreRegistry.registerComponent(PetStateComponent.class, "PetStateComponent", PetStateComponent.CODEC);
@@ -96,6 +107,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         // Systems
         entityStoreRegistry.registerSystem(new RegisterPlayerPetTracker());
         entityStoreRegistry.registerSystem(new ResolvePetTrackerChangesSystem());
+        entityStoreRegistry.registerSystem(new EntityReceivePetUpdatesSystem());
+        entityStoreRegistry.registerSystem(new ResolvePetUpdatesPetSystem());
+        entityStoreRegistry.registerSystem(new ResolvePetUpdatesOwnerSystem());
     }
 
     @Override
@@ -117,5 +131,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
     public ComponentType<EntityStore, PetBondComponent> getPetBondComponentType() {
        return this.petBondComponentType;
+    }
+
+    public ResourceType<EntityStore, PetUpdateQueue> getPetUpdateQueueResourceType() {
+        return petUpdateQueueResourceType;
     }
 }
