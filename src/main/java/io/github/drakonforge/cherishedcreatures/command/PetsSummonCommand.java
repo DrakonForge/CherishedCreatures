@@ -56,12 +56,13 @@ public class PetsSummonCommand extends AbstractPlayerCommand {
         if (existingEntity != null && existingEntity.isValid()) {
             commandContext.sendMessage(Message.raw("Removing existing entity"));
             if (!entry.isActive()) {
-                commandContext.sendMessage(Message.raw("WARN: Entity is active but pet tracker is not in sync"));
+                commandContext.sendMessage(Message.raw("WARN: Entity is active but pet tracker is not in sync, re-syncing"));
+                entry.setEntityRef(existingEntity);
             }
             entry.saveEntity(store);
             store.removeEntity(existingEntity, RemoveReason.UNLOAD);
         }
-        Holder<EntityStore> newEntity = entry.getOrCreateHolder(store);
+        Holder<EntityStore> newEntity = entry.updateAndGetHolder(store);
         newEntity.putComponent(TransformComponent.getComponentType(), transformComponent.clone());
         Ref<EntityStore> newEntityRef = store.addEntity(newEntity, AddReason.LOAD);
         entry.setEntityRef(newEntityRef);
