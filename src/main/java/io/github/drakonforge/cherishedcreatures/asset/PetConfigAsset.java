@@ -9,6 +9,8 @@ import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
+import io.sentry.protocol.FeatureFlag;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 
 public class PetConfigAsset implements JsonAssetWithMap<String, DefaultAssetMap<String, PetConfigAsset>> {
 
@@ -16,6 +18,20 @@ public class PetConfigAsset implements JsonAssetWithMap<String, DefaultAssetMap<
             PetConfigAsset.class, PetConfigAsset::new, Codec.STRING, (asset, id) -> asset.id = id, PetConfigAsset::getId, (asset, data) -> asset.extraData = data, asset -> asset.extraData);
     public static final AssetCodec<String, PetConfigAsset> CODEC = CODEC_BUILDER.build();
     private static AssetStore<String, PetConfigAsset, DefaultAssetMap<String, PetConfigAsset>> ASSET_STORE;
+
+    public enum PetFeatureFlag {
+        Bonding(false);
+
+        private final boolean defaultValue;
+
+        PetFeatureFlag(boolean defaultValue) {
+            this.defaultValue = defaultValue;
+        }
+
+        public boolean getDefaultValue() {
+            return defaultValue;
+        }
+    }
 
     public static AssetStore<String, PetConfigAsset, DefaultAssetMap<String, PetConfigAsset>> getAssetStore() {
         if (ASSET_STORE == null) {
@@ -34,6 +50,11 @@ public class PetConfigAsset implements JsonAssetWithMap<String, DefaultAssetMap<
 
     protected String id;
     protected AssetExtraInfo.Data extraData;
+    protected Object2BooleanMap<PetFeatureFlag> featureFlags;
+
+    public boolean hasFeatureFlag(PetFeatureFlag flag) {
+        return featureFlags.getOrDefault(flag, flag.getDefaultValue());
+    }
 
     @Override
     public String getId() {
