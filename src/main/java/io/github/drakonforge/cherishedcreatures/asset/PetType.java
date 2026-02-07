@@ -9,6 +9,8 @@ import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
+
+import io.github.drakonforge.cherishedcreatures.data.BondingActivity;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 
 public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String, PetType>> {
@@ -55,8 +57,19 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected AssetExtraInfo.Data extraData;
     protected Object2BooleanMap<PetFeatureFlag> featureFlags;
 
+    protected String[] bondingActivities = {BondingActivity.ADVENTURING, BondingActivity.PETTING};
+
     public boolean hasFeatureFlag(PetFeatureFlag flag) {
         return featureFlags.getOrDefault(flag, flag.getDefaultValue());
+    }
+
+    public boolean hasBondingActivity(String activityName) {
+        for(int i = 0; i < this.bondingActivities.length; i++) {
+           if (this.bondingActivities[i].equals(activityName)) {
+               return true;
+           } 
+        }
+        return false;
     }
 
     @Override

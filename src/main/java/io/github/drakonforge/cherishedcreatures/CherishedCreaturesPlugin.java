@@ -23,13 +23,10 @@ import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
+import io.github.drakonforge.cherishedcreatures.sensor.builder.BuilderSensorBondingLevel;
 import io.github.drakonforge.cherishedcreatures.sensor.builder.BuilderSensorPetFollowMode;
-import io.github.drakonforge.cherishedcreatures.system.EntityReceivePetUpdatesSystem;
-import io.github.drakonforge.cherishedcreatures.system.RegisterPetComponentsSystem;
-import io.github.drakonforge.cherishedcreatures.system.RegisterPlayerPetTracker;
-import io.github.drakonforge.cherishedcreatures.system.ResolvePetTrackerChangesSystem;
-import io.github.drakonforge.cherishedcreatures.system.ResolvePetUpdatesOwnerSystem;
-import io.github.drakonforge.cherishedcreatures.system.ResolvePetUpdatesPetSystem;
+import io.github.drakonforge.cherishedcreatures.system.*;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -117,8 +114,10 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new RegisterPetComponentsSystem());
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesPetSystem());
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesOwnerSystem());
+        entityStoreRegistry.registerSystem(new BondingActivityCooldownSystem());
 
         // Sensors (Core Components)
+        NPCPlugin.get().registerCoreComponentType("BondingLevel", BuilderSensorBondingLevel::new);
         NPCPlugin.get().registerCoreComponentType("PetFollowMode", BuilderSensorPetFollowMode::new);
     }
 
