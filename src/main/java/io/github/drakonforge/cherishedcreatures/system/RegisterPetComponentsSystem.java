@@ -57,7 +57,7 @@ public class RegisterPetComponentsSystem extends RefChangeSystem<EntityStore, Pe
 
         commandBuffer.tryRemoveComponent(ref, PetStateComponent.getComponentType());
         if (petType.hasFeatureFlag(PetFeatureFlag.Bonding)) {
-            store.removeComponent(ref, PetBondComponent.getComponentType());
+            store.tryRemoveComponent(ref, PetBondComponent.getComponentType());
         }
     }
 

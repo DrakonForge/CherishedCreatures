@@ -45,6 +45,8 @@ public final class PetHelpers {
             petComponent.setOwnerUuid(uuidComponent.getUuid());
         });
 
+        // TODO: Change role
+
         playerPetTracker.addPetEntry(entry);
         return TameResult.SUCCESS;
     }

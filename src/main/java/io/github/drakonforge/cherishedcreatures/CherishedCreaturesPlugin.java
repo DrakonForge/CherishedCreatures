@@ -13,6 +13,7 @@ import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
@@ -42,6 +43,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         return instance;
     }
 
+    private final Config<CherishedCreaturesConfig> config;
     private ResourceType<EntityStore, PetUpdateQueue> petUpdateQueueResourceType;
 
     private ComponentType<EntityStore, PlayerPetTracker> playerPetTrackerComponentType;
@@ -52,6 +54,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
     public CherishedCreaturesPlugin(@Nonnull JavaPluginInit init) {
         super(init);
+        config = this.withConfig("CherishedCreatures", CherishedCreaturesConfig.CODEC);
     }
 
     @Override
@@ -115,10 +118,13 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesPetSystem());
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesOwnerSystem());
         entityStoreRegistry.registerSystem(new BondingActivityCooldownSystem());
+        entityStoreRegistry.registerSystem(new RegisterDefaultPetTypeSystem());
 
         // Sensors (Core Components)
         NPCPlugin.get().registerCoreComponentType("BondingLevel", BuilderSensorBondingLevel::new);
         NPCPlugin.get().registerCoreComponentType("PetFollowMode", BuilderSensorPetFollowMode::new);
+
+        config.save();
     }
 
     @Override

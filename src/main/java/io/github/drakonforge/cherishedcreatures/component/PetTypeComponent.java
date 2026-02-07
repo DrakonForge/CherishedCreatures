@@ -31,6 +31,12 @@ public class PetTypeComponent implements Component<EntityStore> {
 
     private String petTypeId;
 
+    private PetTypeComponent() {}
+
+    public PetTypeComponent(String petTypeId) {
+        this.petTypeId = petTypeId;
+    }
+
     public String getPetTypeId() {
         return petTypeId;
     }

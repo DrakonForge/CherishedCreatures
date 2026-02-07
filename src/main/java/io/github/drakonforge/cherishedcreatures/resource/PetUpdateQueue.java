@@ -81,7 +81,8 @@ public class PetUpdateQueue implements Resource<EntityStore> {
     }
 
     private void loadQueuedUpdates(PetUpdate[] array) {
-        queuedUpdates = Arrays.stream(array).toList();
+        queuedUpdates = new ArrayList<>(array.length);
+        queuedUpdates.addAll(Arrays.asList(array));
     }
 
     private PetUpdate[] saveQueuedUpdates() {
