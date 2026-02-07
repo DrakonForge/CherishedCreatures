@@ -50,8 +50,7 @@ public class TrackedPetEntry implements Cloneable {
     public static BsonDocument saveEntityToBson(Store<EntityStore> store, Ref<EntityStore> ref) {
         Holder<EntityStore> copy = store.copyEntity(ref);
         copy.removeComponent(TransformComponent.getComponentType());
-        BsonDocument entityDocument = EntityStore.REGISTRY.serialize(copy);
-        return entityDocument;
+        return EntityStore.REGISTRY.serialize(copy);
     }
 
     @Nullable
@@ -59,29 +58,44 @@ public class TrackedPetEntry implements Cloneable {
         return EntityStore.REGISTRY.deserialize(entityDocument);
     }
 
-    // TODO: Create codec
-
     private UUID uuid = null;
+    /**
+     * The saved entity as BSON which persists even when the pet unloads. This is the only
+     * serialized field with the pet data.
+     */
     @Nullable
     private BsonDocument savedEntity = null;
+    /**
+     * A ref to the active, loaded entity.
+     */
     @Nullable
     private Ref<EntityStore> entityRef = null;
+    /**
+     * A holder for the entity which is cached from savedEntity, non-persistent.
+     * Holders are entities which have not yet been added to a system (are not active).
+     */
+    @Nullable
+    private Holder<EntityStore> holder = null;
     private Status status = Status.ALIVE;
 
     public UUID getUuid() {
         return uuid;
     }
 
-    public Holder<EntityStore> createHolder(Store<EntityStore> store) {
+    public Holder<EntityStore> getOrCreateHolder(Store<EntityStore> store) {
         if (entityRef != null && entityRef.isValid()) {
-            return store.copyEntity(entityRef);
+            holder = store.copyEntity(entityRef);
         }
-        Holder<EntityStore> newEntity = loadEntityFromBson(savedEntity);
+        if (holder != null) {
+            return holder;
+        }
+        Holder<EntityStore> newHolder = loadEntityFromBson(savedEntity);
         // TODO: Handle this more gracefully
-        if (newEntity == null) {
+        if (newHolder == null) {
             throw new IllegalStateException("Failed to load entity from bson");
         }
-        return newEntity;
+        holder = newHolder;
+        return newHolder;
     }
 
     public void setEntityRef(@Nullable Ref<EntityStore> entityRef) {

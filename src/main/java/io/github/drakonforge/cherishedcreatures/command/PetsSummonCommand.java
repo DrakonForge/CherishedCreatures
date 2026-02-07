@@ -61,7 +61,7 @@ public class PetsSummonCommand extends AbstractPlayerCommand {
             entry.saveEntity(store);
             store.removeEntity(existingEntity, RemoveReason.UNLOAD);
         }
-        Holder<EntityStore> newEntity = entry.createHolder(store);
+        Holder<EntityStore> newEntity = entry.getOrCreateHolder(store);
         newEntity.putComponent(TransformComponent.getComponentType(), transformComponent.clone());
         Ref<EntityStore> newEntityRef = store.addEntity(newEntity, AddReason.LOAD);
         entry.setEntityRef(newEntityRef);

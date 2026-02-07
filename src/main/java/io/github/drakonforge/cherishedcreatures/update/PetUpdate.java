@@ -70,4 +70,8 @@ public class PetUpdate {
     public UUID getPetUuid() {
         return petUuid;
     }
+
+    public String getOperation() {
+        return operation;
+    }
 }
