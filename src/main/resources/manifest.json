@@ -12,7 +12,7 @@
     "Website": "https://github.com/DrakonForge",
     "ServerVersion": "*",
     "Dependencies": {
-        
+        "Hytale:NPC": "*"
     },
     "OptionalDependencies": {
         
