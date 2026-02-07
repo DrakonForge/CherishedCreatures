@@ -27,6 +27,7 @@ public class PetsClearCommand extends AbstractPlayerCommand {
             return;
         }
         petTracker.clearPetEntries();
+        // TODO: Need to clear active pets too?
         commandContext.sendMessage(Message.raw("Cleared all pets"));
     }
 }
