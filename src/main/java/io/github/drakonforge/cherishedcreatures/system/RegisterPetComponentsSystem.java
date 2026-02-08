@@ -35,7 +35,7 @@ public class RegisterPetComponentsSystem extends RefChangeSystem<EntityStore, Pe
         // Add relevant components
         commandBuffer.ensureComponent(ref, PetStateComponent.getComponentType());
         if (petType.hasFeatureFlag(PetFeatureFlag.Bonding)) {
-            store.ensureComponent(ref, PetBondComponent.getComponentType());
+            commandBuffer.ensureComponent(ref, PetBondComponent.getComponentType());
         }
     }
 
