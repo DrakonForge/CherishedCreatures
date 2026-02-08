@@ -60,6 +60,7 @@ public class PetBondComponent implements Component<EntityStore> {
 
     public void addBondingXp(float baseAmount) {
         // TODO: Bonding XP multipliers
+        LOGGER.atInfo().log("Gained " + baseAmount + " bonding XP");
         bondingXp += baseAmount;
         recalculateBondingLevel();
     }
@@ -76,25 +77,11 @@ public class PetBondComponent implements Component<EntityStore> {
         return bondingXp;
     }
 
-    public float getActivityCooldown(String activityName) {
-        for (ObjectFloatMutablePair<String> pair : activityCooldowns) {
-            if (pair.key().equals(activityName)) {
-                return pair.valueFloat();
-            }
-        }
-        return -1.0f;
-    }
-
-    public boolean isActivityOnCooldown(String activityName) {
-        for (ObjectFloatMutablePair<String> pair : activityCooldowns) {
-            if (pair.key().equals(activityName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void triggerActivity(String activityName) {
+        triggerActivity(activityName, false);
+    }
+
+    public void triggerActivity(String activityName, boolean force) {
         BondingActivity activity = BondingActivity.getAssetStore()
                 .getAssetMap()
                 .getAsset(activityName);
@@ -102,21 +89,30 @@ public class PetBondComponent implements Component<EntityStore> {
             LOGGER.atWarning().log("Unknown bonding activity " + activityName);
             return;
         }
+        int index = getIndexForActivity(activityName);
+        if (index > -1) {
+            if (!force) {
+                // On cooldown, skip adding bonding XP
+                return;
+            }
+            activityCooldowns.get(index).value(activity.getCooldown());
+        } else {
+            addActivityCooldown(activityName, activity.getCooldown());
+        }
         addBondingXp(activity.getBaseXp());
-        removeCooldown(activityName);
-        addActivityCooldown(activityName, activity.getCooldown());
+    }
+
+    private int getIndexForActivity(String activityName) {
+        for (int i = 0; i < activityCooldowns.size(); ++i) {
+            if (activityCooldowns.get(i).key().equals(activityName)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void addActivityCooldown(String activityName, float value) {
         this.activityCooldowns.add(new ObjectFloatMutablePair<>(activityName, value));
-    }
-
-    private void removeCooldown(String activityName) {
-        for (int i = activityCooldowns.size() - 1; i > 0; --i) {
-            if (activityCooldowns.get(i).key().equals(activityName)) {
-                activityCooldowns.remove(i);
-            }
-        }
     }
 
     public void tickActivityCooldowns(float deltaTime) {

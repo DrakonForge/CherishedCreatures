@@ -18,7 +18,6 @@ import com.hypixel.hytale.server.npc.NPCPlugin;
 import io.github.drakonforge.cherishedcreatures.asset.BondingActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
-import io.github.drakonforge.cherishedcreatures.command.ApplyPetCommand;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetStateComponent;
@@ -124,6 +123,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesOwnerSystem());
         entityStoreRegistry.registerSystem(new BondingActivityCooldownSystem());
         entityStoreRegistry.registerSystem(new RegisterDefaultPetTypeSystem());
+        entityStoreRegistry.registerSystem(new HandleBondingActivityEventSystem());
 
         // Sensors (Core Components)
         NPCPlugin.get().registerCoreComponentType("BondingLevel", BuilderSensorBondingLevel::new);

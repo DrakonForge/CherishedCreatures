@@ -12,7 +12,8 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
-import io.github.drakonforge.cherishedcreatures.data.BondingActivities;
+import io.github.drakonforge.cherishedcreatures.data.BondingActivityType;
+import io.github.drakonforge.cherishedcreatures.event.BondingActivityEvent;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -58,14 +59,8 @@ public class ApplyPetCommand extends AbstractTargetEntityCommand {
                continue;
             }
 
-            if (petBondComponent.isActivityOnCooldown(BondingActivities.PETTING)) {
-                commandContext.sendMessage(Message.raw("Attempted to pet a pet on pet cooldown"));
-                continue;
-            }
-
-            petBondComponent.triggerActivity(BondingActivities.PETTING);
-            commandContext.sendMessage(Message.raw("Successfuly applied pet"));
-            LOGGER.atInfo().log("Pet xp set to: " + petBondComponent.getBondingXp());
+            store.invoke(entityRef, new BondingActivityEvent(BondingActivityType.Petting));
+            commandContext.sendMessage(Message.raw("Successfully applied pet"));
         }
     }
 

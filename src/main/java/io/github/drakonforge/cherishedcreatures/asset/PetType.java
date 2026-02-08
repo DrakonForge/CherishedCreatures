@@ -11,7 +11,6 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
-import io.github.drakonforge.cherishedcreatures.data.BondingActivities;
 import io.github.drakonforge.cherishedcreatures.util.Object2BooleanMapCodec;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
@@ -65,20 +64,16 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected AssetExtraInfo.Data extraData;
     protected Object2BooleanMap<PetFeatureFlag> featureFlags;
     // TODO: Optimize this out to a set or bit flag later
-    protected String[] bondingActivities = { BondingActivities.ADVENTURING, BondingActivities.PETTING };
+    protected String[] bondingActivities;
     protected JoinsFlock joinsFlock = JoinsFlock.FOLLOW_ONLY;
 
     public boolean hasFeatureFlag(PetFeatureFlag flag) {
         return featureFlags.getOrDefault(flag, flag.getDefaultValue());
     }
 
-    public boolean hasBondingActivity(String activityName) {
-        for (int i = 0; i < this.bondingActivities.length; i++) {
-            if (this.bondingActivities[i].equals(activityName)) {
-                return true;
-            }
-        }
-        return false;
+    // TODO: Is there a way to automatically map these to BondingActivity assets?
+    public String[] getBondingActivities() {
+        return bondingActivities;
     }
 
     @Override

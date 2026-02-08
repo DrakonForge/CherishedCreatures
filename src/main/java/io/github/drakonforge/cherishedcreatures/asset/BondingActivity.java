@@ -9,7 +9,9 @@ import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
 import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
+import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
+import io.github.drakonforge.cherishedcreatures.data.BondingActivityType;
 
 public class BondingActivity implements
         JsonAssetWithMap<String, DefaultAssetMap<String, BondingActivity>> {
@@ -18,13 +20,20 @@ public class BondingActivity implements
                     BondingActivity.class, BondingActivity::new, Codec.STRING, (asset, id) -> asset.id = id,
                     BondingActivity::getId, (asset, data) -> asset.extraData = data,
                     asset -> asset.extraData)
+            .append(new KeyedCodec<>("Type", new EnumCodec<>(BondingActivityType.class)), (asset, type) -> asset.bondingActivityType = type, BondingActivity::getBondingActivityType)
+            .documentation("The type of bonding activity, which affects what events can trigger it.")
+            .add()
             .append(new KeyedCodec<>("BaseXp", Codec.FLOAT), (asset, xp) -> asset.baseXp = xp,
                     BondingActivity::getBaseXp)
-            .documentation("TODO")
+            .documentation("The base bonding XP gained for this bonding activity. Can be modified by Happiness multipliers.")
             .add()
             .append(new KeyedCodec<>("Cooldown", Codec.FLOAT),
                     (asset, cooldown) -> asset.cooldown = cooldown, BondingActivity::getCooldown)
-            .documentation("TODO")
+            .documentation("The cooldown in seconds for this bonding activity.")
+            .add()
+            .append(new KeyedCodec<>("HappinessGain", Codec.FLOAT),
+                    (asset, gain) -> asset.happinessGain = gain, BondingActivity::getHappinessGain)
+            .documentation("The amount of Happiness gained for this bonding activity.")
             .add()
             .documentation("TODO");
     public static final AssetCodec<String, BondingActivity> CODEC = CODEC_BUILDER.build();
@@ -50,9 +59,11 @@ public class BondingActivity implements
     }
 
     protected String id;
+    protected BondingActivityType bondingActivityType = BondingActivityType.Custom;
     protected AssetExtraInfo.Data extraData;
     protected float baseXp;
     protected float cooldown;
+    protected float happinessGain;
 
     @Override
     public String getId() {
@@ -65,5 +76,13 @@ public class BondingActivity implements
 
     public float getCooldown() {
         return cooldown;
+    }
+
+    public float getHappinessGain() {
+        return happinessGain;
+    }
+
+    public BondingActivityType getBondingActivityType() {
+        return bondingActivityType;
     }
 }

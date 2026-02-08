@@ -1,7 +1,7 @@
 {
   "BondingActivities": [
-    "Adventuring",
-    "Petting"
+    "DefaultAdventuring",
+    "DefaultPetting"
   ],
   "FeatureFlags": {
     "Bonding": true,
