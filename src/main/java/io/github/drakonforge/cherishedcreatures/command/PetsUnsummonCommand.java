@@ -14,6 +14,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class PetsUnsummonCommand extends AbstractPlayerCommand {
@@ -48,14 +49,10 @@ public class PetsUnsummonCommand extends AbstractPlayerCommand {
         }
 
         TrackedPetEntry entry = petTracker.getPetEntry(index);
-        Ref<EntityStore> existingEntity = store.getExternalData().getRefFromUUID(entry.getUuid());
-        if (existingEntity == null || !existingEntity.isValid()) {
+        if (PetHelpers.unsummonPet(entry, store)) {
+            commandContext.sendMessage(Message.raw("Unsummoned pet"));
+        } else {
             commandContext.sendMessage(Message.raw("Pet is not summoned"));
-            return;
         }
-
-        entry.saveEntity(store);
-        store.removeEntity(existingEntity, RemoveReason.REMOVE);
-        commandContext.sendMessage(Message.raw("Unsummoned pet"));
     }
 }

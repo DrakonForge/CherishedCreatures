@@ -16,6 +16,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class PetsSummonCommand extends AbstractPlayerCommand {
@@ -50,22 +51,7 @@ public class PetsSummonCommand extends AbstractPlayerCommand {
         }
 
         TrackedPetEntry entry = petTracker.getPetEntry(index);
-        Ref<EntityStore> existingEntity = store.getExternalData().getRefFromUUID(entry.getUuid());
-        // TODO: Probably don't need to remove + re-add if the entity is loaded, just teleport it
-        // TODO: Not sure if we need isActive or getRefFromUUID here. Probably not both
-        if (existingEntity != null && existingEntity.isValid()) {
-            commandContext.sendMessage(Message.raw("Removing existing entity"));
-            if (!entry.isActive()) {
-                commandContext.sendMessage(Message.raw("WARN: Entity is active but pet tracker is not in sync, re-syncing"));
-                entry.setEntityRef(existingEntity);
-            }
-            entry.saveEntity(store);
-            store.removeEntity(existingEntity, RemoveReason.UNLOAD);
-        }
-        Holder<EntityStore> newEntity = entry.updateAndGetHolder(store);
-        newEntity.putComponent(TransformComponent.getComponentType(), transformComponent.clone());
-        Ref<EntityStore> newEntityRef = store.addEntity(newEntity, AddReason.LOAD);
-        entry.setEntityRef(newEntityRef);
-        commandContext.sendMessage(Message.raw("Adding new entity ref"));
+        PetHelpers.summonPet(entry, store, transformComponent);
+        commandContext.sendMessage(Message.raw("Pet summoned"));
     }
 }

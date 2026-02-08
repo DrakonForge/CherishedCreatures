@@ -1,8 +1,14 @@
 package io.github.drakonforge.cherishedcreatures.util;
 
+import com.hypixel.hytale.component.AddReason;
+import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
@@ -11,6 +17,8 @@ import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 
 public final class PetHelpers {
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+
     public enum TameResult {
         SUCCESS,
         FAIL_MISSING_COMPONENTS,
@@ -49,5 +57,34 @@ public final class PetHelpers {
 
         playerPetTracker.addPetEntry(entry);
         return TameResult.SUCCESS;
+    }
+
+    public static void summonPet(TrackedPetEntry entry, Store<EntityStore> store, TransformComponent transform) {
+        Ref<EntityStore> existingEntity = store.getExternalData().getRefFromUUID(entry.getUuid());
+        // TODO: Probably don't need to remove + re-add if the entity is loaded, just teleport it
+        // TODO: Not sure if we need isActive or getRefFromUUID here. Probably not both
+        if (existingEntity != null && existingEntity.isValid()) {
+            if (!entry.isActive()) {
+                LOGGER.atWarning().log("Pet is active but pet tracker is not in sync, re-syncing");
+                entry.setEntityRef(existingEntity);
+            }
+            entry.saveEntity(store);
+            store.removeEntity(existingEntity, RemoveReason.UNLOAD);
+        }
+        Holder<EntityStore> newEntity = entry.updateAndGetHolder(store);
+        newEntity.putComponent(TransformComponent.getComponentType(), transform.clone());
+        Ref<EntityStore> newEntityRef = store.addEntity(newEntity, AddReason.LOAD);
+        entry.setEntityRef(newEntityRef);
+    }
+
+    public static boolean unsummonPet(TrackedPetEntry entry, Store<EntityStore> store) {
+        Ref<EntityStore> existingEntity = store.getExternalData().getRefFromUUID(entry.getUuid());
+        if (existingEntity == null || !existingEntity.isValid()) {
+            return false;
+        }
+
+        entry.saveEntity(store);
+        store.removeEntity(existingEntity, RemoveReason.REMOVE);
+        return true;
     }
 }

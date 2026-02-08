@@ -22,7 +22,7 @@ public class PlayerPetTracker implements Component<EntityStore> {
             .append(new KeyedCodec<>("PetEntries",
                             new ArrayCodec<>(TrackedPetEntry.CODEC, TrackedPetEntry[]::new)),
                     (data, petEntries) -> data.petEntries = petEntries,
-                    data -> data.petEntries)
+                    PlayerPetTracker::getPetEntries)
             .add()
             .build();
 
@@ -78,6 +78,11 @@ public class PlayerPetTracker implements Component<EntityStore> {
         return petEntries[i];
     }
 
+    public TrackedPetEntry getPetEntry(UUID uuid) {
+        int index = findPetByUuid(uuid);
+        return getPetEntry(index);
+    }
+
     public void addPetEntry(TrackedPetEntry petEntry) {
         petEntryUpdates.add(petEntry);
     }
@@ -89,6 +94,10 @@ public class PlayerPetTracker implements Component<EntityStore> {
     public void clearPetEntries() {
         petEntries = EMPTY;
         petEntryUpdates.clear();
+    }
+
+    public TrackedPetEntry[] getPetEntries() {
+        return petEntries;
     }
 
     @NullableDecl

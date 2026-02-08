@@ -72,6 +72,7 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     }
 
     // TODO: Is there a way to automatically map these to BondingActivity assets?
+    // TODO: Or even better, Map<BondingActivityType, BondingActivity>
     public String[] getBondingActivities() {
         return bondingActivities;
     }
