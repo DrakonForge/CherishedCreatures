@@ -15,6 +15,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.npc.NPCPlugin;
+import io.github.drakonforge.cherishedcreatures.asset.BondingActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
 import io.github.drakonforge.cherishedcreatures.command.ApplyPetCommand;
@@ -64,7 +65,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         instance = this;
         LOGGER.atInfo().log("Setting up plugin " + this.getName() + " version " + this.getManifest().getVersion().toString());
 
+        // Custom Assets
         PetType.register();
+        BondingActivity.register();
 
         // When player logs in, grab all the existing pets
         // TODO: When entity loads, add to tracker

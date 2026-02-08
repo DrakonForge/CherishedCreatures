@@ -7,16 +7,12 @@ import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractTargetEntityCommand;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
-import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
-import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
-import io.github.drakonforge.cherishedcreatures.data.BondingActivity;
-import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
+import io.github.drakonforge.cherishedcreatures.data.BondingActivities;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -62,13 +58,12 @@ public class ApplyPetCommand extends AbstractTargetEntityCommand {
                continue;
             }
 
-            if (petBondComponent.getActivityCooldown(BondingActivity.PETTING) > 0.0f) {
+            if (petBondComponent.isActivityOnCooldown(BondingActivities.PETTING)) {
                 commandContext.sendMessage(Message.raw("Attempted to pet a pet on pet cooldown"));
                 continue;
             }
 
-            petBondComponent.setActivityCooldown(BondingActivity.PETTING, BondingActivity.PETTING_COOLDOWN);
-            petBondComponent.addBondingXp(BondingActivity.PETTING_XP);
+            petBondComponent.triggerActivity(BondingActivities.PETTING);
             commandContext.sendMessage(Message.raw("Successfuly applied pet"));
             LOGGER.atInfo().log("Pet xp set to: " + petBondComponent.getBondingXp());
         }

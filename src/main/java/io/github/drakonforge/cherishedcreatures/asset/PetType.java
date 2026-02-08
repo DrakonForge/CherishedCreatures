@@ -11,7 +11,7 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
-import io.github.drakonforge.cherishedcreatures.data.BondingActivity;
+import io.github.drakonforge.cherishedcreatures.data.BondingActivities;
 import io.github.drakonforge.cherishedcreatures.util.Object2BooleanMapCodec;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
@@ -65,7 +65,7 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected AssetExtraInfo.Data extraData;
     protected Object2BooleanMap<PetFeatureFlag> featureFlags;
     // TODO: Optimize this out to a set or bit flag later
-    protected String[] bondingActivities = { BondingActivity.ADVENTURING, BondingActivity.PETTING };
+    protected String[] bondingActivities = { BondingActivities.ADVENTURING, BondingActivities.PETTING };
     protected JoinsFlock joinsFlock = JoinsFlock.FOLLOW_ONLY;
 
     public boolean hasFeatureFlag(PetFeatureFlag flag) {
