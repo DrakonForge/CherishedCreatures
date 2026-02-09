@@ -11,6 +11,10 @@ import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
+import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
+import com.hypixel.hytale.server.core.modules.entitystats.asset.EntityStatType;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
@@ -25,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-public record PetUICard(UUID id, String name, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIBondingInfo bondingInfo) {
+public record PetUICard(UUID id, String name, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo) {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
@@ -39,15 +43,19 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
         }
     }
 
+    public record PetUIHealthInfo(float fillProgress) {}
+
     public static PetUICard fromTrackedPetEntry(TrackedPetEntry entry, Store<EntityStore> store) {
         Holder<EntityStore> holder = entry.updateAndGetHolder(store);
         PetType petType = entry.getPetType(store);
 
         String displayName = getDisplayName(holder);
-        PetUIBondingInfo bondingInfo = getBondingInfo(holder);
+        Status status = entry.getStatus();
+        PetUIBondingInfo bondingInfo = getBondingInfo(petType, holder);
+        PetUIHealthInfo healthInfo = getHealthInfo(petType, status, holder);
         boolean showSummonToggle = petType.hasFeatureFlag(PetFeatureFlag.SummonControls) && canSummonPetWithStatus(entry.getStatus());
         // If the pet has Status ALIVE but is unloaded, we basically treat it as un-summoned for our purposes.
-        return new PetUICard(entry.getUuid(), displayName, entry.getStatus(), entry.isLoaded(), showSummonToggle, bondingInfo);
+        return new PetUICard(entry.getUuid(), displayName, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo);
     }
 
     private static boolean canSummonPetWithStatus(Status status) {
@@ -67,7 +75,10 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
     }
 
     @Nullable
-    private static PetUIBondingInfo getBondingInfo(Holder<EntityStore> holder) {
+    private static PetUIBondingInfo getBondingInfo(PetType petType, Holder<EntityStore> holder) {
+        if (!petType.hasFeatureFlag(PetFeatureFlag.Bonding)) {
+            return null;
+        }
         PetBondComponent petBondComponent = holder.getComponent(PetBondComponent.getComponentType());
         if (petBondComponent == null) {
             return null;
@@ -86,6 +97,22 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
             return new PetUIBondingInfo(Type.FOUR_SEGMENT, totalProgress);
         }
         return null;
+    }
+
+    @Nullable
+    private static PetUIHealthInfo getHealthInfo(PetType petType, Status status, Holder<EntityStore> holder) {
+        if (petType.hasFeatureFlag(PetFeatureFlag.Immortal) || status == Status.DEAD) {
+            return null;
+        }
+        EntityStatMap entityStatMap = holder.getComponent(EntityStatMap.getComponentType());
+        if (entityStatMap == null) {
+            return null;
+        }
+        EntityStatValue value = entityStatMap.get(DefaultEntityStatTypes.getHealth());
+        if (value == null) {
+            return null;
+        }
+        return new PetUIHealthInfo(value.asPercentage());
     }
 
     private void refreshPetCard(Store<EntityStore> store, PlayerPetTracker petTracker, List<PetUICard> petCards, UUID petUuid) {

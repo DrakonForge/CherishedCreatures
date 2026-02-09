@@ -40,12 +40,7 @@
   }
 
   .pet-status-meters {
-    padding: 10;
-  }
-
-  .pet-status-meter-container {
     layout-mode: Left;
-    padding: 10;
   }
 
   .pet-control {
@@ -76,20 +71,14 @@
           </div>
           <div class="pet-info">
             <p class="pet-name">{{$name}}</p>
-            <div id="pet-status-{{$id}}">
-              {{@PetStatus:status={{$status}}}}
-            </div>
+            {{@PetStatus:status={{$status}}}}
 
             <div class="pet-status-meters">
+              {{#if healthInfo != null}}
+                {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Core.png,size=45,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b}}
+              {{/if}}
               {{#if bondingInfo != null}}
-                <div class="pet-status-meter-container pet-status-bonding">
-                  <progress class="circular-progress"
-                            value="{{$bondingInfo.fillProgress}}"
-                            data-hyui-mask-texture-path="MaskTexture.png"
-                            data-hyui-color="#ffffff"
-                            style="anchor-width: 20; anchor-height: 20;">
-                  </progress>
-                </div>
+                {{@CircularStatusMeter:iconPath=Assets/BondingMeter_Core.png,size=45,fillProgress={{bondingInfo.fillProgress}},fillColor=#07eb2e}}
               {{/if}}
             </div>
           </div>

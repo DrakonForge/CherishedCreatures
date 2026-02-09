@@ -39,6 +39,7 @@ public final class PetMenu {
 
         TemplateProcessor template = new TemplateProcessor()
                 .registerComponentFromFile("PetStatus", "Components/PetStatus.html")
+                .registerComponentFromFile("CircularStatusMeter", "Components/CircularStatusMeter.html")
                 .setVariable("numPets", petCards.size())
                 .setVariable("petCards", petCards);
 
