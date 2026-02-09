@@ -1,17 +1,30 @@
 package io.github.drakonforge.cherishedcreatures.ui;
 
+import au.ellie.hyui.builders.ButtonBuilder;
+import au.ellie.hyui.builders.PageBuilder;
 import com.hypixel.hytale.component.Holder;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.asset.PetType;
+import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
+import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.ui.PetUICard.PetUIBondingInfo.Type;
+import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-public record PetUICard(UUID id, String name, boolean isActive, @Nullable PetUIBondingInfo bondingInfo) {
+public record PetUICard(UUID id, String name, boolean isActive, boolean showSummonToggle, @Nullable PetUIBondingInfo bondingInfo) {
+
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
     // TODO: Replace hardcoded values
     private static final float[] BONDING_XP_LEVEL_THRESHOLDS = { 0.0f, 150.0f, 300.0f, 450.0f, 600.0f };
@@ -25,11 +38,13 @@ public record PetUICard(UUID id, String name, boolean isActive, @Nullable PetUIB
 
     public static PetUICard fromTrackedPetEntry(TrackedPetEntry entry, Store<EntityStore> store) {
         Holder<EntityStore> holder = entry.updateAndGetHolder(store);
+        PetType petType = entry.getPetType(store);
 
         String displayName = getDisplayName(holder);
         PetUIBondingInfo bondingInfo = getBondingInfo(holder);
 
-        return new PetUICard(entry.getUuid(), displayName, entry.isActive(), bondingInfo);
+        return new PetUICard(entry.getUuid(), displayName, entry.isActive(), petType.hasFeatureFlag(
+                PetFeatureFlag.SummonControls), bondingInfo);
 
     }
 
@@ -65,5 +80,34 @@ public record PetUICard(UUID id, String name, boolean isActive, @Nullable PetUIB
             return new PetUIBondingInfo(Type.FOUR_SEGMENT, totalProgress);
         }
         return null;
+    }
+
+    public void registerEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker) {
+        if (showSummonToggle) {
+            builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
+                TrackedPetEntry entry = petTracker.getPetEntry(id);
+                if (entry.isActive()) {
+                    if (PetHelpers.unsummonPet(entry, store)) {
+                        playerRef.sendMessage(Message.raw("Unsummoned pet " + name + "!"));
+                    }
+                    ctx.getById("toggle-summon-" + id, ButtonBuilder.class).ifPresent(buttonBuilder -> {
+                        buttonBuilder.withText("Summon");
+                        ctx.updatePage(false);
+                    });
+                } else {
+                    TransformComponent transformComponent = store.getComponent(ref, TransformComponent.getComponentType());
+                    if (transformComponent == null) {
+                        LOGGER.atWarning().log("Transform should not be null");
+                        return;
+                    }
+                    PetHelpers.summonPet(entry, store, transformComponent);
+                    playerRef.sendMessage(Message.raw("Summoned pet " + name + "!"));
+                    ctx.getById("toggle-summon-" + id, ButtonBuilder.class).ifPresent(buttonBuilder -> {
+                        buttonBuilder.withText("Unsummon");
+                        ctx.updatePage(false);
+                    });
+                }
+            });
+        }
     }
 }

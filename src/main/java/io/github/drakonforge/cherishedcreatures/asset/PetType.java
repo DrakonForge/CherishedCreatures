@@ -83,7 +83,9 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     }
 
     public enum PetFeatureFlag {
-        Bonding(false), FollowModeControls(true);
+        Bonding(false),
+        FollowModeControls(true),
+        SummonControls(true);
 
         private final boolean defaultValue;
 

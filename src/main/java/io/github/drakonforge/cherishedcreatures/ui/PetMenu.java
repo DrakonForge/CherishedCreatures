@@ -1,19 +1,14 @@
 package io.github.drakonforge.cherishedcreatures.ui;
 
-import au.ellie.hyui.builders.ButtonBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.html.TemplateProcessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
-import com.hypixel.hytale.server.core.Message;
-import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
-import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -44,31 +39,7 @@ public final class PetMenu {
         PageBuilder builder = PageBuilder.detachedPage()
                 .loadHtml("Pages/PetMenu.html", template);
         for (PetUICard petUICard : petCards) {
-            // TODO: Need to register only the buttons that actually exist
-            builder.addEventListener("toggle-summon-" + petUICard.id(), CustomUIEventBindingType.Activating, (data, ctx) -> {
-                TrackedPetEntry entry = playerPetTracker.getPetEntry(petUICard.id());
-                if (entry.isActive()) {
-                    if (PetHelpers.unsummonPet(entry, store)) {
-                        playerRef.sendMessage(Message.raw("Unsummoned pet " + petUICard.name() + "!"));
-                    }
-                    ctx.getById("toggle-summon-" + petUICard.id(), ButtonBuilder.class).ifPresent(buttonBuilder -> {
-                        buttonBuilder.withText("Summon");
-                        ctx.updatePage(false);
-                    });
-                } else {
-                    TransformComponent transformComponent = store.getComponent(ref, TransformComponent.getComponentType());
-                    if (transformComponent == null) {
-                        LOGGER.atWarning().log("Transform should not be null");
-                        return;
-                    }
-                    PetHelpers.summonPet(entry, store, transformComponent);
-                    playerRef.sendMessage(Message.raw("Summoned pet " + petUICard.name() + "!"));
-                    ctx.getById("toggle-summon-" + petUICard.id(), ButtonBuilder.class).ifPresent(buttonBuilder -> {
-                        buttonBuilder.withText("Unsummon");
-                        ctx.updatePage(false);
-                    });
-                }
-            });
+            petUICard.registerEventListeners(builder, store, ref, playerRef, playerPetTracker);
         }
         builder.open(playerRef, store);
     }
