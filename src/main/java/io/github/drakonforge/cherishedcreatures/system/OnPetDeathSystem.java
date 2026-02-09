@@ -40,7 +40,7 @@ public class OnPetDeathSystem extends DeathSystems.OnDeathSystem {
         }
         entry.setEntityRef(ref);
         entry.saveEntity(store);
-        entry.setStatus(Status.DEAD);
+        entry.setStatus(Status.DEAD); // TODO: Depending on type of pet, it might be resurrected or just stored again
         OfflinePlayerHelpers.saveIfOffline(ownerUuid);
     }
 

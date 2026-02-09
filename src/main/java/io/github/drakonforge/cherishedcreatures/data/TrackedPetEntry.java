@@ -14,6 +14,7 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
@@ -53,6 +54,7 @@ public class TrackedPetEntry implements Cloneable {
         if (uuidComponent == null || transformComponent == null) {
             return null;
         }
+        entry.validateTrackedPetEntry();
         // TODO: Validate for Pet and PetType components here?
         entry.uuid = uuidComponent.getUuid();
         entry.entityRef = ref;
@@ -110,6 +112,18 @@ public class TrackedPetEntry implements Cloneable {
     public void clearPosData() {
         this.lastKnownPos = null;
         this.worldUuid = null;
+    }
+
+    // Validates the TrackedPetEntry properties using the holder.
+    public void validateTrackedPetEntry() {
+        if (holder.getComponent(DeathComponent.getComponentType()) == null) {
+            if (status == Status.DEAD) {
+                setStatus(Status.UNKNOWN);
+            }
+        } else {
+            // TODO: Might be based on config
+            setStatus(Status.DEAD);
+        }
     }
 
     public void saveEntity(Store<EntityStore> store) {

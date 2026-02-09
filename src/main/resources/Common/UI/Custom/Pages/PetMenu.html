@@ -94,10 +94,15 @@
             </div>
           </div>
           <div class="pet-controls" style="flex-weight: 1;">
-              {{#if isLoaded}}
+              {{#if showSummonToggle}}
+                {{#if isLoaded}}
                 <button class="pet-control small-tertiary-button" id="toggle-summon-{{$id}}">Unsummon</button>
-              {{else}}
+                {{else}}
                 <button class="pet-control small-tertiary-button" id="toggle-summon-{{$id}}">Summon</button>
+                {{/if}}
+              {{/if}}
+              {{#if status == DEAD}}
+                <button class="pet-control small-tertiary-button" id="accept-death-{{$id}}">Accept</button>
               {{/if}}
               <button class="pet-control small-tertiary-button" id="view-details-{{$id}}">Details</button>
           </div>

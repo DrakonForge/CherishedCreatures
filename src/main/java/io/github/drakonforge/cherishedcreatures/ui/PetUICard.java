@@ -133,5 +133,22 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
                 }
             });
         }
+        if (status == Status.DEAD) {
+            builder.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
+                int index = findPetCard(petCards, id);
+                if (index < 0 || petCards.get(index).status != Status.DEAD) {
+                    playerRef.sendMessage(Message.raw("Pet does not exist or is not dead"));
+                    return;
+                }
+                boolean success = petTracker.removePetEntry(id);
+                if (success) {
+                    petCards.remove(index);
+                    playerRef.sendMessage(Message.raw("Accepted the death of " + name));
+                    ctx.updatePage(true);
+                } else {
+                    playerRef.sendMessage(Message.raw("Failed to remove pet"));
+                }
+            });
+        }
     }
 }

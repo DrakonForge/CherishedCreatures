@@ -116,7 +116,7 @@ public class PetBondComponent implements Component<EntityStore> {
     }
 
     public void tickActivityCooldowns(float deltaTime) {
-        for (int i = activityCooldowns.size() - 1; i > 0; --i) {
+        for (int i = activityCooldowns.size() - 1; i >= 0; --i) {
             ObjectFloatMutablePair<String> pair = activityCooldowns.get(i);
             float newValue = pair.valueFloat() - deltaTime;
             if (newValue <= 0) {

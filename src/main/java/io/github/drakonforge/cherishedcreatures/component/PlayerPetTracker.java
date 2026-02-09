@@ -9,6 +9,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -21,48 +22,27 @@ public class PlayerPetTracker implements Component<EntityStore> {
                     PlayerPetTracker.class, PlayerPetTracker::new)
             .append(new KeyedCodec<>("PetEntries",
                             new ArrayCodec<>(TrackedPetEntry.CODEC, TrackedPetEntry[]::new)),
-                    (data, petEntries) -> data.petEntries = petEntries,
-                    PlayerPetTracker::getPetEntries)
+                    PlayerPetTracker::loadEntries, PlayerPetTracker::saveEntries)
             .add()
             .build();
 
     public static ComponentType<EntityStore, PlayerPetTracker> getComponentType() {
         return CherishedCreaturesPlugin.get().getPlayerPetTrackerComponentType();
     }
-    private final List<TrackedPetEntry> petEntryUpdates = new ArrayList<>(); // TODO: Update system
-    private TrackedPetEntry[] petEntries = EMPTY;
+    private final List<TrackedPetEntry> petEntries = new ArrayList<>();
 
-    public void resolveChanges() {
-        // TODO: Right now, it's only adding entries, but we may want to update/remove them later
-        if (petEntryUpdates.isEmpty()) {
-            return;
-        }
+    private TrackedPetEntry[] saveEntries() {
+        return petEntries.toArray(new TrackedPetEntry[0]);
+    }
 
-        // Update existing entries
-        for (int i = petEntryUpdates.size() - 1; i > 0; --i) {
-            TrackedPetEntry newPetEntry = petEntryUpdates.get(i);
-            int petIndex = findPetByUuid(newPetEntry.getUuid());
-            if (petIndex > -1) {
-                petEntries[petIndex] = newPetEntry;
-                petEntryUpdates.remove(i);
-            }
-        }
-
-        if (!petEntryUpdates.isEmpty()) {
-            TrackedPetEntry[] newPetEntries = new TrackedPetEntry[petEntries.length + petEntryUpdates.size()];
-            System.arraycopy(petEntries, 0, newPetEntries, 0, petEntries.length);
-            for (int i = 0; i < petEntryUpdates.size(); ++i) {
-                newPetEntries[petEntries.length + i] = petEntryUpdates.get(i);
-            }
-            petEntries = newPetEntries;
-        }
-
-        petEntryUpdates.clear();
+    private void loadEntries(TrackedPetEntry[] entries) {
+        petEntries.clear();
+        petEntries.addAll(Arrays.asList(entries));
     }
 
     private int findPetByUuid(UUID uuid) {
-        for (int i = 0; i < petEntries.length; ++i) {
-            TrackedPetEntry petEntry = petEntries[i];
+        for (int i = 0; i < petEntries.size(); ++i) {
+            TrackedPetEntry petEntry = petEntries.get(i);
             if (petEntry.getUuid().equals(uuid)) {
                 return i;
             }
@@ -70,12 +50,8 @@ public class PlayerPetTracker implements Component<EntityStore> {
         return -1;
     }
 
-    public List<TrackedPetEntry> getPetEntryUpdates() {
-        return petEntryUpdates;
-    }
-
     public TrackedPetEntry getPetEntry(int i) {
-        return petEntries[i];
+        return petEntries.get(i);
     }
 
     public TrackedPetEntry getPetEntry(UUID uuid) {
@@ -83,20 +59,34 @@ public class PlayerPetTracker implements Component<EntityStore> {
         return getPetEntry(index);
     }
 
-    public void addPetEntry(TrackedPetEntry petEntry) {
-        petEntryUpdates.add(petEntry);
+    public boolean addPetEntry(TrackedPetEntry petEntry) {
+        if (findPetByUuid(petEntry.getUuid()) > -1) {
+            return false;
+        }
+        petEntries.add(petEntry);
+        return true;
+    }
+
+    public boolean removePetEntry(UUID uuid) {
+        boolean foundAny = false;
+        for (int i = petEntries.size() - 1; i >= 0; --i) {
+            if (petEntries.get(i).getUuid().equals(uuid)) {
+                petEntries.remove(i);
+                foundAny = true;
+            }
+        }
+        return foundAny;
     }
 
     public int getNumPetEntries() {
-        return petEntries.length;
+        return petEntries.size();
     }
 
     public void clearPetEntries() {
-        petEntries = EMPTY;
-        petEntryUpdates.clear();
+        petEntries.clear();
     }
 
-    public TrackedPetEntry[] getPetEntries() {
+    public List<TrackedPetEntry> getPetEntries() {
         return petEntries;
     }
 

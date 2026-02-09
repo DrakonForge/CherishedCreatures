@@ -88,6 +88,7 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
 
     public enum PetFeatureFlag {
         Bonding(false),
+        Immortal(false), // Pet that cannot take damage or die, so health doesn't matter
         FollowModeControls(true),
         SummonControls(true);
 
