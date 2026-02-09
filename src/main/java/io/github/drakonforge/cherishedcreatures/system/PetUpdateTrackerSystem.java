@@ -39,17 +39,16 @@ public class PetUpdateTrackerSystem extends RefSystem<EntityStore> {
         }
         PlayerPetTracker petTracker = OfflinePlayerHelpers.getComponent(store, ownerUuid, PlayerPetTracker.getComponentType());
         if (petTracker == null) {
+            LOGGER.atWarning().log("Pet tracker is null");
             return;
         }
         TrackedPetEntry trackedPetEntry = petTracker.getPetEntry(uuid);
         if (trackedPetEntry == null) {
+            LOGGER.atWarning().log("Pet tracker entry is null");
             return;
         }
+        LOGGER.atInfo().log("Started tracking entity");
         trackedPetEntry.setEntityRef(ref);
-        // trackedPetEntry.saveEntityFromRef(store, ref);
-
-        // store.getResource(CherishedCreaturesPlugin.get().getPetUpdateQueueResourceType()).deliverUpdatesForPet(store, ref);
-        // OfflinePlayerHelpers.saveIfOffline(ownerUuid);
     }
 
     @Override

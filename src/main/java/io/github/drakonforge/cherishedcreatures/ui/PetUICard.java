@@ -45,7 +45,7 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
 
     public static PetUICard fromTrackedPetEntry(TrackedPetEntry entry, Store<EntityStore> store) {
         entry.attemptSaveEntityFromLive(store);
-        Holder<EntityStore> holder = entry.getHolder();
+        Holder<EntityStore> holder = entry.getHolder(false);
         PetType petType = entry.getPetType(store);
 
         String displayName = getDisplayName(holder);

@@ -18,6 +18,7 @@ import com.hypixel.hytale.server.core.modules.entity.component.TransformComponen
 import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
+import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import java.util.UUID;
 import javax.annotation.Nonnull;
@@ -41,21 +42,6 @@ public class TrackedPetEntry implements Cloneable {
             .append(new KeyedCodec<>("WorldUuid", Codec.UUID_STRING), (data, uuid) -> data.worldUuid = uuid, data -> data.worldUuid)
             .add()
             .build();
-
-    // TODO: Do on spawn instead of on despawn?
-    public void updateHolder(Holder<EntityStore> holder) {
-        // Super hacky solution to ensure that we get a properly serialized component
-        StoredCodec<Holder<EntityStore>> codec = new StoredCodec<>(EntityStore.HOLDER_CODEC_KEY);
-        ExtraInfo extraInfo = new ExtraInfo();
-        Holder<EntityStore> newHolder = codec.decode(codec.encode(holder, extraInfo), extraInfo);
-        if (newHolder == null) {
-            LOGGER.atWarning().log("Failed to encode/decode object");
-            this.holder = EntityStore.REGISTRY.newHolder();
-        } else {
-            this.holder = newHolder;
-        }
-        // this.holder = holder.cloneSerializable(EntityStore.REGISTRY.getData());
-    }
 
     public enum Status {
         ALIVE, STORED, UNKNOWN, DEAD
@@ -103,8 +89,25 @@ public class TrackedPetEntry implements Cloneable {
     }
 
     @NonNullDecl
-    public Holder<EntityStore> getHolder() {
+    public Holder<EntityStore> getHolder(boolean forSpawning) {
+        if (forSpawning) {
+            // There are weird bugs when we try to spawn from the holder, unless it was just loaded from the player's data
+            // To account for this, we pipe it through the codec one more time
+            StoredCodec<Holder<EntityStore>> codec = new StoredCodec<>(EntityStore.HOLDER_CODEC_KEY);
+            ExtraInfo extraInfo = new ExtraInfo();
+            Holder<EntityStore> newHolder = codec.decode(codec.encode(holder, extraInfo), extraInfo);
+            if (newHolder == null) {
+                LOGGER.atWarning().log("Failed to serialize holder with codec");
+                return EntityStore.REGISTRY.newHolder();
+            }
+            return newHolder;
+        }
+        // This version is not properly serialized, but as long as we're not spawning it it shouldn't matter
         return holder.clone();
+    }
+
+    public void setHolder(@Nonnull Holder<EntityStore> holder) {
+        this.holder = holder;
     }
 
     public void setEntityRef(@Nullable Ref<EntityStore> entityRef) {
