@@ -1,0 +1,34 @@
+<style>
+  .pet-status {
+    font-size: 14;
+    font-weight: bold;
+  }
+
+  .pet-status-alive {
+    color: #00ff00;
+  }
+
+  .pet-status-stored {
+    color: #00ffff;
+  }
+
+  .pet-status-unknown {
+    color: #ff0000;
+  }
+
+  .pet-status-dead {
+    color: #ff0000;
+  }
+</style>
+  {{#if status == ALIVE}}
+  <p class="pet-status pet-status-alive">ALIVE</p>
+  {{/if}}
+  {{#if status == STORED}}
+  <p class="pet-status pet-status-stored">STORED</p>
+  {{/if}}
+  {{#if status == UNKNOWN}}
+  <p class="pet-status pet-status-unknown">UNKNOWN</p>
+  {{/if}}
+  {{#if status == DEAD}}
+  <p class="pet-status pet-status-dead">DEAD</p>
+  {{/if}}

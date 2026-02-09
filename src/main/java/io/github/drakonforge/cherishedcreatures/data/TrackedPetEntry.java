@@ -40,7 +40,7 @@ public class TrackedPetEntry implements Cloneable {
             .build();
 
     public enum Status {
-        ACTIVE, STORED, UNREACHABLE, DEAD
+        ALIVE, STORED, UNKNOWN, DEAD
     }
 
     private TrackedPetEntry() {}
@@ -74,7 +74,7 @@ public class TrackedPetEntry implements Cloneable {
      */
     @Nonnull
     private Holder<EntityStore> holder = EntityStore.REGISTRY.newHolder();
-    private Status status = Status.ACTIVE;
+    private Status status = Status.ALIVE;
     @Nullable
     private UUID worldUuid;
     @Nullable
@@ -157,6 +157,13 @@ public class TrackedPetEntry implements Cloneable {
 
     public UUID getWorldUuid() {
         return worldUuid;
+    }
+
+    // Should be called before using PetHelpers.summonPet
+    public boolean canSummonViaMenu(Store<EntityStore> store) {
+        PetType petType = getPetType(store);
+        // TODO: Also check pet type summon rules
+        return status == Status.STORED || status == Status.ALIVE;
     }
 
     @Override

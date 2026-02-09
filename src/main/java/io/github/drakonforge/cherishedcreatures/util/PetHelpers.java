@@ -75,7 +75,7 @@ public final class PetHelpers {
         }
         Holder<EntityStore> newEntity = entry.updateAndGetHolder(store);
         newEntity.putComponent(TransformComponent.getComponentType(), transform.clone());
-        entry.setStatus(Status.ACTIVE);
+        entry.setStatus(Status.ALIVE);
         entry.setLastKnownPos(transform.getPosition().clone());
         entry.setWorldUuid(store.getExternalData().getWorld().getWorldConfig().getUuid());
         Ref<EntityStore> newEntityRef = store.addEntity(newEntity, AddReason.LOAD);

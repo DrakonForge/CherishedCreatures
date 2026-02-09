@@ -1,10 +1,15 @@
 package io.github.drakonforge.cherishedcreatures.ui;
 
+import au.ellie.hyui.builders.GroupBuilder;
 import au.ellie.hyui.builders.PageBuilder;
+import au.ellie.hyui.builders.PanelBuilder;
+import au.ellie.hyui.builders.UIElementBuilder;
+import au.ellie.hyui.events.PageRefreshResult;
 import au.ellie.hyui.html.TemplateProcessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
@@ -33,13 +38,20 @@ public final class PetMenu {
         }
 
         TemplateProcessor template = new TemplateProcessor()
+                .registerComponentFromFile("PetStatus", "Components/PetStatus.html")
                 .setVariable("numPets", petCards.size())
                 .setVariable("petCards", petCards);
 
         PageBuilder builder = PageBuilder.detachedPage()
+                .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
+                .enableRuntimeTemplateUpdates(true)
                 .loadHtml("Pages/PetMenu.html", template);
+        // The data-hyui tags don't seem to work properly, so add the scroll position manually
+        builder.getById("pet-card-list", GroupBuilder.class).ifPresent(groupBuilder -> {
+            groupBuilder.withKeepScrollPosition(true);
+        });
         for (PetUICard petUICard : petCards) {
-            petUICard.registerEventListeners(builder, store, ref, playerRef, playerPetTracker);
+            petUICard.registerEventListeners(builder, store, ref, playerRef, playerPetTracker, petCards);
         }
         builder.open(playerRef, store);
     }

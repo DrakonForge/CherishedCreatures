@@ -18,18 +18,17 @@
     layout-mode: Left;
   }
 
-  .pet-card-info {
+  .pet-info {
     flex-weight: 1;
     layout-mode: Top;
     anchor-vertical: 10;
   }
-  .pet-card-name {
-    flex-weight: 2;
+  .pet-name {
     font-weight: bold;
     font-size: 20;
   }
 
-  .pet-card-controls {
+  .pet-controls {
     anchor-right: 10;
     anchor-vertical: 10;
     layout-mode: Right;
@@ -40,16 +39,16 @@
     layout-mode: TopScrolling;
   }
 
-  .pet-card-status-meters {
+  .pet-status-meters {
     padding: 10;
   }
 
-  .pet-card-status-meter-container {
+  .pet-status-meter-container {
     layout-mode: Left;
     padding: 10;
   }
 
-  .pet-card-control {
+  .pet-control {
     flex-weight: 1;
     anchor-left: 10;
     anchor-height: 50;
@@ -69,17 +68,21 @@
       <div class="menu-description">
         <p>Displaying {{$numPets}} pets</p>
       </div>
-      <div class="pet-card-list" data-hyui-scrollbar-style="DefaultScrollbarStyle">
+      <div id="pet-card-list" class="pet-card-list" data-hyui-scrollbar-style="DefaultScrollbarStyle" data-hyui-keep-scroll-position="true">
         {{#each petCards}}
-        <div class="pet-card" id="pet-card-{{$id}}">
+        <div class="pet-card" id="pet-{{$id}}">
           <div class="pet-image-container">
 
           </div>
-          <div class="pet-card-info">
-            <p class="pet-card-name">{{$name}}</p>
-            <div class="pet-card-status-meters">
+          <div class="pet-info">
+            <p class="pet-name">{{$name}}</p>
+            <div id="pet-status-{{$id}}">
+              {{@PetStatus:status={{$status}}}}
+            </div>
+
+            <div class="pet-status-meters">
               {{#if bondingInfo != null}}
-                <div class="pet-card-status-meter-container pet-card-status-bonding">
+                <div class="pet-status-meter-container pet-status-bonding">
                   <progress class="circular-progress"
                             value="{{$bondingInfo.fillProgress}}"
                             data-hyui-mask-texture-path="MaskTexture.png"
@@ -90,13 +93,13 @@
               {{/if}}
             </div>
           </div>
-          <div class="pet-card-controls" style="flex-weight: 1;">
+          <div class="pet-controls" style="flex-weight: 1;">
               {{#if isLoaded}}
-                <button class="pet-card-control small-tertiary-button" id="toggle-summon-{{$id}}">Unsummon</button>
+                <button class="pet-control small-tertiary-button" id="toggle-summon-{{$id}}">Unsummon</button>
               {{else}}
-                <button class="pet-card-control small-tertiary-button" id="toggle-summon-{{$id}}">Summon</button>
+                <button class="pet-control small-tertiary-button" id="toggle-summon-{{$id}}">Summon</button>
               {{/if}}
-              <button class="pet-card-control small-tertiary-button" id="view-details-{{$id}}">Details</button>
+              <button class="pet-control small-tertiary-button" id="view-details-{{$id}}">Details</button>
           </div>
         </div>
         {{/each}}

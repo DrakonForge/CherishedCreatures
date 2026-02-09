@@ -67,6 +67,10 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected String[] bondingActivities;
     protected JoinsFlock joinsFlock = JoinsFlock.FOLLOW_ONLY;
 
+    private PetType() {
+        featureFlags = new Object2BooleanArrayMap<>();
+    }
+
     public boolean hasFeatureFlag(PetFeatureFlag flag) {
         return featureFlags.getOrDefault(flag, flag.getDefaultValue());
     }

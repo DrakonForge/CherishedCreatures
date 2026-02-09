@@ -1,6 +1,7 @@
 package io.github.drakonforge.cherishedcreatures.ui;
 
 import au.ellie.hyui.builders.ButtonBuilder;
+import au.ellie.hyui.builders.GroupBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
@@ -17,12 +18,14 @@ import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
 import io.github.drakonforge.cherishedcreatures.ui.PetUICard.PetUIBondingInfo.Type;
 import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
+import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-public record PetUICard(UUID id, String name, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIBondingInfo bondingInfo) {
+public record PetUICard(UUID id, String name, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIBondingInfo bondingInfo) {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
@@ -42,10 +45,13 @@ public record PetUICard(UUID id, String name, boolean isLoaded, boolean showSumm
 
         String displayName = getDisplayName(holder);
         PetUIBondingInfo bondingInfo = getBondingInfo(holder);
+        boolean showSummonToggle = petType.hasFeatureFlag(PetFeatureFlag.SummonControls) && canSummonPetWithStatus(entry.getStatus());
+        // If the pet has Status ALIVE but is unloaded, we basically treat it as un-summoned for our purposes.
+        return new PetUICard(entry.getUuid(), displayName, entry.getStatus(), entry.isLoaded(), showSummonToggle, bondingInfo);
+    }
 
-        return new PetUICard(entry.getUuid(), displayName, entry.isLoaded(), petType.hasFeatureFlag(
-                PetFeatureFlag.SummonControls), bondingInfo);
-
+    private static boolean canSummonPetWithStatus(Status status) {
+        return status == Status.STORED || status == Status.ALIVE;
     }
 
     private static String getDisplayName(Holder<EntityStore> holder) {
@@ -82,18 +88,35 @@ public record PetUICard(UUID id, String name, boolean isLoaded, boolean showSumm
         return null;
     }
 
-    public void registerEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker) {
+    private void refreshPetCard(Store<EntityStore> store, PlayerPetTracker petTracker, List<PetUICard> petCards, UUID petUuid) {
+        int index = findPetCard(petCards, petUuid);
+        if (index > -1) {
+            TrackedPetEntry entry = petTracker.getPetEntry(petUuid);
+            if (entry != null) {
+                petCards.set(index, PetUICard.fromTrackedPetEntry(entry, store));
+            }
+        }
+    }
+
+    private int findPetCard(List<PetUICard> petCards, UUID petUuid) {
+        for(int i = 0; i < petCards.size(); ++i) {
+            if (petCards.get(i).id().equals(petUuid)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void registerEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
         if (showSummonToggle) {
             builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
                 TrackedPetEntry entry = petTracker.getPetEntry(id);
+                boolean hasChanged = false;
                 if (entry.isLoaded()) {
                     if (PetHelpers.unsummonPet(entry, store)) {
                         playerRef.sendMessage(Message.raw("Unsummoned pet " + name + "!"));
+                        hasChanged = true;
                     }
-                    ctx.getById("toggle-summon-" + id, ButtonBuilder.class).ifPresent(buttonBuilder -> {
-                        buttonBuilder.withText("Summon");
-                        ctx.updatePage(false);
-                    });
                 } else {
                     TransformComponent transformComponent = store.getComponent(ref, TransformComponent.getComponentType());
                     if (transformComponent == null) {
@@ -102,10 +125,11 @@ public record PetUICard(UUID id, String name, boolean isLoaded, boolean showSumm
                     }
                     PetHelpers.summonPet(entry, store, transformComponent);
                     playerRef.sendMessage(Message.raw("Summoned pet " + name + "!"));
-                    ctx.getById("toggle-summon-" + id, ButtonBuilder.class).ifPresent(buttonBuilder -> {
-                        buttonBuilder.withText("Unsummon");
-                        ctx.updatePage(false);
-                    });
+                    hasChanged = true;
+                }
+                if (hasChanged) {
+                    refreshPetCard(store, petTracker, petCards, id);
+                    ctx.updatePage(false);
                 }
             });
         }
