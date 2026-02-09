@@ -22,7 +22,7 @@ import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-public record PetUICard(UUID id, String name, boolean isActive, boolean showSummonToggle, @Nullable PetUIBondingInfo bondingInfo) {
+public record PetUICard(UUID id, String name, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIBondingInfo bondingInfo) {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
@@ -43,7 +43,7 @@ public record PetUICard(UUID id, String name, boolean isActive, boolean showSumm
         String displayName = getDisplayName(holder);
         PetUIBondingInfo bondingInfo = getBondingInfo(holder);
 
-        return new PetUICard(entry.getUuid(), displayName, entry.isActive(), petType.hasFeatureFlag(
+        return new PetUICard(entry.getUuid(), displayName, entry.isLoaded(), petType.hasFeatureFlag(
                 PetFeatureFlag.SummonControls), bondingInfo);
 
     }
@@ -86,7 +86,7 @@ public record PetUICard(UUID id, String name, boolean isActive, boolean showSumm
         if (showSummonToggle) {
             builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
                 TrackedPetEntry entry = petTracker.getPetEntry(id);
-                if (entry.isActive()) {
+                if (entry.isLoaded()) {
                     if (PetHelpers.unsummonPet(entry, store)) {
                         playerRef.sendMessage(Message.raw("Unsummoned pet " + name + "!"));
                     }

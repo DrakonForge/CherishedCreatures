@@ -124,6 +124,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new BondingActivityCooldownSystem());
         entityStoreRegistry.registerSystem(new RegisterDefaultPetTypeSystem());
         entityStoreRegistry.registerSystem(new HandleBondingActivityEventSystem());
+        entityStoreRegistry.registerSystem(new OnPetDeathSystem());
 
         // Sensors (Core Components)
         NPCPlugin.get().registerCoreComponentType("BondingLevel", BuilderSensorBondingLevel::new);

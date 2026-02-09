@@ -6,7 +6,6 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
@@ -15,6 +14,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
 
 public final class PetHelpers {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
@@ -59,12 +59,14 @@ public final class PetHelpers {
         return TameResult.SUCCESS;
     }
 
+    // Summons the pet from the entry. This forcefully summons it, so it does not perform any checks
+    // to determine whether the pet should be summonable.
     public static void summonPet(TrackedPetEntry entry, Store<EntityStore> store, TransformComponent transform) {
         Ref<EntityStore> existingEntity = store.getExternalData().getRefFromUUID(entry.getUuid());
         // TODO: Probably don't need to remove + re-add if the entity is loaded, just teleport it
-        // TODO: Not sure if we need isActive or getRefFromUUID here. Probably not both
+        // TODO: Not sure if we need isLoaded or getRefFromUUID here. Probably not both
         if (existingEntity != null && existingEntity.isValid()) {
-            if (!entry.isActive()) {
+            if (!entry.isLoaded()) {
                 LOGGER.atWarning().log("Pet is active but pet tracker is not in sync, re-syncing");
                 entry.setEntityRef(existingEntity);
             }
@@ -73,6 +75,9 @@ public final class PetHelpers {
         }
         Holder<EntityStore> newEntity = entry.updateAndGetHolder(store);
         newEntity.putComponent(TransformComponent.getComponentType(), transform.clone());
+        entry.setStatus(Status.ACTIVE);
+        entry.setLastKnownPos(transform.getPosition().clone());
+        entry.setWorldUuid(store.getExternalData().getWorld().getWorldConfig().getUuid());
         Ref<EntityStore> newEntityRef = store.addEntity(newEntity, AddReason.LOAD);
         entry.setEntityRef(newEntityRef);
     }
@@ -84,6 +89,8 @@ public final class PetHelpers {
         }
 
         entry.saveEntity(store);
+        entry.clearPosData();
+        entry.setStatus(Status.STORED);
         store.removeEntity(existingEntity, RemoveReason.REMOVE);
         return true;
     }

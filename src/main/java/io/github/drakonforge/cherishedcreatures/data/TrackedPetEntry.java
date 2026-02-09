@@ -11,6 +11,7 @@ import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -32,10 +33,14 @@ public class TrackedPetEntry implements Cloneable {
             .add()
             .append(new KeyedCodec<>("Status", new EnumCodec<>(Status.class)), (data, status) -> data.status = status, data -> data.status)
             .add()
+            .append(new KeyedCodec<>("LastKnownPos", Vector3d.CODEC), (data, pos) -> data.lastKnownPos = pos, data -> data.lastKnownPos)
+            .add()
+            .append(new KeyedCodec<>("WorldUuid", Codec.UUID_STRING), (data, uuid) -> data.worldUuid = uuid, data -> data.worldUuid)
+            .add()
             .build();
 
     public enum Status {
-        ALIVE, DEAD
+        ACTIVE, STORED, UNREACHABLE, DEAD
     }
 
     private TrackedPetEntry() {}
@@ -44,12 +49,15 @@ public class TrackedPetEntry implements Cloneable {
     public static TrackedPetEntry createEntryFor(Store<EntityStore> store, Ref<EntityStore> ref) {
         TrackedPetEntry entry = new TrackedPetEntry();
         UUIDComponent uuidComponent = store.getComponent(ref, UUIDComponent.getComponentType());
-        if (uuidComponent == null) {
+        TransformComponent transformComponent = store.getComponent(ref, TransformComponent.getComponentType());
+        if (uuidComponent == null || transformComponent == null) {
             return null;
         }
         // TODO: Validate for Pet and PetType components here?
         entry.uuid = uuidComponent.getUuid();
         entry.entityRef = ref;
+        entry.worldUuid = store.getExternalData().getWorld().getWorldConfig().getUuid();
+        entry.lastKnownPos = transformComponent.getPosition().clone();
         entry.saveEntity(store);
         return entry;
     }
@@ -66,7 +74,11 @@ public class TrackedPetEntry implements Cloneable {
      */
     @Nonnull
     private Holder<EntityStore> holder = EntityStore.REGISTRY.newHolder();
-    private Status status = Status.ALIVE; // TODO: Not actually sure if we should store this separately
+    private Status status = Status.ACTIVE;
+    @Nullable
+    private UUID worldUuid;
+    @Nullable
+    private Vector3d lastKnownPos;
 
     public UUID getUuid() {
         return uuid;
@@ -87,6 +99,19 @@ public class TrackedPetEntry implements Cloneable {
         this.status = status;
     }
 
+    public void setLastKnownPos(@Nullable Vector3d lastKnownPos) {
+        this.lastKnownPos = lastKnownPos;
+    }
+
+    public void setWorldUuid(@Nullable UUID worldUuid) {
+        this.worldUuid = worldUuid;
+    }
+
+    public void clearPosData() {
+        this.lastKnownPos = null;
+        this.worldUuid = null;
+    }
+
     public void saveEntity(Store<EntityStore> store) {
         if (entityRef == null) {
             throw new IllegalStateException("No entity to save");
@@ -96,10 +121,6 @@ public class TrackedPetEntry implements Cloneable {
 
         // Remove components it should not be keeping
         holder.removeComponent(TransformComponent.getComponentType());
-    }
-
-    public Status getStatus() {
-        return status;
     }
 
     @Nonnull
@@ -121,8 +142,21 @@ public class TrackedPetEntry implements Cloneable {
         return holder.getComponent(componentType);
     }
 
-    public boolean isActive() {
+    // Returns whether the entity is currently loaded in the world.
+    public boolean isLoaded() {
         return entityRef != null && entityRef.isValid();
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Vector3d getLastKnownPos() {
+        return lastKnownPos;
+    }
+
+    public UUID getWorldUuid() {
+        return worldUuid;
     }
 
     @Override
