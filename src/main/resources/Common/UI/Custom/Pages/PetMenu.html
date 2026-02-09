@@ -70,15 +70,31 @@
 
           </div>
           <div class="pet-info">
-            <p class="pet-name">{{$name}}</p>
+            <p class="pet-name">
+              {{$name}}
+              <tooltip>
+                <span>{{$id}}</span>
+              </tooltip>
+            </p>
             {{@PetStatus:status={{$status}}}}
 
             <div class="pet-status-meters">
               {{#if healthInfo != null}}
-                {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Core.png,size=45,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b}}
+                <div>
+                  {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Core.png,size=45,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b}}
+                  <tooltip>
+                    <span>Health: </span>
+                    <span data-hyui-bold=true>{{$healthInfo.value}}/{{$healthInfo.max}}</span>
+                  </tooltip>
+                </div>
               {{/if}}
               {{#if bondingInfo != null}}
+              <div>
                 {{@CircularStatusMeter:iconPath=Assets/BondingMeter_Core.png,size=45,fillProgress={{bondingInfo.fillProgress}},fillColor=#07eb2e}}
+                <tooltip>
+                  <span>Bonding Level {{$bondingInfo.bondingLevel}}</span>
+                </tooltip>
+              </div>
               {{/if}}
             </div>
           </div>

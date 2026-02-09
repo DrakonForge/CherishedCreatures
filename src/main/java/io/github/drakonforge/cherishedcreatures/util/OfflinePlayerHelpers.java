@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class OfflinePlayerHelpers {
@@ -44,7 +45,7 @@ public class OfflinePlayerHelpers {
     }
 
     @Nullable
-    public static <T extends Component<EntityStore>> T getComponent(Store<EntityStore> store, UUID playerUuid, ComponentType<EntityStore, T> componentType) {
+    public static <T extends Component<EntityStore>> T getComponent(@Nonnull Store<EntityStore> store, @Nonnull UUID playerUuid, @Nonnull ComponentType<EntityStore, T> componentType) {
         PlayerRef playerRef = Universe.get().getPlayer(playerUuid);
         if (playerRef != null) {
             Ref<EntityStore> onlinePlayerRef = playerRef.getReference();
@@ -64,7 +65,7 @@ public class OfflinePlayerHelpers {
         CACHED_OFFLINE_PLAYER_REFS.put(playerUuid, holder);
     }
 
-    public static void saveIfOffline(UUID playerUuid) {
+    public static void saveIfOffline(@Nonnull UUID playerUuid) {
         if (Universe.get().getPlayer(playerUuid) != null) {
             return;
         }

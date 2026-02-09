@@ -1,6 +1,7 @@
 package io.github.drakonforge.cherishedcreatures.data;
 
 import com.hypixel.hytale.codec.Codec;
+import com.hypixel.hytale.codec.ExtraInfo;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
@@ -21,6 +22,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class TrackedPetEntry implements Cloneable {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
@@ -40,6 +42,21 @@ public class TrackedPetEntry implements Cloneable {
             .add()
             .build();
 
+    // TODO: Do on spawn instead of on despawn?
+    public void updateHolder(Holder<EntityStore> holder) {
+        // Super hacky solution to ensure that we get a properly serialized component
+        StoredCodec<Holder<EntityStore>> codec = new StoredCodec<>(EntityStore.HOLDER_CODEC_KEY);
+        ExtraInfo extraInfo = new ExtraInfo();
+        Holder<EntityStore> newHolder = codec.decode(codec.encode(holder, extraInfo), extraInfo);
+        if (newHolder == null) {
+            LOGGER.atWarning().log("Failed to encode/decode object");
+            this.holder = EntityStore.REGISTRY.newHolder();
+        } else {
+            this.holder = newHolder;
+        }
+        // this.holder = holder.cloneSerializable(EntityStore.REGISTRY.getData());
+    }
+
     public enum Status {
         ALIVE, STORED, UNKNOWN, DEAD
     }
@@ -54,13 +71,12 @@ public class TrackedPetEntry implements Cloneable {
         if (uuidComponent == null || transformComponent == null) {
             return null;
         }
-        entry.validateTrackedPetEntry();
         // TODO: Validate for Pet and PetType components here?
         entry.uuid = uuidComponent.getUuid();
-        entry.entityRef = ref;
         entry.worldUuid = store.getExternalData().getWorld().getWorldConfig().getUuid();
         entry.lastKnownPos = transformComponent.getPosition().clone();
-        entry.saveEntity(store);
+
+        entry.saveEntityFromRef(store, ref);
         return entry;
     }
 
@@ -86,14 +102,13 @@ public class TrackedPetEntry implements Cloneable {
         return uuid;
     }
 
-    public Holder<EntityStore> updateAndGetHolder(Store<EntityStore> store) {
-        if (entityRef != null && entityRef.isValid()) {
-            saveEntity(store);
-        }
-        return holder;
+    @NonNullDecl
+    public Holder<EntityStore> getHolder() {
+        return holder.clone();
     }
 
     public void setEntityRef(@Nullable Ref<EntityStore> entityRef) {
+        LOGGER.atInfo().log("Setting entity ref for " + uuid + " to " + (entityRef == null ? "Null" : entityRef.getIndex()));
         this.entityRef = entityRef;
     }
 
@@ -115,7 +130,8 @@ public class TrackedPetEntry implements Cloneable {
     }
 
     // Validates the TrackedPetEntry properties using the holder.
-    public void validateTrackedPetEntry() {
+    private void validateTrackedPetEntry() {
+        LOGGER.atInfo().log("Validating " + uuid);
         if (holder.getComponent(DeathComponent.getComponentType()) == null) {
             if (status == Status.DEAD) {
                 setStatus(Status.UNKNOWN);
@@ -126,15 +142,27 @@ public class TrackedPetEntry implements Cloneable {
         }
     }
 
-    public void saveEntity(Store<EntityStore> store) {
-        if (entityRef == null) {
-            throw new IllegalStateException("No entity to save");
+    // TODO: Maybe think about throttling this?
+    public void saveEntityFromRef(Store<EntityStore> store, Ref<EntityStore> ref) {
+        if (ref == null || !ref.isValid()) {
+            throw new IllegalStateException("Ref is invalid or null");
         }
-        LOGGER.atInfo().log("Saved pet data");
-        holder = store.copyEntity(entityRef);
+        setEntityRef(ref);
+        if (!store.getArchetype(ref).hasSerializableComponents(store.getRegistry().getData())) {
+            LOGGER.atInfo().log("Nothing to serialize for " + uuid + ", skipping save");
+            holder = EntityStore.REGISTRY.newHolder();
+            return;
+        }
+        LOGGER.atInfo().log("Saving " + uuid + " from ref");
+        holder = store.copySerializableEntity(ref); // Save only the serializable components, ignore everything else
+        validateTrackedPetEntry();
+    }
 
-        // Remove components it should not be keeping
-        holder.removeComponent(TransformComponent.getComponentType());
+    public void attemptSaveEntityFromLive(Store<EntityStore> store) {
+        if (entityRef == null || !entityRef.isValid()) {
+            return;
+        }
+        saveEntityFromRef(store, entityRef);
     }
 
     @Nonnull
@@ -152,7 +180,6 @@ public class TrackedPetEntry implements Cloneable {
         if (entityRef != null && entityRef.isValid()) {
             return store.getComponent(entityRef, componentType);
         }
-        Holder<EntityStore> holder = updateAndGetHolder(store);
         return holder.getComponent(componentType);
     }
 

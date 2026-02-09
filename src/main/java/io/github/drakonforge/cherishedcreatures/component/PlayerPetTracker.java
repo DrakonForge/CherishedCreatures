@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class PlayerPetTracker implements Component<EntityStore> {
@@ -54,8 +55,12 @@ public class PlayerPetTracker implements Component<EntityStore> {
         return petEntries.get(i);
     }
 
+    @Nullable
     public TrackedPetEntry getPetEntry(UUID uuid) {
         int index = findPetByUuid(uuid);
+        if (index < 0) {
+            return null;
+        }
         return getPetEntry(index);
     }
 

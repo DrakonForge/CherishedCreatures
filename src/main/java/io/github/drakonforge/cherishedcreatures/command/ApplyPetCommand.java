@@ -54,9 +54,9 @@ public class ApplyPetCommand extends AbstractTargetEntityCommand {
                 continue;
             }
 
-            if (!petComponent.getOwnerUuid().equals(playerUuidComponent.getUuid())) {
-               commandContext.sendMessage(Message.raw("Attempted to pet an unowned pet"));
-               continue;
+            if (!playerUuidComponent.getUuid().equals(petComponent.getOwnerUuid())) {
+                commandContext.sendMessage(Message.raw("Attempted to pet an unowned pet"));
+                continue;
             }
 
             store.invoke(entityRef, new BondingActivityEvent(BondingActivityType.Petting));

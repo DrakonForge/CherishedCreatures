@@ -1,12 +1,11 @@
 package io.github.drakonforge.cherishedcreatures.ui;
 
-import au.ellie.hyui.builders.ButtonBuilder;
-import au.ellie.hyui.builders.GroupBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.math.util.MathUtil;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
@@ -14,7 +13,6 @@ import com.hypixel.hytale.server.core.modules.entity.component.TransformComponen
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
-import com.hypixel.hytale.server.core.modules.entitystats.asset.EntityStatType;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
@@ -36,17 +34,18 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
     // TODO: Replace hardcoded values
     private static final float[] BONDING_XP_LEVEL_THRESHOLDS = { 0.0f, 150.0f, 300.0f, 450.0f, 600.0f };
 
-    public record PetUIBondingInfo(Type type, float fillProgress) {
+    public record PetUIBondingInfo(Type type, float fillProgress, int bondingLevel) {
         public enum Type {
             FOUR_SEGMENT,
             LINEAR
         }
     }
 
-    public record PetUIHealthInfo(float fillProgress) {}
+    public record PetUIHealthInfo(float fillProgress, int value, int max) {}
 
     public static PetUICard fromTrackedPetEntry(TrackedPetEntry entry, Store<EntityStore> store) {
-        Holder<EntityStore> holder = entry.updateAndGetHolder(store);
+        entry.attemptSaveEntityFromLive(store);
+        Holder<EntityStore> holder = entry.getHolder();
         PetType petType = entry.getPetType(store);
 
         String displayName = getDisplayName(holder);
@@ -94,7 +93,7 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
             float progressToNextLevel = (bondingXp - xpRequiredForCurrentLevel) / (xpRequiredForNextLevel - xpRequiredForCurrentLevel);
             float levelFillProgress = 0.25f * (bondingLevel + progressToNextLevel);
             float totalProgress = Math.clamp(levelFillProgress, 0.0f, 1.0f);
-            return new PetUIBondingInfo(Type.FOUR_SEGMENT, totalProgress);
+            return new PetUIBondingInfo(Type.FOUR_SEGMENT, totalProgress, bondingLevel);
         }
         return null;
     }
@@ -108,11 +107,13 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
         if (entityStatMap == null) {
             return null;
         }
-        EntityStatValue value = entityStatMap.get(DefaultEntityStatTypes.getHealth());
-        if (value == null) {
+        EntityStatValue statValue = entityStatMap.get(DefaultEntityStatTypes.getHealth());
+        if (statValue == null) {
             return null;
         }
-        return new PetUIHealthInfo(value.asPercentage());
+        int currentValue = MathUtil.floor(statValue.get());
+        int maxValue = MathUtil.ceil(statValue.getMax());
+        return new PetUIHealthInfo(statValue.asPercentage(), currentValue, maxValue);
     }
 
     private void refreshPetCard(Store<EntityStore> store, PlayerPetTracker petTracker, List<PetUICard> petCards, UUID petUuid) {
@@ -139,7 +140,12 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
             builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
                 TrackedPetEntry entry = petTracker.getPetEntry(id);
                 boolean hasChanged = false;
+                if (entry == null) {
+                    LOGGER.atWarning().log("Entry is null");
+                    return;
+                }
                 if (entry.isLoaded()) {
+                    LOGGER.atInfo().log("Calling unsummon pet from summon toggle");
                     if (PetHelpers.unsummonPet(entry, store)) {
                         playerRef.sendMessage(Message.raw("Unsummoned pet " + name + "!"));
                         hasChanged = true;
@@ -155,8 +161,10 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
                     hasChanged = true;
                 }
                 if (hasChanged) {
-                    refreshPetCard(store, petTracker, petCards, id);
-                    ctx.updatePage(false);
+                    store.getExternalData().getWorld().execute(() -> {
+                        refreshPetCard(store, petTracker, petCards, id);
+                        ctx.updatePage(false);
+                    });
                 }
             });
         }
@@ -167,14 +175,16 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
                     playerRef.sendMessage(Message.raw("Pet does not exist or is not dead"));
                     return;
                 }
-                boolean success = petTracker.removePetEntry(id);
-                if (success) {
-                    petCards.remove(index);
-                    playerRef.sendMessage(Message.raw("Accepted the death of " + name));
-                    ctx.updatePage(true);
-                } else {
-                    playerRef.sendMessage(Message.raw("Failed to remove pet"));
-                }
+                store.getExternalData().getWorld().execute(() -> {
+                    boolean success = petTracker.removePetEntry(id);
+                    if (success) {
+                        petCards.remove(index);
+                        playerRef.sendMessage(Message.raw("Accepted the death of " + name));
+                        ctx.updatePage(true);
+                    } else {
+                        playerRef.sendMessage(Message.raw("Failed to remove pet"));
+                    }
+                });
             });
         }
     }

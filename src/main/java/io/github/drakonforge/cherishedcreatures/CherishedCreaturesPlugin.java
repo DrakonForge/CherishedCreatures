@@ -91,11 +91,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
                 TrackedPetEntry entry = playerPetTracker.getPetEntry(i);
                 Ref<EntityStore> existingEntity = world.getEntityStore().getRefFromUUID(entry.getUuid());
                 if (existingEntity != null && existingEntity.isValid()) {
-                    entry.setEntityRef(existingEntity);
-                    entry.saveEntity(store);
+                    entry.saveEntityFromRef(store, existingEntity);
                     numFound += 1;
                 }
-                entry.validateTrackedPetEntry();
             }
 
             LOGGER.atInfo().log("Retrieved " + numFound + "/" + playerPetTracker.getNumPetEntries() + " pets for " + playerName);
@@ -117,7 +115,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
         // Systems
         entityStoreRegistry.registerSystem(new RegisterPlayerPetTracker());
-        entityStoreRegistry.registerSystem(new EntityReceivePetUpdatesSystem());
+        entityStoreRegistry.registerSystem(new PetUpdateTrackerSystem());
         entityStoreRegistry.registerSystem(new RegisterPetComponentsSystem());
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesPetSystem());
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesOwnerSystem());

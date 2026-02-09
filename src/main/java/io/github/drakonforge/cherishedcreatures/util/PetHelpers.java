@@ -7,6 +7,7 @@ import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
+import com.hypixel.hytale.server.core.modules.entity.component.NewSpawnComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -38,7 +39,7 @@ public final class PetHelpers {
             return TameResult.FAIL_NOT_TAMEABLE;
         }
         PetComponent existingPetComponent = store.getComponent(petRef, PetComponent.getComponentType());
-        if (existingPetComponent != null && existingPetComponent.getOwnerUuid().equals(uuidComponent.getUuid())) {
+        if (existingPetComponent != null && uuidComponent.getUuid().equals(existingPetComponent.getOwnerUuid())) {
             return TameResult.FAIL_ALREADY_TAMED_BY_SELF;
         }
 
@@ -49,8 +50,7 @@ public final class PetHelpers {
         World world = store.getExternalData().getWorld();
         world.execute(() -> {
             // Other components are handled in RegisterPetComponentsSystem
-            PetComponent petComponent = store.ensureAndGetComponent(petRef, PetComponent.getComponentType());
-            petComponent.setOwnerUuid(uuidComponent.getUuid());
+            store.putComponent(petRef, PetComponent.getComponentType(), new PetComponent(uuidComponent.getUuid()));
         });
 
         // TODO: Change role
@@ -70,28 +70,44 @@ public final class PetHelpers {
                 LOGGER.atWarning().log("Pet is active but pet tracker is not in sync, re-syncing");
                 entry.setEntityRef(existingEntity);
             }
-            entry.saveEntity(store);
-            store.removeEntity(existingEntity, RemoveReason.UNLOAD);
+            LOGGER.atInfo().log("Starting despawn existing pet");
+            if (existingEntity.isValid()) {
+                store.removeEntity(existingEntity, RemoveReason.UNLOAD);
+            }
+            LOGGER.atInfo().log("Finishing despawn existing pet");
         }
-        Holder<EntityStore> newEntity = entry.updateAndGetHolder(store);
-        newEntity.putComponent(TransformComponent.getComponentType(), transform.clone());
-        entry.setStatus(Status.ALIVE);
-        entry.setLastKnownPos(transform.getPosition().clone());
-        entry.setWorldUuid(store.getExternalData().getWorld().getWorldConfig().getUuid());
-        Ref<EntityStore> newEntityRef = store.addEntity(newEntity, AddReason.LOAD);
-        entry.setEntityRef(newEntityRef);
+        Holder<EntityStore> newEntity = entry.getHolder(); // This is the issue -- when entry is serialized things are fine, not fine if not
+        TransformComponent component = newEntity.getComponent(TransformComponent.getComponentType());
+        if (component != null) {
+            component.setPosition(transform.getPosition().clone());
+            entry.setStatus(Status.ALIVE);
+            entry.setLastKnownPos(transform.getPosition().clone());
+            entry.setWorldUuid(store.getExternalData().getWorld().getWorldConfig().getUuid());
+            LOGGER.atInfo().log("Start spawn pet");
+
+            store.addEntity(newEntity, AddReason.LOAD);
+            LOGGER.atInfo().log("Finishing spawn pet");
+        } else {
+            LOGGER.atWarning().log("Transform is null");
+        }
     }
 
     public static boolean unsummonPet(TrackedPetEntry entry, Store<EntityStore> store) {
+        if (!entry.isLoaded()) {
+            return false;
+        }
+
+        entry.clearPosData();
+        entry.setStatus(Status.STORED);
+        LOGGER.atInfo().log("Starting unsummon pet");
         Ref<EntityStore> existingEntity = store.getExternalData().getRefFromUUID(entry.getUuid());
         if (existingEntity == null || !existingEntity.isValid()) {
             return false;
         }
-
-        entry.saveEntity(store);
-        entry.clearPosData();
-        entry.setStatus(Status.STORED);
-        store.removeEntity(existingEntity, RemoveReason.REMOVE);
+        LOGGER.atInfo().log("Executing unsummon pet on " + entry.getUuid() + " which has " + existingEntity.isValid());
+        Holder<EntityStore> holder = store.removeEntity(existingEntity, RemoveReason.UNLOAD);
+        LOGGER.atInfo().log("Finished executing unsummon pet");
+        entry.updateHolder(holder);
         return true;
     }
 }
