@@ -7,7 +7,6 @@ import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
-import com.hypixel.hytale.server.core.modules.entity.component.NewSpawnComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -80,6 +79,7 @@ public final class PetHelpers {
             Holder<EntityStore> newEntity = entry.getHolder(true);
             TransformComponent transform = newEntity.getComponent(TransformComponent.getComponentType());
             PetComponent petComponent = newEntity.getComponent(PetComponent.getComponentType());
+
             if (petComponent == null) {
                 LOGGER.atWarning().log("Warning: New holder does not have PetComponent");
             }

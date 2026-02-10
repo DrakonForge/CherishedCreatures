@@ -137,7 +137,7 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
 
     public void registerEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
         if (showSummonToggle) {
-            builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
+            builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
                 TrackedPetEntry entry = petTracker.getPetEntry(id);
                 boolean hasChanged = false;
                 if (entry == null) {
@@ -169,7 +169,7 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
             });
         }
         if (status == Status.DEAD) {
-            builder.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
+            builder.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
                 int index = findPetCard(petCards, id);
                 if (index < 0 || petCards.get(index).status != Status.DEAD) {
                     playerRef.sendMessage(Message.raw("Pet does not exist or is not dead"));

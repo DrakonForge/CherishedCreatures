@@ -16,14 +16,15 @@ import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
-import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class TrackedPetEntry implements Cloneable {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
@@ -102,8 +103,8 @@ public class TrackedPetEntry implements Cloneable {
             }
             return newHolder;
         }
-        // This version is not properly serialized, but as long as we're not spawning it it shouldn't matter
-        return holder.clone();
+        // This version is not properly serialized, but as long as we're not spawning it shouldn't matter
+        return holder;
     }
 
     public void setHolder(@Nonnull Holder<EntityStore> holder) {
@@ -151,13 +152,16 @@ public class TrackedPetEntry implements Cloneable {
             throw new IllegalStateException("Ref is invalid or null");
         }
         setEntityRef(ref);
-        if (!store.getArchetype(ref).hasSerializableComponents(store.getRegistry().getData())) {
-            LOGGER.atInfo().log("Nothing to serialize for " + uuid + ", skipping save");
-            holder = EntityStore.REGISTRY.newHolder();
-            return;
-        }
         LOGGER.atInfo().log("Saving " + uuid + " from ref");
-        holder = store.copySerializableEntity(ref); // Save only the serializable components, ignore everything else
+        holder = store.copyEntity(ref);
+
+        // EntityStatMap.clone() currently is bugged and does not save health values. This will occur whenever the holder is created
+        // from another source (entity, holder, etc.) though somehow magically fixes itself later.
+        // As a workaround, we directly copy the reference to the component.
+        EntityStatMap entityStatMap = store.getComponent(ref, EntityStatMap.getComponentType());
+        if (entityStatMap != null) {
+            holder.putComponent(EntityStatMap.getComponentType(), entityStatMap);
+        }
         validateTrackedPetEntry();
     }
 
@@ -195,10 +199,12 @@ public class TrackedPetEntry implements Cloneable {
         return status;
     }
 
+    @NullableDecl
     public Vector3d getLastKnownPos() {
         return lastKnownPos;
     }
 
+    @NullableDecl
     public UUID getWorldUuid() {
         return worldUuid;
     }
@@ -214,7 +220,7 @@ public class TrackedPetEntry implements Cloneable {
     protected TrackedPetEntry clone() {
         TrackedPetEntry clone = new TrackedPetEntry();
         clone.uuid = uuid;
-        clone.holder = holder;
+        clone.holder = holder.clone();
         clone.entityRef = entityRef;
         clone.status = status;
         return clone;
