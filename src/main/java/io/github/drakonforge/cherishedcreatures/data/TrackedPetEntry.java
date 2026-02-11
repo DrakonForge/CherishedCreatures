@@ -19,6 +19,7 @@ import com.hypixel.hytale.server.core.modules.entity.damage.DeathComponent;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
+import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import java.util.UUID;
 import javax.annotation.Nonnull;
@@ -143,6 +144,10 @@ public class TrackedPetEntry implements Cloneable {
         } else {
             // TODO: Might be based on config
             setStatus(Status.DEAD);
+        }
+
+        if (holder.getComponent(PetComponent.getComponentType()) == null) {
+            // TODO: Mark entry for removal
         }
     }
 

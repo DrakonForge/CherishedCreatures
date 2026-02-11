@@ -6,6 +6,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
@@ -13,6 +14,8 @@ import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.asset.PetType;
+import io.github.drakonforge.cherishedcreatures.asset.PetType.AbandonBehavior;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
@@ -28,6 +31,14 @@ public final class PetHelpers {
         FAIL_MISSING_COMPONENTS,
         FAIL_NOT_TAMEABLE,
         FAIL_ALREADY_TAMED_BY_SELF
+    }
+
+    public enum UntameResult {
+        SUCCESS,
+        FAIL_MISSING_COMPONENTS,
+        FAIL_MUST_BE_SPAWNED,
+        FAIL_ALREADY_DEAD,
+        FAIL_REMOVE_FROM_TRACKER,
     }
 
     public static TameResult attemptTame(Store<EntityStore> store, Ref<EntityStore> playerRef, Ref<EntityStore> petRef) {
@@ -60,6 +71,42 @@ public final class PetHelpers {
 
         playerPetTracker.addPetEntry(entry);
         return TameResult.SUCCESS;
+    }
+
+    public static UntameResult attemptUntame(Store<EntityStore> store, PlayerPetTracker petTracker, TrackedPetEntry entry) {
+        PetType petType = entry.getPetType();
+        AbandonBehavior abandonBehavior = petType.getAbandonBehavior();
+
+        if (entry.getStatus() == Status.DEAD) {
+            return UntameResult.FAIL_ALREADY_DEAD;
+        }
+
+        if (abandonBehavior == AbandonBehavior.UntameIfSpawned && !entry.isLoaded()) {
+            return UntameResult.FAIL_MUST_BE_SPAWNED;
+        }
+
+        // Remove from tracker first
+        boolean success = petTracker.removePetEntry(entry.getUuid());
+        if (!success) {
+            return UntameResult.FAIL_REMOVE_FROM_TRACKER;
+        }
+
+        // Then the components of the active entity
+        Ref<EntityStore> ref = entry.getEntityRef();
+        if (entry.isLoaded() && ref != null) {
+            World world = store.getExternalData().getWorld();
+            world.execute(() -> {
+                if (abandonBehavior == AbandonBehavior.Despawn) {
+                    store.removeEntity(ref, RemoveReason.REMOVE);
+                } else if (abandonBehavior == AbandonBehavior.UntameIfSpawned) {
+                    store.removeComponent(ref, PetComponent.getComponentType());
+                }
+            });
+        }
+
+
+
+       return UntameResult.SUCCESS;
     }
 
     // Summons the pet from the entry. This forcefully summons it, so it does not perform any checks

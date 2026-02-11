@@ -44,9 +44,11 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     private static AssetStore<String, PetType, DefaultAssetMap<String, PetType>> ASSET_STORE;
 
     public enum JoinsFlock {
-        ALWAYS,
-        FOLLOW_ONLY,
-        NEVER
+        Always, FollowOnly, Never
+    }
+
+    public enum AbandonBehavior {
+        Despawn, UntameIfSpawned
     }
 
     public static AssetStore<String, PetType, DefaultAssetMap<String, PetType>> getAssetStore() {
@@ -73,7 +75,8 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     // TODO: Optimize this out to a set or bit flag later
     protected String[] bondingActivities;
     protected float[] bondingLevelValuesOverride;
-    protected JoinsFlock joinsFlock = JoinsFlock.FOLLOW_ONLY;
+    protected JoinsFlock joinsFlock = JoinsFlock.FollowOnly;
+    protected AbandonBehavior abandonBehavior = AbandonBehavior.UntameIfSpawned;
 
     private PetType() {
         featureFlags = new Object2BooleanArrayMap<>();
@@ -87,6 +90,10 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     // TODO: Or even better, Map<BondingActivityType, BondingActivity>
     public String[] getBondingActivities() {
         return bondingActivities;
+    }
+
+    public AbandonBehavior getAbandonBehavior() {
+        return abandonBehavior;
     }
 
     @Nonnull
