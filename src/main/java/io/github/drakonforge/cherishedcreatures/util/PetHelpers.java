@@ -8,8 +8,12 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
+import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
@@ -79,24 +83,36 @@ public final class PetHelpers {
             Holder<EntityStore> newEntity = entry.getHolder(true);
             TransformComponent transform = newEntity.getComponent(TransformComponent.getComponentType());
             PetComponent petComponent = newEntity.getComponent(PetComponent.getComponentType());
-
-            if (petComponent == null) {
-                LOGGER.atWarning().log("Warning: New holder does not have PetComponent");
+            EntityStatMap entityStatMap = newEntity.getComponent(EntityStatMap.getComponentType());
+            if (petComponent == null || transform == null || entityStatMap == null) {
+                LOGGER.atWarning().log("Missing components, aborting summonPet call");
+                return;
             }
-            if (transform != null) {
-                transform.setPosition(spawnTransform.getPosition().clone());
-                entry.setStatus(Status.ALIVE);
-                entry.setLastKnownPos(spawnTransform.getPosition().clone());
-                entry.setWorldUuid(store.getExternalData().getWorld().getWorldConfig().getUuid());
-                LOGGER.atInfo().log("Start spawn pet");
 
-                store.addEntity(newEntity, AddReason.LOAD);
-                LOGGER.atInfo().log("Finishing spawn pet");
+            transform.setPosition(spawnTransform.getPosition().clone());
+            entry.setStatus(Status.ALIVE);
+            entry.setLastKnownPos(spawnTransform.getPosition().clone());
+            entry.setWorldUuid(store.getExternalData().getWorld().getWorldConfig().getUuid());
+
+            // Thanks to BalancingInitialisationSystem, health is set to max every spawn
+            // This fixes that
+            EntityStatValue oldHealthStat = entityStatMap.get(DefaultEntityStatTypes.getHealth());
+            float oldValue;
+            if (oldHealthStat == null) {
+                oldValue = -1.0f;
             } else {
-                LOGGER.atWarning().log("Transform is null");
+                oldValue = oldHealthStat.get();
             }
-        }
 
+            Ref<EntityStore> ref = store.addEntity(newEntity, AddReason.LOAD);
+            if (ref != null && !entry.getPetType().hasFeatureFlag(PetFeatureFlag.HealsOnSpawn)) {
+                EntityStatMap newStatMap = store.getComponent(ref, EntityStatMap.getComponentType());
+                if (newStatMap != null) {
+                    newStatMap.setStatValue(DefaultEntityStatTypes.getHealth(), oldValue);
+                }
+            }
+            LOGGER.atInfo().log("Spawned pet");
+        }
     }
 
     public static boolean unsummonPet(TrackedPetEntry entry, Store<EntityStore> store) {

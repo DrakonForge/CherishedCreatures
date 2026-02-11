@@ -173,8 +173,8 @@ public class TrackedPetEntry implements Cloneable {
     }
 
     @Nonnull
-    public PetType getPetType(Store<EntityStore> store) {
-        PetTypeComponent petComponent = getComponent(store, PetTypeComponent.getComponentType());
+    public PetType getPetType() {
+        PetTypeComponent petComponent = holder.getComponent(PetTypeComponent.getComponentType());
         if (petComponent == null) {
             LOGGER.atWarning().log("Pet type component did not exist for tracked pet entry");
             return PetType.DEFAULT;
@@ -215,8 +215,8 @@ public class TrackedPetEntry implements Cloneable {
     }
 
     // Should be called before using PetHelpers.summonPet
-    public boolean canSummonViaMenu(Store<EntityStore> store) {
-        PetType petType = getPetType(store);
+    public boolean canSummonViaMenu() {
+        PetType petType = getPetType();
         // TODO: Also check pet type summon rules
         return status == Status.STORED || status == Status.ALIVE;
     }
