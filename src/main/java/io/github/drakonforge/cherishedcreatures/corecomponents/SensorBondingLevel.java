@@ -1,4 +1,4 @@
-package io.github.drakonforge.cherishedcreatures.sensor;
+package io.github.drakonforge.cherishedcreatures.corecomponents;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -8,7 +8,7 @@ import com.hypixel.hytale.server.npc.corecomponents.SensorBase;
 import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
-import io.github.drakonforge.cherishedcreatures.sensor.builder.BuilderSensorBondingLevel;
+import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorBondingLevel;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 

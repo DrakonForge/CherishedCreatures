@@ -1,4 +1,4 @@
-package io.github.drakonforge.cherishedcreatures.sensor.builder;
+package io.github.drakonforge.cherishedcreatures.corecomponents.builder;
 
 import com.google.gson.JsonElement;
 import com.hypixel.hytale.server.npc.asset.builder.Builder;
@@ -8,7 +8,7 @@ import com.hypixel.hytale.server.npc.asset.builder.holder.NumberArrayHolder;
 import com.hypixel.hytale.server.npc.asset.builder.validators.IntSequenceValidator;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
-import io.github.drakonforge.cherishedcreatures.sensor.SensorBondingLevel;
+import io.github.drakonforge.cherishedcreatures.corecomponents.SensorBondingLevel;
 import javax.annotation.Nonnull;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 

@@ -16,6 +16,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.npc.NPCPlugin;
+import com.hypixel.hytale.server.npc.asset.builder.BuilderFactory;
 import io.github.drakonforge.cherishedcreatures.asset.BondingActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
@@ -27,8 +28,8 @@ import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
-import io.github.drakonforge.cherishedcreatures.sensor.builder.BuilderSensorBondingLevel;
-import io.github.drakonforge.cherishedcreatures.sensor.builder.BuilderSensorPetFollowMode;
+import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorBondingLevel;
+import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetFollowMode;
 import io.github.drakonforge.cherishedcreatures.system.*;
 
 import javax.annotation.Nonnull;
@@ -134,9 +135,10 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new NotifyBondingXpSystem());
         entityStoreRegistry.registerSystem(new UpdateBondingLevelSystem());
 
-        // Sensors (Core Components)
-        NPCPlugin.get().registerCoreComponentType("BondingLevel", BuilderSensorBondingLevel::new);
-        NPCPlugin.get().registerCoreComponentType("PetFollowMode", BuilderSensorPetFollowMode::new);
+        // Core Components
+        NPCPlugin npcPlugin = NPCPlugin.get();
+        npcPlugin.registerCoreComponentType("BondingLevel", BuilderSensorBondingLevel::new);
+        npcPlugin.registerCoreComponentType("PetFollowMode", BuilderSensorPetFollowMode::new);
 
         config.save();
     }

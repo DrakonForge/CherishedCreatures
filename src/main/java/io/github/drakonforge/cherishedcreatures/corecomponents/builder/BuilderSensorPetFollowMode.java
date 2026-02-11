@@ -1,4 +1,4 @@
-package io.github.drakonforge.cherishedcreatures.sensor.builder;
+package io.github.drakonforge.cherishedcreatures.corecomponents.builder;
 
 import com.hypixel.hytale.server.npc.asset.builder.BuilderDescriptorState;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
@@ -6,7 +6,7 @@ import com.hypixel.hytale.server.npc.asset.builder.holder.EnumHolder;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
 import io.github.drakonforge.cherishedcreatures.data.PetFollowMode;
-import io.github.drakonforge.cherishedcreatures.sensor.SensorPetFollowMode;
+import io.github.drakonforge.cherishedcreatures.corecomponents.SensorPetFollowMode;
 import javax.annotation.Nonnull;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
