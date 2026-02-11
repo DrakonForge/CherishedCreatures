@@ -52,10 +52,10 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         NPCEntity npcEntity =
                 holder.getComponent(Objects.requireNonNull(NPCEntity.getComponentType()));
         if (npcEntity != null) {
-            Role role = npcEntity.getRole();
-            if (role != null) {
-                roleName = Message.translation(npcEntity.getRole().getNameTranslationKey()).getAnsiMessage();
-            }
+            roleName = npcEntity.getRoleName();
+            // if (role != null) {
+            //     roleName = Message.translation(npcEntity.getRole().getNameTranslationKey()).getAnsiMessage();
+            // }
         }
 
         String displayName = getDisplayName(holder);
@@ -110,7 +110,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
 
     @Nullable
     private static PetUIHealthInfo getHealthInfo(PetType petType, Status status, Holder<EntityStore> holder) {
-        if (petType.hasFeatureFlag(PetFeatureFlag.Immortal) || status == Status.DEAD) {
+        if (petType.hasFeatureFlag(PetFeatureFlag.Immortal)) {
             return null;
         }
         EntityStatMap entityStatMap = holder.getComponent(EntityStatMap.getComponentType());
@@ -123,6 +123,9 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         }
         int currentValue = MathUtil.floor(statValue.get());
         int maxValue = MathUtil.ceil(statValue.getMax());
+        if (status == Status.DEAD) {
+            return new PetUIHealthInfo(0.0f, 0, maxValue);
+        }
         return new PetUIHealthInfo(statValue.asPercentage(), currentValue, maxValue);
     }
 

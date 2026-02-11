@@ -1,4 +1,10 @@
-<div>
+<style>
+  .status-meter-container {
+    anchor-vertical: -5;
+    anchor-horizontal: -4;
+  }
+</style>
+<div class="status-meter-container">
   <img src="{{$iconPath}}" width="{{$size}}" height="{{$size}}"/>
   {{#if {{$meter}} == FOUR_SEGMENT}}
     <img src="Assets/StatusMeter_Background_Circular_FourSegment.png" width="{{$size}}" height="{{$size}}" />
@@ -17,7 +23,4 @@
               style="anchor-width: {{$size}}; anchor-height: {{$size}};">
     </progress>
   {{/if}}
-
-
-
 </div>

@@ -10,7 +10,7 @@
   }
 
   .pet-card {
-    anchor-height: 102;
+    anchor-height: 120;
     vertical-align: center;
     background-color: #2a2a3e;
     anchor-vertical: 5;
@@ -23,6 +23,7 @@
     layout-mode: Top;
     anchor-vertical: 10;
     anchor-right: 10;
+    anchor-left: 5;
   }
 
   .pet-info-header {
@@ -59,6 +60,7 @@
 
   .pet-status-meters {
     layout-mode: Left;
+    anchor-top: 5;
   }
 
   .pet-control {
@@ -68,11 +70,11 @@
   }
 
   .pet-image-container {
-    anchor-width: 90;
-    anchor-height: 90;
+    anchor-width: 110;
+    anchor-height: 110;
     background-color: #212133;
-    anchor-left: 6;
-    anchor-right: 10;
+    anchor-left: 5;
+    anchor-right: 5;
   }
 </style>
 <div class="page-overlay">
@@ -92,33 +94,37 @@
               <p class="pet-name">
                 {{$name}}
                 <tooltip>
-                  <span>{{$id}}</span>
+                  <span>{{$roleName}} - {{$id}}</span>
                 </tooltip>
               </p>
               <div class="pet-info-tags">
-                {{@PetStatus:status={{$status}}}}
               </div>
             </div>
 
-
+            {{@PetStatus:status={{$status}}}}
 
             <div class="pet-status-meters">
+              {{#if bondingInfo != null}}
+                <div>
+                  {{@CircularStatusMeter:iconPath=Assets/BondingMeter_Core.png,size=60,fillProgress={{$bondingInfo.fillProgress}},fillColor=#07eb2e,meter={{$bondingInfo.type}}}}
+                  <tooltip>
+                    <span>Bonding Level {{$bondingInfo.bondingLevel}}</span>
+                  </tooltip>
+                </div>
+                {{else}}
+                <div style="anchor-width: 52"></div>
+              {{/if}}
+
               {{#if healthInfo != null}}
                 <div>
-                  {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Core.png,size=50,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                  {{@CircularStatusMeter:iconPath={{#if status == DEAD}}Assets/HealthMeter_Dead_Core.png{{else}}Assets/HealthMeter_Core.png{{/if}},size=60,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
                   <tooltip>
                     <span>Health: </span>
                     <span data-hyui-bold=true>{{$healthInfo.value}}/{{$healthInfo.max}}</span>
                   </tooltip>
                 </div>
-              {{/if}}
-              {{#if bondingInfo != null}}
-              <div>
-                {{@CircularStatusMeter:iconPath=Assets/BondingMeter_Core.png,size=50,fillProgress={{$bondingInfo.fillProgress}},fillColor=#07eb2e,meter={{$bondingInfo.type}}}}
-                <tooltip>
-                  <span>Bonding Level {{$bondingInfo.bondingLevel}} {{$bondingInfo.type}}</span>
-                </tooltip>
-              </div>
+              {{else}}
+              <div style="anchor-width: 52"></div>
               {{/if}}
             </div>
           </div>
