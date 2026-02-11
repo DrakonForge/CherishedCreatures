@@ -13,7 +13,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.data.BondingActivityType;
-import io.github.drakonforge.cherishedcreatures.event.BondingActivityEvent;
+import io.github.drakonforge.cherishedcreatures.event.TriggerBondingActivityEvent;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -23,7 +23,6 @@ public class ApplyPetCommand extends AbstractTargetEntityCommand {
     public ApplyPetCommand() {
         super("pet", "Pet the pet you are currently looking at, bonding with it.");
     }
-
 
     @Override
     protected void execute(@NonNullDecl CommandContext commandContext,
@@ -59,7 +58,7 @@ public class ApplyPetCommand extends AbstractTargetEntityCommand {
                 continue;
             }
 
-            store.invoke(entityRef, new BondingActivityEvent(BondingActivityType.Petting));
+            store.invoke(entityRef, new TriggerBondingActivityEvent(BondingActivityType.Petting));
             commandContext.sendMessage(Message.raw("Successfully applied pet"));
         }
     }

@@ -24,8 +24,8 @@ public class PetComponent implements Component<EntityStore> {
                     PetComponent::setOwnerUuid, PetComponent::getOwnerUuid)
             .addValidator(Validators.nonNull())
             .add()
-            .append(new KeyedCodec<>("Name", Codec.STRING), PetComponent::setName,
-                    PetComponent::getName)
+            .append(new KeyedCodec<>("CustomName", Codec.STRING), PetComponent::setCustomName,
+                    PetComponent::getCustomName)
             .add()
             .build();
 
@@ -40,14 +40,14 @@ public class PetComponent implements Component<EntityStore> {
     }
 
     private UUID ownerUuid;
-    private String name;
+    private String customName;
 
     public void setOwnerUuid(@Nonnull UUID ownerUuid) {
         this.ownerUuid = ownerUuid;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCustomName(String customName) {
+        this.customName = customName;
     }
 
     @Nullable
@@ -55,8 +55,8 @@ public class PetComponent implements Component<EntityStore> {
         return ownerUuid;
     }
 
-    public String getName() {
-        return name;
+    public String getCustomName() {
+        return customName;
     }
 
     @NullableDecl
@@ -64,7 +64,7 @@ public class PetComponent implements Component<EntityStore> {
     public Component<EntityStore> clone() {
         PetComponent clone = new PetComponent();
         clone.ownerUuid = ownerUuid;
-        clone.name = name;
+        clone.customName = customName;
         return clone;
     }
 }

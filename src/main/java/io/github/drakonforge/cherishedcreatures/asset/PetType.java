@@ -11,9 +11,11 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
+import io.github.drakonforge.cherishedcreatures.CherishedCreaturesConfig;
 import io.github.drakonforge.cherishedcreatures.util.Object2BooleanMapCodec;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import javax.annotation.Nonnull;
 
 public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String, PetType>> {
 
@@ -30,6 +32,11 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
                             PetFeatureFlag.class), Object2BooleanArrayMap::new)),
                     (asset, featureFlags) -> asset.featureFlags = featureFlags,
                     asset -> asset.featureFlags)
+            .documentation("TODO")
+            .add()
+            .append(new KeyedCodec<>("BondingLevelValuesOverride", Codec.STRING_ARRAY),
+                    (asset, bondingActivities) -> asset.bondingActivities = bondingActivities,
+                    asset -> asset.bondingActivities)
             .documentation("TODO")
             .add()
             .documentation("TODO");
@@ -65,6 +72,7 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected Object2BooleanMap<PetFeatureFlag> featureFlags;
     // TODO: Optimize this out to a set or bit flag later
     protected String[] bondingActivities;
+    protected float[] bondingLevelValuesOverride;
     protected JoinsFlock joinsFlock = JoinsFlock.FOLLOW_ONLY;
 
     private PetType() {
@@ -79,6 +87,14 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     // TODO: Or even better, Map<BondingActivityType, BondingActivity>
     public String[] getBondingActivities() {
         return bondingActivities;
+    }
+
+    @Nonnull
+    public float[] getBondingLevelValues() {
+        if (bondingLevelValuesOverride == null) {
+            return CherishedCreaturesConfig.get().getDefaultBondingLevelValues();
+        }
+        return bondingLevelValuesOverride;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.ResourceType;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.SystemGroup;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
@@ -53,6 +54,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
     private ComponentType<EntityStore, PetStateComponent> petStateComponentType;
     private ComponentType<EntityStore, PetBondComponent> petBondComponentType;
     private ComponentType<EntityStore, PetTypeComponent> petTypeComponentType;
+
+    private SystemGroup<EntityStore> filterBondingXpEventGroup;
+    private SystemGroup<EntityStore> inspectBondingXpEventGroup;
 
     public CherishedCreaturesPlugin(@Nonnull JavaPluginInit init) {
         super(init);
@@ -113,6 +117,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         this.petBondComponentType = entityStoreRegistry.registerComponent(PetBondComponent.class, "PetBondComponent", PetBondComponent.CODEC);
         this.petTypeComponentType = entityStoreRegistry.registerComponent(PetTypeComponent.class, "PetType", PetTypeComponent.CODEC);
 
+        this.filterBondingXpEventGroup = entityStoreRegistry.registerSystemGroup();
+        this.inspectBondingXpEventGroup = entityStoreRegistry.registerSystemGroup();
+
         // Systems
         entityStoreRegistry.registerSystem(new RegisterPlayerPetTracker());
         entityStoreRegistry.registerSystem(new PetUpdateTrackerSystem());
@@ -123,6 +130,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new RegisterDefaultPetTypeSystem());
         entityStoreRegistry.registerSystem(new HandleBondingActivityEventSystem());
         entityStoreRegistry.registerSystem(new OnPetDeathSystem());
+        entityStoreRegistry.registerSystem(new ApplyBondingXpSystem());
+        entityStoreRegistry.registerSystem(new NotifyBondingXpSystem());
+        entityStoreRegistry.registerSystem(new UpdateBondingLevelSystem());
 
         // Sensors (Core Components)
         NPCPlugin.get().registerCoreComponentType("BondingLevel", BuilderSensorBondingLevel::new);
@@ -158,5 +168,17 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
     public ComponentType<EntityStore, PetTypeComponent> getPetTypeComponentType() {
         return this.petTypeComponentType;
+    }
+
+    public SystemGroup<EntityStore> getFilterBondingXpEventGroup() {
+        return filterBondingXpEventGroup;
+    }
+
+    public SystemGroup<EntityStore> getInspectBondingXpEventGroup() {
+        return inspectBondingXpEventGroup;
+    }
+
+    public Config<CherishedCreaturesConfig> getConfig() {
+        return config;
     }
 }

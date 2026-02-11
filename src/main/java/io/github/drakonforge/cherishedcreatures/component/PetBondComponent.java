@@ -9,7 +9,6 @@ import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin;
-import io.github.drakonforge.cherishedcreatures.asset.BondingActivity;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
@@ -34,7 +33,6 @@ public class PetBondComponent implements Component<EntityStore> {
                     PetBondComponent::saveActivityCooldowns)
             .add()
             .build();
-    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
     public static ComponentType<EntityStore, PetBondComponent> getComponentType() {
         return CherishedCreaturesPlugin.get().getPetBondComponentType();
@@ -54,19 +52,28 @@ public class PetBondComponent implements Component<EntityStore> {
     private void loadActivityCooldowns(Object2FloatMap<String> map) {
         activityCooldowns.clear();
         for (Entry<String> entry : map.object2FloatEntrySet()) {
-            addActivityCooldown(entry.getKey(), entry.getFloatValue());
+            setActivityCooldown(entry.getKey(), entry.getFloatValue());
         }
     }
 
-    public void addBondingXp(float baseAmount) {
-        // TODO: Bonding XP multipliers
-        LOGGER.atInfo().log("Gained " + baseAmount + " bonding XP");
-        bondingXp += baseAmount;
-        recalculateBondingLevel();
+    public void addBondingXp(float amount) {
+        if (amount <= 0) {
+            return;
+        }
+        // TODO: Add a system for Bonding XP multipliers
+        bondingXp += amount;
     }
 
-    public void recalculateBondingLevel() {
-        // TODO: If level changed, fire an event
+    public boolean isActivityOnCooldown(String activityName) {
+        int index = getIndexForActivity(activityName);
+        if (index > -1) {
+            return true;
+        }
+        return false;
+    }
+
+    public void setBondingLevel(int bondingLevel) {
+        this.bondingLevel = bondingLevel;
     }
 
     public int getBondingLevel() {
@@ -75,31 +82,6 @@ public class PetBondComponent implements Component<EntityStore> {
 
     public float getBondingXp() {
         return bondingXp;
-    }
-
-    public void triggerActivity(String activityName) {
-        triggerActivity(activityName, false);
-    }
-
-    public void triggerActivity(String activityName, boolean force) {
-        BondingActivity activity = BondingActivity.getAssetStore()
-                .getAssetMap()
-                .getAsset(activityName);
-        if (activity == null) {
-            LOGGER.atWarning().log("Unknown bonding activity " + activityName);
-            return;
-        }
-        int index = getIndexForActivity(activityName);
-        if (index > -1) {
-            if (!force) {
-                // On cooldown, skip adding bonding XP
-                return;
-            }
-            activityCooldowns.get(index).value(activity.getCooldown());
-        } else {
-            addActivityCooldown(activityName, activity.getCooldown());
-        }
-        addBondingXp(activity.getBaseXp());
     }
 
     private int getIndexForActivity(String activityName) {
@@ -111,8 +93,13 @@ public class PetBondComponent implements Component<EntityStore> {
         return -1;
     }
 
-    private void addActivityCooldown(String activityName, float value) {
-        this.activityCooldowns.add(new ObjectFloatMutablePair<>(activityName, value));
+    public void setActivityCooldown(String activityName, float value) {
+        int index = getIndexForActivity(activityName);
+        if (index > -1) {
+            this.activityCooldowns.get(index).value(value);
+        } else {
+            this.activityCooldowns.add(new ObjectFloatMutablePair<>(activityName, value));
+        }
     }
 
     public void tickActivityCooldowns(float deltaTime) {
