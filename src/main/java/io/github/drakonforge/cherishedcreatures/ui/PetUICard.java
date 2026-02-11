@@ -15,6 +15,8 @@ import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import com.hypixel.hytale.server.npc.role.Role;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
@@ -25,17 +27,17 @@ import io.github.drakonforge.cherishedcreatures.ui.PetUICard.PetUIBondingInfo.Ty
 import io.github.drakonforge.cherishedcreatures.util.BondingHelpers;
 import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-public record PetUICard(UUID id, String name, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo) {
+public record PetUICard(UUID id, String name, String roleName, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo) {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
     public record PetUIBondingInfo(Type type, float fillProgress, int bondingLevel) {
         public enum Type {
-            FOUR_SEGMENT,
-            LINEAR
+            FOUR_SEGMENT, LINEAR
         }
     }
 
@@ -45,6 +47,16 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
         entry.attemptSaveEntityFromLive(store);
         Holder<EntityStore> holder = entry.getHolder(false);
         PetType petType = entry.getPetType();
+        String roleName = "Unknown";
+
+        NPCEntity npcEntity =
+                holder.getComponent(Objects.requireNonNull(NPCEntity.getComponentType()));
+        if (npcEntity != null) {
+            Role role = npcEntity.getRole();
+            if (role != null) {
+                roleName = Message.translation(npcEntity.getRole().getNameTranslationKey()).getAnsiMessage();
+            }
+        }
 
         String displayName = getDisplayName(holder);
         Status status = entry.getStatus();
@@ -52,7 +64,7 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
         PetUIHealthInfo healthInfo = getHealthInfo(petType, status, holder);
         boolean showSummonToggle = petType.hasFeatureFlag(PetFeatureFlag.SummonControls) && canSummonPetWithStatus(entry.getStatus());
         // If the pet has Status ALIVE but is unloaded, we basically treat it as un-summoned for our purposes.
-        return new PetUICard(entry.getUuid(), displayName, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo);
+        return new PetUICard(entry.getUuid(), displayName, roleName, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo);
     }
 
     private static boolean canSummonPetWithStatus(Status status) {
