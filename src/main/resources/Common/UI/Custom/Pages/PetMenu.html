@@ -1,5 +1,5 @@
 <style>
-  .decorated-container {
+  .container {
     padding: 10;
     anchor-width: 800;
     anchor-height: 550;
@@ -12,7 +12,7 @@
   .pet-card {
     anchor-height: 120;
     vertical-align: center;
-    background-color: #2a2a3e;
+    background-color: #202d44;
     anchor-vertical: 5;
     padding: 10;
     layout-mode: Left;
@@ -72,13 +72,13 @@
   .pet-image-container {
     anchor-width: 110;
     anchor-height: 110;
-    background-color: #212133;
+    background-color: #111922;
     anchor-left: 5;
     anchor-right: 5;
   }
 </style>
 <div class="page-overlay">
-  <div class="decorated-container" data-hyui-title="Your Pets">
+  <div class="container" data-hyui-title="Your Pets">
     <div class="container-contents">
       <div class="menu-description">
         <p>Displaying {{$numPets}} pets</p>
@@ -101,7 +101,7 @@
               </div>
             </div>
 
-            {{@PetStatus:status={{$status}}}}
+            {{@PetStatus:status={{$status}},fontSize=14}}
 
             <div class="pet-status-meters">
               {{#if bondingInfo != null}}

@@ -16,7 +16,6 @@ import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntitySta
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
-import com.hypixel.hytale.server.npc.role.Role;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
@@ -148,7 +147,64 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         return -1;
     }
 
-    public void registerEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
+    public void registerPetDetailsEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
+        if (showSummonToggle) {
+            builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating,
+                    (_, ctx) -> {
+                        TrackedPetEntry entry = petTracker.getPetEntry(id);
+                        boolean hasChanged = false;
+                        if (entry == null) {
+                            LOGGER.atWarning().log("Entry is null");
+                            return;
+                        }
+                        if (entry.isLoaded()) {
+                            LOGGER.atInfo().log("Calling unsummon pet from summon toggle");
+                            if (PetHelpers.unsummonPet(entry, store)) {
+                                playerRef.sendMessage(Message.raw("Unsummoned pet " + name + "!"));
+                                hasChanged = true;
+                            }
+                        } else {
+                            TransformComponent transformComponent = store.getComponent(ref,
+                                    TransformComponent.getComponentType());
+                            if (transformComponent == null) {
+                                LOGGER.atWarning().log("Transform should not be null");
+                                return;
+                            }
+                            PetHelpers.summonPet(entry, store, transformComponent);
+                            playerRef.sendMessage(Message.raw("Summoned pet " + name + "!"));
+                            hasChanged = true;
+                        }
+                        if (hasChanged) {
+                            store.getExternalData().getWorld().execute(() -> {
+                                refreshPetCard(store, petTracker, petCards, id);
+                                ctx.updatePage(false);
+                            });
+                        }
+                    });
+        }
+        if (status == Status.DEAD) {
+            builder.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating,
+                    (_, ctx) -> {
+                        int index = findPetCard(petCards, id);
+                        if (index < 0 || petCards.get(index).status != Status.DEAD) {
+                            playerRef.sendMessage(Message.raw("Pet does not exist or is not dead"));
+                            return;
+                        }
+                        store.getExternalData().getWorld().execute(() -> {
+                            boolean success = petTracker.removePetEntry(id);
+                            if (success) {
+                                petCards.remove(index);
+                                playerRef.sendMessage(Message.raw("Accepted the death of " + name));
+                                ctx.updatePage(true);
+                            } else {
+                                playerRef.sendMessage(Message.raw("Failed to remove pet"));
+                            }
+                        });
+                    });
+        }
+    }
+
+    public void registerMenuEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
         if (showSummonToggle) {
             builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
                 TrackedPetEntry entry = petTracker.getPetEntry(id);
@@ -200,5 +256,14 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
                 });
             });
         }
+
+        builder.addEventListener("view-details-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
+            TrackedPetEntry entry = petTracker.getPetEntry(id);
+            if (entry == null) {
+                LOGGER.atWarning().log("Entry is null");
+                return;
+            }
+            PetMenus.openPetDetails(store, ref, playerRef, entry.getUuid());
+        });
     }
 }

@@ -1,0 +1,187 @@
+<style>
+
+  .pet-card {
+    layout-mode: Top;
+    anchor-width: 1200;
+    anchor-height: 700;
+  }
+
+  .pet-contents {
+    layout-mode: Left;
+    flex-weight: 1;
+  }
+
+  .content-wrapper {
+    layout-mode: TopScrolling;
+    anchor-horizontal: 0;
+    anchor-vertical: 5;
+  }
+
+  .pet-info-container {
+    flex-weight: 6;
+    anchor-right: 20;
+  }
+
+  .pet-controls-container {
+    flex-weight: 4;
+    anchor-left: 20;
+  }
+
+  .pet-header {
+    layout-mode: Left;
+    anchor-bottom: 15;
+  }
+
+  .pet-header-info {
+    layout-mode: Top;
+    flex-weight: 1;
+    anchor-left: 15;
+  }
+
+  .pet-header-details {
+    flex-weight: 1;
+    layout-mode: Top;
+  }
+
+  .name-row {
+    layout-mode: Left;
+  }
+
+  .pet-name {
+    font-weight: bold;
+    font-size: 24;
+    flex-weight: 1;
+  }
+
+  .role-name {
+    font-weight: bold;
+    color: #b4c8c9;
+    font-size: 14;
+  }
+
+  .pet-image-container {
+    anchor-width: 160;
+    anchor-height: 160;
+    background-color: #111922;
+  }
+
+  .pet-info {
+    layout-mode: Top;
+  }
+
+  .status-text {
+    layout-mode: Left;
+    vertical-align: center;
+  }
+
+  .status-label {
+    anchor-right: 5;
+  }
+
+  .pet-status-meters {
+    layout-mode: Center;
+    anchor-top: 5;
+    anchor-bottom: -10;
+  }
+
+  .pet-control {
+  }
+
+  .footer {
+    anchor-top: 40;
+    layout-mode: Center;
+  }
+</style>
+<div class="page-overlay">
+  <div id="pet-card" class="pet-card">
+    {{#each petCard}}
+    <div class="pet-contents">
+      <div class="pet-info-container decorated-container" data-hyui-title="Pet Details">
+        <div class="container-contents">
+          <div class="content-wrapper" data-hyui-scrollbar-style="DefaultScrollbarStyle"
+               data-hyui-keep-scroll-position="true">
+            <div class="pet-header">
+              <div class="pet-image-container">
+              </div>
+              <div class="pet-header-info">
+                <div class="pet-header-details">
+                  <div class="name-row">
+                    <p class="pet-name">
+                      {{$name}}
+                      <tooltip>
+                        <span>{{$id}}</span>
+                      </tooltip>
+                    </p>
+                    <button class="name-change-button small-secondary-button">Change Name</button>
+                  </div>
+                  <p class="role-name">{{$roleName|upper}}</p>
+                </div>
+                <div class="pet-status-meters">
+                  {{#if bondingInfo != null}}
+                  <div>
+                    {{@CircularStatusMeter:iconPath=Assets/BondingMeter_Core.png,size=75,fillProgress={{$bondingInfo.fillProgress}},fillColor=#07eb2e,meter={{$bondingInfo.type}}}}
+                    <tooltip>
+                      <span>Bonding Level {{$bondingInfo.bondingLevel}}</span>
+                    </tooltip>
+                  </div>
+                  {{/if}}
+
+                  {{#if healthInfo != null}}
+                  <div>
+                    {{@CircularStatusMeter:iconPath={{#if status ==
+                    DEAD}}Assets/HealthMeter_Dead_Core.png{{else}}Assets/HealthMeter_Core.png{{/if}},size=75,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                    <tooltip>
+                      <span>Health: </span>
+                      <span data-hyui-bold=true>{{$healthInfo.value}}/{{$healthInfo.max}}</span>
+                    </tooltip>
+                  </div>
+                  {{/if}}
+                </div>
+              </div>
+
+            </div>
+            <div class="pet-info">
+              <div class="status-text">
+                <p class="status-label">Status: </p>
+                {{@PetStatus:status={{$status}},fontSize=16}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pet-controls-container decorated-container" data-hyui-title="Commands">
+        <div class="container-contents">
+          <div class="content-wrapper" data-hyui-scrollbar-style="DefaultScrollbarStyle"
+               data-hyui-keep-scroll-position="true">{{#if showSummonToggle}}
+            {{#if isLoaded}}
+            <button class="pet-control tertiary-button" id="toggle-summon-{{$id}}">Unsummon
+            </button>
+            {{else}}
+            <button class="pet-control tertiary-button" id="toggle-summon-{{$id}}">Summon
+            </button>
+            {{/if}}
+            {{/if}}
+            {{#if status == DEAD}}
+            <button class="pet-control tertiary-button" id="accept-death-{{$id}}">Accept
+            </button>
+            {{else}}
+            <select id="difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+            <input type="range" class="slider-number-field" min="0" max="100" value="50"/>
+            <progress value="75" max="100"></progress>
+            {{/if}}
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {{/each}}
+    <div class="footer">
+      <button class="secondary-button">Back</button>
+    </div>
+  </div>
+
+</div>
