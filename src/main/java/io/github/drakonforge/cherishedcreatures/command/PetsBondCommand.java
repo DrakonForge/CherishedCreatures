@@ -13,18 +13,21 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.event.BondingXpEvent;
 import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-public class PetsSummonCommand extends AbstractPlayerCommand {
+public class PetsBondCommand extends AbstractPlayerCommand {
 
     private final RequiredArg<Integer> indexArg;
+    private final RequiredArg<Float> amountArg;
 
-    public PetsSummonCommand() {
-        super("summon", "TODO");
-        this.addAliases("spawn");
+    public PetsBondCommand() {
+        super("bond", "TODO");
         this.indexArg = this.withRequiredArg("index", "TODO", ArgTypes.INTEGER);
+        this.amountArg = this.withRequiredArg("amount", "TODO", ArgTypes.FLOAT);
     }
+
 
     @Override
     protected void execute(@NonNullDecl CommandContext commandContext,
@@ -48,7 +51,12 @@ public class PetsSummonCommand extends AbstractPlayerCommand {
         }
 
         TrackedPetEntry entry = petTracker.getPetEntry(index);
-        PetHelpers.summonPet(entry, store, transformComponent);
-        commandContext.sendMessage(Message.raw("Pet summoned"));
+        Ref<EntityStore> petRef = entry.getEntityRef();
+        float amount = commandContext.get(amountArg);
+        if (petRef == null || !entry.isLoaded()) {
+            commandContext.sendMessage(Message.raw("Pet is not loaded"));
+            return;
+        }
+        store.invoke(petRef, new BondingXpEvent(amount));
     }
 }

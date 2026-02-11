@@ -90,7 +90,7 @@
               {{/if}}
               {{#if bondingInfo != null}}
               <div>
-                {{@CircularStatusMeter:iconPath=Assets/BondingMeter_Core.png,size=45,fillProgress={{bondingInfo.fillProgress}},fillColor=#07eb2e}}
+                {{@CircularStatusMeter:iconPath=Assets/BondingMeter_Core.png,size=45,fillProgress={{$bondingInfo.fillProgress}},fillColor=#07eb2e}}
                 <tooltip>
                   <span>Bonding Level {{$bondingInfo.bondingLevel}}</span>
                 </tooltip>

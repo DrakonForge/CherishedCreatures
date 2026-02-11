@@ -29,6 +29,7 @@ public class PetsCommand extends AbstractPlayerCommand {
         this.addSubCommand(new PetsClearCommand());
         this.addSubCommand(new PetsMenuCommand());
         this.addSubCommand(new ApplyPetCommand());
+        this.addSubCommand(new PetsBondCommand());
     }
 
     @Override

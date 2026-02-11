@@ -209,6 +209,11 @@ public class TrackedPetEntry implements Cloneable {
         return worldUuid;
     }
 
+    @Nullable
+    public Ref<EntityStore> getEntityRef() {
+        return entityRef;
+    }
+
     // Should be called before using PetHelpers.summonPet
     public boolean canSummonViaMenu(Store<EntityStore> store) {
         PetType petType = getPetType(store);

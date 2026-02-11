@@ -22,6 +22,7 @@ import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
 import io.github.drakonforge.cherishedcreatures.ui.PetUICard.PetUIBondingInfo.Type;
+import io.github.drakonforge.cherishedcreatures.util.BondingHelpers;
 import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import java.util.List;
 import java.util.UUID;
@@ -30,9 +31,6 @@ import javax.annotation.Nullable;
 public record PetUICard(UUID id, String name, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo) {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-
-    // TODO: Replace hardcoded values
-    private static final float[] BONDING_XP_LEVEL_THRESHOLDS = { 0.0f, 150.0f, 300.0f, 450.0f, 600.0f };
 
     public record PetUIBondingInfo(Type type, float fillProgress, int bondingLevel) {
         public enum Type {
@@ -82,20 +80,20 @@ public record PetUICard(UUID id, String name, Status status, boolean isLoaded, b
         if (petBondComponent == null) {
             return null;
         }
-        // TODO: Replace with hardcoded values with server config, which can be overridden by pet type
         int bondingLevel = petBondComponent.getBondingLevel();
         float bondingXp = petBondComponent.getBondingXp();
+        float[] bondingLevelValues = petType.getBondingLevelValues();
+        Type type;
+        float totalProgress;
 
-        // Assume it is a 4-segment, this may change later
-        if (0 <= bondingLevel && bondingLevel < BONDING_XP_LEVEL_THRESHOLDS.length - 1) {
-            float xpRequiredForCurrentLevel = BONDING_XP_LEVEL_THRESHOLDS[bondingLevel];
-            float xpRequiredForNextLevel = BONDING_XP_LEVEL_THRESHOLDS[bondingLevel + 1];
-            float progressToNextLevel = (bondingXp - xpRequiredForCurrentLevel) / (xpRequiredForNextLevel - xpRequiredForCurrentLevel);
-            float levelFillProgress = 0.25f * (bondingLevel + progressToNextLevel);
-            float totalProgress = Math.clamp(levelFillProgress, 0.0f, 1.0f);
-            return new PetUIBondingInfo(Type.FOUR_SEGMENT, totalProgress, bondingLevel);
+        if (bondingLevelValues.length == BondingHelpers.DEFAULT_NUM_SEGMENTS) {
+            totalProgress = BondingHelpers.getSegmentedBondingProgress(bondingLevelValues, bondingXp);
+            type = Type.FOUR_SEGMENT;
+        } else {
+            totalProgress = BondingHelpers.getLinearBondingProgress(bondingLevelValues, bondingXp);
+            type = Type.LINEAR;
         }
-        return null;
+        return new PetUIBondingInfo(type, totalProgress, bondingLevel);
     }
 
     @Nullable
