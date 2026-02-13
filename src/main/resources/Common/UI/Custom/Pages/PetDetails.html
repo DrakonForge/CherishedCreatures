@@ -114,6 +114,7 @@
     anchor-top: 40;
     layout-mode: Center;
   }
+
 </style>
 <div class="page-overlay">
   <div id="pet-card" class="pet-card">
@@ -164,8 +165,11 @@
 
                   {{#if healthInfo != null}}
                   <div>
-                    {{@CircularStatusMeter:iconPath={{#if status ==
-                    DEAD}}Assets/HealthMeter_Dead_Core.png{{else}}Assets/HealthMeter_Core.png{{/if}},size=75,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                    {{#if status == DEAD}}
+                    {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Dead_Core.png,size=75,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                    {{else}}
+                    {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Core.png,size=75,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                    {{/if}}
                     <tooltip>
                       <span>Health: </span>
                       <span data-hyui-bold=true>{{$healthInfo.value}}/{{$healthInfo.max}}</span>
@@ -190,8 +194,7 @@
           <div class="content-wrapper" data-hyui-scrollbar-style="DefaultScrollbarStyle"
                data-hyui-keep-scroll-position="true">{{#if showSummonToggle}}
             {{#if status == DEAD}}
-            <button class="pet-control tertiary-button" id="accept-death-{{$id}}">Accept
-            </button>
+            {{@DestructiveButton:id=accept-death-{{$id}},text=Accept}}
             {{else}}
             {{#if isLoaded}}
             <button class="pet-control tertiary-button" id="toggle-summon-{{$id}}">Unsummon
@@ -208,7 +211,7 @@
             </select>
             <input type="range" class="slider-number-field" min="0" max="100" value="50"/>
             <progress value="75" max="100"></progress>
-            <button class="pet-control secondary-button" id="abandon">Abandon</button>
+            {{@DestructiveButton:id=abandon-{{$id}},text=Abandon}}
             {{/if}}
           </div>
 

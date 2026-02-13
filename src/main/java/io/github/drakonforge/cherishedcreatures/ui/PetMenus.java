@@ -38,6 +38,7 @@ public final class PetMenus {
         TemplateProcessor template = new TemplateProcessor()
                 .registerComponentFromFile("PetStatus", "Components/PetStatus.html")
                 .registerComponentFromFile("CircularStatusMeter", "Components/CircularStatusMeter.html")
+                .registerComponentFromFile("DestructiveButton", "Components/DestructiveButton.html")
                 .setVariable("numPets", petCards.size())
                 .setVariable("petCards", petCards);
 
@@ -77,6 +78,7 @@ public final class PetMenus {
         TemplateProcessor template = new TemplateProcessor()
                 .registerComponentFromFile("PetStatus", "Components/PetStatus.html")
                 .registerComponentFromFile("CircularStatusMeter", "Components/CircularStatusMeter.html")
+                .registerComponentFromFile("DestructiveButton", "Components/DestructiveButton.html")
                 .setVariable("petCard", petCardHolder);
 
         PageBuilder builder = PageBuilder.detachedPage()

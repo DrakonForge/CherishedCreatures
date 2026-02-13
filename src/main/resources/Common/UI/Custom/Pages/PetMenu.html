@@ -118,8 +118,11 @@
 
               {{#if healthInfo != null}}
               <div>
-                {{@CircularStatusMeter:iconPath={{#if status ==
-                DEAD}}Assets/HealthMeter_Dead_Core.png{{else}}Assets/HealthMeter_Core.png{{/if}},size=60,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                {{#if status == DEAD}}
+                  {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Dead_Core.png,size=60,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                {{else}}
+                  {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Core.png,size=60,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                {{/if}}
                 <tooltip>
                   <span>Health: </span>
                   <span data-hyui-bold=true>{{$healthInfo.value}}/{{$healthInfo.max}}</span>
@@ -139,7 +142,7 @@
                 {{/if}}
               {{/if}}
               {{#if status == DEAD}}
-                <button class="pet-control small-tertiary-button" id="accept-death-{{$id}}">Accept</button>
+                {{@DestructiveButton:id=accept-death-{{$id}},text=Accept,height=50}}
               {{/if}}
               <button class="pet-control small-tertiary-button" id="view-details-{{$id}}">Details</button>
           </div>
