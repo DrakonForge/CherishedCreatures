@@ -88,6 +88,7 @@ public final class PetMenus {
             groupBuilder.withKeepScrollPosition(true);
         });
 
+
         petCard.registerPetDetailsEventListeners(builder, store, ref, playerRef, playerPetTracker, petCardHolder);
 
         builder.open(playerRef, store);

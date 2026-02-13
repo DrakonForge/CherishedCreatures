@@ -59,6 +59,20 @@
     font-size: 14;
   }
 
+  .pet-edit-name {
+    visibility: hidden;
+  }
+
+  .name-input-container {
+    flex-weight: 1;
+    anchor-right: 10;
+  }
+
+  .name-input {
+    anchor-width: 300;
+    anchor-left: 0;
+  }
+
   .pet-image-container {
     anchor-width: 160;
     anchor-height: 160;
@@ -69,9 +83,18 @@
     layout-mode: Top;
   }
 
-  .status-text {
+  .pet-main-stats {
     layout-mode: Left;
     vertical-align: center;
+    anchor-width: 250;
+    anchor-top: 10;
+  }
+  .pet-main-stat-label {
+    flex-weight: 1;
+    text-align: left;
+    horizontal-align: left;
+  }
+  .pet-main-stat-value {
   }
 
   .status-label {
@@ -105,14 +128,27 @@
               </div>
               <div class="pet-header-info">
                 <div class="pet-header-details">
-                  <div class="name-row">
+                  <div class="name-row name-container" id="display-name-container">
                     <p class="pet-name">
                       {{$name}}
                       <tooltip>
                         <span>{{$id}}</span>
                       </tooltip>
                     </p>
-                    <button class="name-change-button small-secondary-button">Change Name</button>
+                    {{#if status != DEAD}}
+                    <button class="name-change-button small-secondary-button"
+                            id="change-name-{{$id}}">Change Name
+                    </button>
+                    {{/if}}
+                  </div>
+                  <div class="name-row pet-edit-name" id="change-name-container">
+                    <div class="name-input-container">
+                      <input type="text" class="name-input" id="change-name-input-{{$id}}"
+                             placeholder="{{$name}}" maxlength="32"/>
+                    </div>
+                    <button class="name-change-button small-secondary-button"
+                            id="change-name-submit-{{$id}}">Submit
+                    </button>
                   </div>
                   <p class="role-name">{{$roleName|upper}}</p>
                 </div>
@@ -141,9 +177,9 @@
 
             </div>
             <div class="pet-info">
-              <div class="status-text">
-                <p class="status-label">Status: </p>
-                {{@PetStatus:status={{$status}},fontSize=16}}
+              <div class="pet-main-stats">
+                <div class="pet-main-stat-label">Status</div>
+                <div class="pet-main-stat-value">{{@PetStatus:status={{$status}},fontSize=16}}</div>
               </div>
             </div>
           </div>
@@ -181,7 +217,7 @@
     </div>
     {{/each}}
     <div class="footer">
-      <button class="secondary-button">Back</button>
+      <button id="back" class="secondary-button">Back</button>
     </div>
   </div>
 

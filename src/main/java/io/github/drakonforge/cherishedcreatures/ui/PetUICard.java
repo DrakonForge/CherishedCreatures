@@ -1,5 +1,6 @@
 package io.github.drakonforge.cherishedcreatures.ui;
 
+import au.ellie.hyui.builders.GroupBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
@@ -27,6 +28,7 @@ import io.github.drakonforge.cherishedcreatures.util.BondingHelpers;
 import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -148,6 +150,75 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
     }
 
     public void registerPetDetailsEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
+        builder.addEventListener("back", CustomUIEventBindingType.Activating, (_, _) -> {
+            PetMenus.openMenu(store, ref, playerRef);
+        });
+
+        if (status == Status.DEAD) {
+            builder.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating,
+                    (_, ctx) -> {
+                        int index = findPetCard(petCards, id);
+                        if (index < 0 || petCards.get(index).status != Status.DEAD) {
+                            playerRef.sendMessage(Message.raw("Pet does not exist or is not dead"));
+                            return;
+                        }
+                        store.getExternalData().getWorld().execute(() -> {
+                            boolean success = petTracker.removePetEntry(id);
+                            if (success) {
+                                petCards.remove(index);
+                                playerRef.sendMessage(Message.raw("Accepted the death of " + name));
+                                ctx.updatePage(true);
+                            } else {
+                                playerRef.sendMessage(Message.raw("Failed to remove pet"));
+                            }
+                        });
+                    });
+            return;
+        }
+
+        builder.addEventListener("change-name-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
+            LOGGER.atInfo().log("Called");
+            // TODO: Restore IDs if possible
+            ctx.getById("change-name-container", GroupBuilder.class).ifPresent(changeBuilder -> {
+                changeBuilder.withVisible(true);
+                ctx.updatePage(true);
+            });
+            ctx.getById("display-name-container", GroupBuilder.class).ifPresent(displayBuilder -> {
+                displayBuilder.withVisible(false);
+                ctx.updatePage(true);
+            });
+
+            LOGGER.atWarning().log("Exiting");
+
+            // Optional<GroupBuilder> changeBuilder = ctx.getById("change-name-container", GroupBuilder.class);
+            // Optional<GroupBuilder> displayBuilder = ctx.getById("display-name-container", GroupBuilder.class);
+            //
+            // if (changeBuilder.isPresent() && displayBuilder.isPresent()) {
+            //     LOGGER.atInfo().log("Success");
+            //     changeBuilder.get().withVisible(true);
+            //     displayBuilder.get().withVisible(false);
+            //     ctx.updatePage(true);
+            // } else {
+            //     LOGGER.atWarning().log("Fail");
+            // }
+            // LOGGER.atWarning().log("Exiting");
+        });
+
+        builder.addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
+            LOGGER.atInfo().log("Called");
+            Optional<GroupBuilder> changeBuilder = ctx.getById("change-name-container", GroupBuilder.class);
+            Optional<GroupBuilder> displayBuilder = ctx.getById("display-name-container", GroupBuilder.class);
+
+            if (changeBuilder.isPresent() && displayBuilder.isPresent()) {
+                LOGGER.atInfo().log("Success");
+                changeBuilder.get().withVisible(true);
+                displayBuilder.get().withVisible(false);
+                ctx.updatePage(true);
+            } else {
+                LOGGER.atWarning().log("Fail");
+            }
+        });
+
         if (showSummonToggle) {
             builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating,
                     (_, ctx) -> {
@@ -180,26 +251,6 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
                                 ctx.updatePage(false);
                             });
                         }
-                    });
-        }
-        if (status == Status.DEAD) {
-            builder.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating,
-                    (_, ctx) -> {
-                        int index = findPetCard(petCards, id);
-                        if (index < 0 || petCards.get(index).status != Status.DEAD) {
-                            playerRef.sendMessage(Message.raw("Pet does not exist or is not dead"));
-                            return;
-                        }
-                        store.getExternalData().getWorld().execute(() -> {
-                            boolean success = petTracker.removePetEntry(id);
-                            if (success) {
-                                petCards.remove(index);
-                                playerRef.sendMessage(Message.raw("Accepted the death of " + name));
-                                ctx.updatePage(true);
-                            } else {
-                                playerRef.sendMessage(Message.raw("Failed to remove pet"));
-                            }
-                        });
                     });
         }
     }

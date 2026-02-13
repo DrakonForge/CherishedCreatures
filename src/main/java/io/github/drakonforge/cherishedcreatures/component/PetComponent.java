@@ -16,16 +16,11 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 // Base pet info for a tamed pet
 public class PetComponent implements Component<EntityStore> {
-    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-
     public static final BuilderCodec<PetComponent> CODEC = BuilderCodec.builder(PetComponent.class,
                     PetComponent::new)
             .append(new KeyedCodec<>("OwnerUUID", Codec.UUID_STRING, true),
                     PetComponent::setOwnerUuid, PetComponent::getOwnerUuid)
             .addValidator(Validators.nonNull())
-            .add()
-            .append(new KeyedCodec<>("CustomName", Codec.STRING), PetComponent::setCustomName,
-                    PetComponent::getCustomName)
             .add()
             .build();
 
@@ -40,14 +35,9 @@ public class PetComponent implements Component<EntityStore> {
     }
 
     private UUID ownerUuid;
-    private String customName;
 
     public void setOwnerUuid(@Nonnull UUID ownerUuid) {
         this.ownerUuid = ownerUuid;
-    }
-
-    public void setCustomName(String customName) {
-        this.customName = customName;
     }
 
     @Nullable
@@ -55,16 +45,11 @@ public class PetComponent implements Component<EntityStore> {
         return ownerUuid;
     }
 
-    public String getCustomName() {
-        return customName;
-    }
-
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
         PetComponent clone = new PetComponent();
         clone.ownerUuid = ownerUuid;
-        clone.customName = customName;
         return clone;
     }
 }
