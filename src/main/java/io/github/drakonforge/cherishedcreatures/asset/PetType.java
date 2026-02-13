@@ -1,6 +1,7 @@
 package io.github.drakonforge.cherishedcreatures.asset;
 
 import com.hypixel.hytale.assetstore.AssetExtraInfo;
+import com.hypixel.hytale.assetstore.AssetKeyValidator;
 import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.AssetStore;
 import com.hypixel.hytale.assetstore.codec.AssetBuilderCodec;
@@ -10,6 +11,7 @@ import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
+import com.hypixel.hytale.codec.validation.ValidatorCache;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
 import io.github.drakonforge.cherishedcreatures.CherishedCreaturesConfig;
 import io.github.drakonforge.cherishedcreatures.util.Object2BooleanMapCodec;
@@ -34,14 +36,15 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
                     asset -> asset.featureFlags)
             .documentation("TODO")
             .add()
-            .append(new KeyedCodec<>("BondingLevelValuesOverride", Codec.STRING_ARRAY),
-                    (asset, bondingActivities) -> asset.bondingActivities = bondingActivities,
-                    asset -> asset.bondingActivities)
+            .append(new KeyedCodec<>("BondingLevelValuesOverride", Codec.FLOAT_ARRAY),
+                    (asset, bondingLevelValues) -> asset.bondingLevelValuesOverride = bondingLevelValues,
+                    PetType::getBondingLevelValues)
             .documentation("TODO")
             .add()
             .documentation("TODO");
     public static final AssetCodec<String, PetType> CODEC = CODEC_BUILDER.build();
     private static AssetStore<String, PetType, DefaultAssetMap<String, PetType>> ASSET_STORE;
+    public static final ValidatorCache<String> VALIDATOR_CACHE = new ValidatorCache<>(new AssetKeyValidator<>(BondingActivity::getAssetStore));
 
     public enum JoinsFlock {
         Always, FollowOnly, Never

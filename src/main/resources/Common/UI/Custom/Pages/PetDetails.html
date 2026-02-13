@@ -153,6 +153,10 @@
         <div class="container-contents">
           <div class="content-wrapper" data-hyui-scrollbar-style="DefaultScrollbarStyle"
                data-hyui-keep-scroll-position="true">{{#if showSummonToggle}}
+            {{#if status == DEAD}}
+            <button class="pet-control tertiary-button" id="accept-death-{{$id}}">Accept
+            </button>
+            {{else}}
             {{#if isLoaded}}
             <button class="pet-control tertiary-button" id="toggle-summon-{{$id}}">Unsummon
             </button>
@@ -161,10 +165,6 @@
             </button>
             {{/if}}
             {{/if}}
-            {{#if status == DEAD}}
-            <button class="pet-control tertiary-button" id="accept-death-{{$id}}">Accept
-            </button>
-            {{else}}
             <select id="difficulty">
               <option value="easy">Easy</option>
               <option value="medium" selected>Medium</option>
@@ -172,6 +172,7 @@
             </select>
             <input type="range" class="slider-number-field" min="0" max="100" value="50"/>
             <progress value="75" max="100"></progress>
+            <button class="pet-control secondary-button" id="abandon">Abandon</button>
             {{/if}}
           </div>
 
