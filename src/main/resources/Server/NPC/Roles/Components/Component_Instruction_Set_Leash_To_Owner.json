@@ -1,0 +1,23 @@
+{
+  "Type": "Component",
+  "Class": "Instruction",
+  "Content": {
+    "Sensor": {
+      "Type": "PetOwner"
+    },
+    "Actions": [
+
+      {
+        "Type": "Timeout",
+        "Delay": [
+          0.5,
+          2
+        ],
+        "Action": {
+          "Type": "SetLeashPosition",
+          "ToTarget": true
+        }
+      }
+    ]
+  }
+}

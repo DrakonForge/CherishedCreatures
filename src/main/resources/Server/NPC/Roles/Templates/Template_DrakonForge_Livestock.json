@@ -540,6 +540,9 @@
       "Continue": true,
       "Instructions": [
         {
+          "Reference": "Component_Instruction_Set_Leash_To_Owner"
+        },
+        {
           "$Comment": "Update flock member leash positions to match the leader.",
           "Enabled": {
             "Compute": "!isEmptyStringArray(FlockArray)"
@@ -1163,6 +1166,17 @@
                           "Crouch": false
                         }
                       ]
+                    },
+                    {
+                      "Reference": "Component_Instruction_Leash_To_Pet_Owner",
+                      "Modify": {
+                        "Enabled": true,
+                        "WanderRadius": {
+                          "Compute": "WanderRadius"
+                        },
+                        "RelativeSpeed": 0.3,
+                        "StopDistance": 3
+                      }
                     },
                     {
                       "Reference": "Component_Instruction_Leash_To_Flock_Leader",

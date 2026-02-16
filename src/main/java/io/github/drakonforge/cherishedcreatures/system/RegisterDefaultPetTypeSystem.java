@@ -6,6 +6,7 @@ import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.HolderSystem;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
@@ -17,6 +18,7 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class RegisterDefaultPetTypeSystem extends HolderSystem<EntityStore> {
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private static final Map<String, String> idToPetTypeId = createDefaultIdToPetTypeIdMap();
 
     // TODO: Hardcoding for now
@@ -27,6 +29,7 @@ public class RegisterDefaultPetTypeSystem extends HolderSystem<EntityStore> {
         idToPetTypeId.put("Cow", "DrakonForge_Generic");
         idToPetTypeId.put("Crab", "DrakonForge_Generic");
         idToPetTypeId.put("Rabbit", "DrakonForge_Generic");
+        idToPetTypeId.put("DrakonForge_Test_Mount", "DrakonForge_Horse");
         return idToPetTypeId;
     }
 
@@ -47,6 +50,7 @@ public class RegisterDefaultPetTypeSystem extends HolderSystem<EntityStore> {
             petTypeId = "DrakonForge_Generic"; // TODO: Temporary debug, let anything be tamed
         }
         if (petTypeId != null) {
+            LOGGER.atInfo().log("Assigning entity of type " + id + " to pet type " + petTypeId);
             holder.addComponent(PetTypeComponent.getComponentType(), new PetTypeComponent(petTypeId));
         }
     }

@@ -1,0 +1,11 @@
+{
+  "BondingActivities": [
+    "DefaultAdventuring",
+    "DefaultPetting"
+  ],
+  "FeatureFlags": {
+    "Bonding": true,
+    "FollowModeControls": true,
+    "SummonControls": false
+  }
+}
