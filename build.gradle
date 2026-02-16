@@ -45,7 +45,7 @@ javadoc {
 }
 
 repositories {
-    maven { url "https://www.cursemaven.com" }
+    maven { url = "https://www.cursemaven.com" }
 }
 
 // Adds the Hytale server as a build dependency, allowing you to reference and
