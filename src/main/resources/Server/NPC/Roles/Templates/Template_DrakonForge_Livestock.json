@@ -1187,17 +1187,7 @@
                         }
                       ]
                     },
-                    {
-                      "Reference": "Component_Instruction_Leash_To_Pet_Owner",
-                      "Modify": {
-                        "Enabled": true,
-                        "WanderRadius": {
-                          "Compute": "WanderRadius"
-                        },
-                        "RelativeSpeed": 0.3,
-                        "StopDistance": 3
-                      }
-                    },
+
                     {
                       "Reference": "Component_Instruction_Leash_To_Flock_Leader",
                       "Modify": {
