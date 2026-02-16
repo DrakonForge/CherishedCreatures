@@ -761,6 +761,26 @@
       ]
     },
     {
+      "Continue": true,
+      "Instructions": [
+        {
+          "Sensor": {
+            "Type": "Beacon",
+            "Message": "Whistle_Recall",
+            "TargetSlot": "LockedTarget",
+            "$Comment": "TODO - Set range to whistle range",
+            "Range": 500
+          },
+          "Actions": [
+            {
+              "Type": "State",
+              "State": "ReturnToOwner"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "Instructions": [
         {
           "Sensor": {
@@ -2675,6 +2695,62 @@
                 {
                   "Type": "State",
                   "State": "Idle"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Sensor": {
+            "Type": "State",
+            "State": "ReturnToOwner"
+          },
+          "Instructions": [
+            {
+              "Sensor": {
+                "Type": "Target",
+                "TargetSlot": "PetOwner",
+                "Range": 3
+              },
+              "Actions": [
+                {
+                  "Type": "State",
+                  "State": "Idle"
+                },
+                {
+                  "Type": "Log",
+                  "Message": "Resetting to idle state, close enough"
+                }
+              ]
+            },
+            {
+              "Sensor": {
+                "Type": "Target",
+                "TargetSlot": "PetOwner",
+                "Range": 500,
+                "$Comment": "Range is the maximum range of any whistle, the whistle item has an equal or lower range"
+              },
+              "BodyMotion": {
+                "Type": "Seek",
+                "SlowDownDistance": 10,
+                "StopDistance": 3,
+                "RelativeSpeed": 1,
+                "AbortDistance": 100,
+                "$Comment": "TODO - Set range properly"
+              }
+            },
+            {
+              "Sensor": {
+                "Type": "Any"
+              },
+              "Actions": [
+                {
+                  "Type": "State",
+                  "State": "Idle"
+                },
+                {
+                  "Type": "Log",
+                  "Message": "Resetting to idle state, target lost"
                 }
               ]
             }

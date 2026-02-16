@@ -6,7 +6,10 @@
       "Type": "PetOwner"
     },
     "Actions": [
-
+      {
+        "Type": "SetMarkedTarget",
+        "TargetSlot": "PetOwner"
+      },
       {
         "Type": "Timeout",
         "Delay": [
