@@ -1,1 +1,2 @@
 interactionHints.openPetDetails = Press [{key}] to open Pet Details
+interactionHints.denyNotPetOwner = You are not {name}'s owner

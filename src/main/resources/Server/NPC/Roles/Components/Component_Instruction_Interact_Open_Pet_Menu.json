@@ -14,6 +14,27 @@
     },
     "Instructions": [
       {
+        "Sensor": {
+          "Type": "Target",
+          "Filters": [
+            {
+              "Type": "Not",
+              "Filter": {
+                "Type": "PetOwner"
+              }
+            }
+          ]
+        },
+        "Actions": [
+          {
+            "$Comment": "This doesn't seem to actually work unfortunately...nothing shows up",
+            "Type": "SetInteractable",
+            "Interactable": false,
+            "Hint": "cherishedcreatures.interactionHints.denyNotPetOwner"
+          }
+        ]
+      },
+      {
         "Continue": true,
         "Sensor": {
           "Type": "Any"
