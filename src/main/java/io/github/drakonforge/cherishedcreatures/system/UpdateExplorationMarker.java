@@ -42,11 +42,11 @@ public class UpdateExplorationMarker extends DelayedEntitySystem<EntityStore> {
         if (lastMarker.closeToZero(0.1)) {
             // Initialize lastMarker to current entityPosition
             petBondComponent.setLastExplorationMarker(petPosition.x,petPosition.y,petPosition.z);
-            LOGGER.atInfo().log("Pet initial position set to %f, %f, %f",petPosition.x,petPosition.y,petPosition.z);
+            LOGGER.atInfo().log("Pet initial exploration position set to %f, %f, %f",petPosition.x,petPosition.y,petPosition.z);
 
             return;
         }
-        if (distance >= 5.0f) {
+        if (distance >= 10.0f) {
             // Trigger exploration activity event
             store.invoke(ref,new TriggerPetActivityEvent(PetActivityType.Exploring));
             petBondComponent.setLastExplorationMarker(petPosition.x,petPosition.y,petPosition.z);
@@ -59,6 +59,7 @@ public class UpdateExplorationMarker extends DelayedEntitySystem<EntityStore> {
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return null;
+
+        return Query.and(PetBondComponent.getComponentType(), TransformComponent.getComponentType());
     }
 }
