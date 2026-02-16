@@ -26,6 +26,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetStateComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 
+import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetOwner;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorBondingLevel;
@@ -139,6 +140,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         NPCPlugin npcPlugin = NPCPlugin.get();
         npcPlugin.registerCoreComponentType("BondingLevel", BuilderSensorBondingLevel::new);
         npcPlugin.registerCoreComponentType("PetFollowMode", BuilderSensorPetFollowMode::new);
+        npcPlugin.registerCoreComponentType("PetOwner", BuilderSensorPetOwner::new);
 
         config.save();
     }
