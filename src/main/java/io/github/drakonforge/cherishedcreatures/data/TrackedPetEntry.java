@@ -113,7 +113,6 @@ public class TrackedPetEntry implements Cloneable {
     }
 
     public void setEntityRef(@Nullable Ref<EntityStore> entityRef) {
-        LOGGER.atInfo().log("Setting entity ref for " + uuid + " to " + (entityRef == null ? "Null" : entityRef.getIndex()));
         this.entityRef = entityRef;
     }
 
@@ -136,7 +135,6 @@ public class TrackedPetEntry implements Cloneable {
 
     // Validates the TrackedPetEntry properties using the holder.
     private void validateTrackedPetEntry() {
-        LOGGER.atInfo().log("Validating " + uuid);
         if (holder.getComponent(DeathComponent.getComponentType()) == null) {
             if (status == Status.DEAD) {
                 setStatus(Status.UNKNOWN);
@@ -157,7 +155,6 @@ public class TrackedPetEntry implements Cloneable {
             throw new IllegalStateException("Ref is invalid or null");
         }
         setEntityRef(ref);
-        LOGGER.atInfo().log("Saving " + uuid + " from ref");
         holder = store.copyEntity(ref);
 
         // EntityStatMap.clone() currently is bugged and does not save health values. This will occur whenever the holder is created

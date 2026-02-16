@@ -38,7 +38,6 @@ public class PetUpdateTrackerSystem extends RefSystem<EntityStore> {
             LOGGER.atWarning().log("Pet tracker entry is null");
             return null;
         }
-        LOGGER.atInfo().log("Started tracking entity");
         return trackedPetEntry;
     }
 
@@ -71,7 +70,6 @@ public class PetUpdateTrackerSystem extends RefSystem<EntityStore> {
             LOGGER.atInfo().log("Loaded pet with no matching owner entry, removing it");
             commandBuffer.removeEntity(ref, RemoveReason.REMOVE);
         } else {
-            LOGGER.atInfo().log("Started tracking entity");
             trackedPetEntry.setEntityRef(ref);
 
         }

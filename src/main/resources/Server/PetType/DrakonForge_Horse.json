@@ -6,6 +6,7 @@
   "FeatureFlags": {
     "Bonding": true,
     "FollowModeControls": true,
-    "SummonControls": false
+    "SummonControls": false,
+    "AdvancedMountHandling": true
   }
 }
