@@ -118,6 +118,7 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
         Immortal(false), // Pet that cannot take damage or die, so health doesn't matter
         FollowModeControls(true),
         SummonControls(true),
+        AdvancedMountHandling(false), // If this is a mount, use the advanced handling system
         HealsOnSpawn(false);
 
         private final boolean defaultValue;

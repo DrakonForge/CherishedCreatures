@@ -19,6 +19,7 @@ import com.hypixel.hytale.server.npc.NPCPlugin;
 import io.github.drakonforge.cherishedcreatures.asset.PetActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
+import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetStateComponent;
@@ -58,6 +59,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
     private ComponentType<EntityStore, PetStateComponent> petStateComponentType;
     private ComponentType<EntityStore, PetBondComponent> petBondComponentType;
     private ComponentType<EntityStore, PetTypeComponent> petTypeComponentType;
+    private ComponentType<EntityStore, MountHandlingComponent> mountHandlingComponentType;
 
     private SystemGroup<EntityStore> filterBondingXpEventGroup;
     private SystemGroup<EntityStore> inspectBondingXpEventGroup;
@@ -120,6 +122,8 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         this.petStateComponentType = entityStoreRegistry.registerComponent(PetStateComponent.class, "PetStateComponent", PetStateComponent.CODEC);
         this.petBondComponentType = entityStoreRegistry.registerComponent(PetBondComponent.class, "PetBondComponent", PetBondComponent.CODEC);
         this.petTypeComponentType = entityStoreRegistry.registerComponent(PetTypeComponent.class, "PetType", PetTypeComponent.CODEC);
+        this.mountHandlingComponentType = entityStoreRegistry.registerComponent(
+                MountHandlingComponent.class, MountHandlingComponent::new);
 
         this.filterBondingXpEventGroup = entityStoreRegistry.registerSystemGroup();
         this.inspectBondingXpEventGroup = entityStoreRegistry.registerSystemGroup();
@@ -137,6 +141,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new ApplyBondingXpSystem());
         entityStoreRegistry.registerSystem(new NotifyBondingXpSystem());
         entityStoreRegistry.registerSystem(new UpdateBondingLevelSystem());
+        // Mount Handling
+        entityStoreRegistry.registerSystem(new RegisterMountHandlingSystem());
+        entityStoreRegistry.registerSystem(new MountHandlingTickingSystem());
 
         // Core Components
         NPCPlugin npcPlugin = NPCPlugin.get();
@@ -171,12 +178,16 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
        return this.petBondComponentType;
     }
 
-    public ResourceType<EntityStore, PetUpdateQueue> getPetUpdateQueueResourceType() {
-        return this.petUpdateQueueResourceType;
-    }
-
     public ComponentType<EntityStore, PetTypeComponent> getPetTypeComponentType() {
         return this.petTypeComponentType;
+    }
+
+    public ComponentType<EntityStore, MountHandlingComponent> getMountHandlingComponentType() {
+        return mountHandlingComponentType;
+    }
+
+    public ResourceType<EntityStore, PetUpdateQueue> getPetUpdateQueueResourceType() {
+        return this.petUpdateQueueResourceType;
     }
 
     public SystemGroup<EntityStore> getFilterBondingXpEventGroup() {

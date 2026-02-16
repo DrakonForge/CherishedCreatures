@@ -37,6 +37,7 @@ public class PetBondComponent implements Component<EntityStore> {
     public static ComponentType<EntityStore, PetBondComponent> getComponentType() {
         return CherishedCreaturesPlugin.get().getPetBondComponentType();
     }
+
     List<ObjectFloatMutablePair<String>> activityCooldowns = new ArrayList<>();
     private int bondingLevel = 0;
     private float bondingXp = 0.0f;
