@@ -56,18 +56,18 @@ public final class PetMenus {
         builder.open(playerRef, store);
     }
 
-    public static void openPetDetails(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
+    public static boolean openPetDetails(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
             @NonNullDecl PlayerRef playerRef, UUID petUuid) {
         PlayerPetTracker playerPetTracker = store.getComponent(ref, PlayerPetTracker.getComponentType());
         if (playerPetTracker == null) {
             LOGGER.atWarning().log("Pet tracker should not be null");
-            return;
+            return false;
         }
 
         TrackedPetEntry petEntry = playerPetTracker.getPetEntry(petUuid);
         if (petEntry == null) {
             LOGGER.atWarning().log("Cannot find entity " + petUuid + " for player " + playerRef.getUsername());
-            return;
+            return false;
         }
 
         PetUICard petCard = PetUICard.fromTrackedPetEntry(petEntry, store);
@@ -94,5 +94,6 @@ public final class PetMenus {
         petCard.registerPetDetailsEventListeners(builder, store, ref, playerRef, playerPetTracker, petCardHolder);
 
         builder.open(playerRef, store);
+        return true;
     }
 }

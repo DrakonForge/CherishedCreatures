@@ -2695,6 +2695,9 @@
         ]
       },
       {
+        "Reference": "Component_Instruction_Interact_Open_Pet_Menu"
+      },
+      {
         "Enabled": {
           "Compute": "IsPettable"
         },

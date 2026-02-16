@@ -1,0 +1,41 @@
+{
+  "Type": "Component",
+  "Class": "Instruction",
+  "Content":   {
+    "Sensor": {
+      "$Comment": "TODO - Should also command entity to stay still / look at player while in menu",
+      "Type": "Target",
+      "Filters": [
+        {
+          "Type": "MovementState",
+          "State": "Crouching"
+        }
+      ]
+    },
+    "Instructions": [
+      {
+        "Continue": true,
+        "Sensor": {
+          "Type": "Any"
+        },
+        "Actions": [
+          {
+            "Type": "SetInteractable",
+            "Interactable": true,
+            "Hint": "cherishedcreatures.interactionHints.openPetDetails"
+          }
+        ]
+      },
+      {
+        "Sensor": {
+          "Type": "HasInteracted"
+        },
+        "Actions": [
+          {
+            "Type": "OpenPetMenu"
+          }
+        ]
+      }
+    ]
+  }
+}

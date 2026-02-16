@@ -30,7 +30,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public record PetUICard(UUID id, String name, String roleName, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo) {
 
@@ -44,7 +46,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
 
     public record PetUIHealthInfo(float fillProgress, int value, int max) {}
 
-    public static PetUICard fromTrackedPetEntry(TrackedPetEntry entry, Store<EntityStore> store) {
+    public static PetUICard fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, @NonNullDecl Store<EntityStore> store) {
         entry.attemptSaveEntityFromLive(store);
         Holder<EntityStore> holder = entry.getHolder(false);
         PetType petType = entry.getPetType();
