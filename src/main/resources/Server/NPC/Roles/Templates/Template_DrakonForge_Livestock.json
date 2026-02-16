@@ -2779,6 +2779,10 @@
                 },
                 "Actions": [
                   {
+                    "Type": "TriggerPetActivity",
+                    "Activity": "Petting"
+                  },
+                  {
                     "Type": "PlayAnimation",
                     "Slot": "Status",
                     "Animation": {

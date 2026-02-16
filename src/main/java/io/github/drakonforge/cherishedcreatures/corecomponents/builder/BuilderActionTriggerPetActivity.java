@@ -36,7 +36,7 @@ public class BuilderActionTriggerPetActivity extends BuilderActionBase {
 
     @Override
     public Builder<Action> readConfig(@Nonnull JsonElement data) {
-        this.requireEnum(data, "ActivityType", this.activityType, PetActivityType.class, BuilderDescriptorState.Experimental, "The pet activity type to trigger", null);
+        this.requireEnum(data, "Activity", this.activityType, PetActivityType.class, BuilderDescriptorState.Experimental, "The pet activity type to trigger", null);
         return this;
     }
 

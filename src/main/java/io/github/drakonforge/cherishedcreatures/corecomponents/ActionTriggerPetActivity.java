@@ -31,7 +31,7 @@ public class ActionTriggerPetActivity extends ActionBase {
         if (petComponent == null) {
             return false;
         }
-        store.invoke(ref, new TriggerPetActivityEvent(PetActivityType.Petting));
+        store.invoke(ref, new TriggerPetActivityEvent(petActivityType));
         return true;
     }
 }
