@@ -25,9 +25,9 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     private static final AssetBuilderCodec.Builder<String, PetType> CODEC_BUILDER = AssetBuilderCodec.builder(
                     PetType.class, PetType::new, Codec.STRING, (asset, id) -> asset.id = id, PetType::getId,
                     (asset, data) -> asset.extraData = data, asset -> asset.extraData)
-            .append(new KeyedCodec<>("BondingActivities", Codec.STRING_ARRAY),
-                    (asset, bondingActivities) -> asset.bondingActivities = bondingActivities,
-                    asset -> asset.bondingActivities)
+            .append(new KeyedCodec<>("PetActivities", Codec.STRING_ARRAY),
+                    (asset, petActivities) -> asset.petActivities = petActivities,
+                    asset -> asset.petActivities)
             .documentation("TODO")
             .add()
             .append(new KeyedCodec<>("FeatureFlags", new Object2BooleanMapCodec<>(new EnumCodec<>(
@@ -44,7 +44,8 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
             .documentation("TODO");
     public static final AssetCodec<String, PetType> CODEC = CODEC_BUILDER.build();
     private static AssetStore<String, PetType, DefaultAssetMap<String, PetType>> ASSET_STORE;
-    public static final ValidatorCache<String> VALIDATOR_CACHE = new ValidatorCache<>(new AssetKeyValidator<>(BondingActivity::getAssetStore));
+    public static final ValidatorCache<String> VALIDATOR_CACHE = new ValidatorCache<>(new AssetKeyValidator<>(
+            PetActivity::getAssetStore));
 
     public enum JoinsFlock {
         Always, FollowOnly, Never
@@ -76,7 +77,7 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected AssetExtraInfo.Data extraData;
     protected Object2BooleanMap<PetFeatureFlag> featureFlags;
     // TODO: Optimize this out to a set or bit flag later
-    protected String[] bondingActivities;
+    protected String[] petActivities;
     protected float[] bondingLevelValuesOverride;
     protected JoinsFlock joinsFlock = JoinsFlock.FollowOnly;
     protected AbandonBehavior abandonBehavior = AbandonBehavior.UntameIfSpawned;
@@ -91,8 +92,8 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
 
     // TODO: Is there a way to automatically map these to BondingActivity assets?
     // TODO: Or even better, Map<BondingActivityType, BondingActivity>
-    public String[] getBondingActivities() {
-        return bondingActivities;
+    public String[] getPetActivities() {
+        return petActivities;
     }
 
     public AbandonBehavior getAbandonBehavior() {

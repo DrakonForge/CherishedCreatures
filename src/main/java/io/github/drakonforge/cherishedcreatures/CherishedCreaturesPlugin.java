@@ -16,8 +16,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.npc.NPCPlugin;
-import com.hypixel.hytale.server.npc.asset.builder.BuilderFactory;
-import io.github.drakonforge.cherishedcreatures.asset.BondingActivity;
+import io.github.drakonforge.cherishedcreatures.asset.PetActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
@@ -27,6 +26,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderActionOpenPetMenu;
+import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderActionTriggerPetActivity;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderEntityFilterPetOwner;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetOwner;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
@@ -74,7 +74,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
         // Custom Assets
         PetType.register();
-        BondingActivity.register();
+        PetActivity.register();
 
         // When player logs in, grab all the existing pets
         // TODO: When entity loads, add to tracker
@@ -130,9 +130,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new RegisterPetComponentsSystem());
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesPetSystem());
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesOwnerSystem());
-        entityStoreRegistry.registerSystem(new BondingActivityCooldownSystem());
+        entityStoreRegistry.registerSystem(new PetActivityCooldownSystem());
         entityStoreRegistry.registerSystem(new RegisterDefaultPetTypeSystem());
-        entityStoreRegistry.registerSystem(new HandleBondingActivityEventSystem());
+        entityStoreRegistry.registerSystem(new HandlePetActivityEventSystem());
         entityStoreRegistry.registerSystem(new OnPetDeathSystem());
         entityStoreRegistry.registerSystem(new ApplyBondingXpSystem());
         entityStoreRegistry.registerSystem(new NotifyBondingXpSystem());
@@ -145,6 +145,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         npcPlugin.registerCoreComponentType("PetOwner", BuilderSensorPetOwner::new);
         npcPlugin.registerCoreComponentType("OpenPetMenu", BuilderActionOpenPetMenu::new);
         npcPlugin.registerCoreComponentType("PetOwner", BuilderEntityFilterPetOwner::new);
+        npcPlugin.registerCoreComponentType("TriggerPetActivity", BuilderActionTriggerPetActivity::new);
 
         config.save();
     }

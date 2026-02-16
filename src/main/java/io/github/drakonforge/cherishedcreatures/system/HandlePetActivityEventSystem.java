@@ -7,27 +7,27 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.EntityEventSystem;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.cherishedcreatures.asset.BondingActivity;
+import io.github.drakonforge.cherishedcreatures.asset.PetActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.event.BondingXpEvent;
-import io.github.drakonforge.cherishedcreatures.event.TriggerBondingActivityEvent;
+import io.github.drakonforge.cherishedcreatures.event.TriggerPetActivityEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class HandleBondingActivityEventSystem extends EntityEventSystem<EntityStore, TriggerBondingActivityEvent> {
+public class HandlePetActivityEventSystem extends EntityEventSystem<EntityStore, TriggerPetActivityEvent> {
 
-    public HandleBondingActivityEventSystem() {
-        super(TriggerBondingActivityEvent.class);
+    public HandlePetActivityEventSystem() {
+        super(TriggerPetActivityEvent.class);
     }
 
     @Override
     public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
-            @NonNullDecl TriggerBondingActivityEvent bondingActivityEvent) {
+            @NonNullDecl TriggerPetActivityEvent petActivityEvent) {
         PetTypeComponent petTypeComponent = archetypeChunk.getComponent(i, PetTypeComponent.getComponentType());
         PetBondComponent petBondComponent = archetypeChunk.getComponent(i, PetBondComponent.getComponentType());
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
@@ -36,12 +36,12 @@ public class HandleBondingActivityEventSystem extends EntityEventSystem<EntitySt
         PetType petType = petTypeComponent.getPetType();
 
         // TODO: This would be easier if the component mapped to BondingActivity directly
-        String[] bondingActivities = petType.getBondingActivities();
+        String[] petActivities = petType.getPetActivities();
         float xpEarned = 0.0f;
-        for (String activityName : bondingActivities) {
-            BondingActivity activity = BondingActivity.getAssetStore().getAssetMap().getAsset(activityName);
-            if (activity != null && activity.getBondingActivityType() == bondingActivityEvent.getType()) {
-                if (petBondComponent.isActivityOnCooldown(activityName) && !bondingActivityEvent.isForced()) {
+        for (String activityName : petActivities) {
+            PetActivity activity = PetActivity.getAssetStore().getAssetMap().getAsset(activityName);
+            if (activity != null && activity.getPetActivityType() == petActivityEvent.getType()) {
+                if (petBondComponent.isActivityOnCooldown(activityName) && !petActivityEvent.isForced()) {
                     continue;
                 }
                 petBondComponent.setActivityCooldown(activityName, activity.getCooldown());

@@ -10,7 +10,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class BondingActivityCooldownSystem extends EntityTickingSystem<EntityStore> {
+public class PetActivityCooldownSystem extends EntityTickingSystem<EntityStore> {
 
     @NullableDecl
     @Override

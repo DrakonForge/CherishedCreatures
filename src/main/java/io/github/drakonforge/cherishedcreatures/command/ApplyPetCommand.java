@@ -12,8 +12,8 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
-import io.github.drakonforge.cherishedcreatures.data.BondingActivityType;
-import io.github.drakonforge.cherishedcreatures.event.TriggerBondingActivityEvent;
+import io.github.drakonforge.cherishedcreatures.data.PetActivityType;
+import io.github.drakonforge.cherishedcreatures.event.TriggerPetActivityEvent;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -58,7 +58,7 @@ public class ApplyPetCommand extends AbstractTargetEntityCommand {
                 continue;
             }
 
-            store.invoke(entityRef, new TriggerBondingActivityEvent(BondingActivityType.Petting));
+            store.invoke(entityRef, new TriggerPetActivityEvent(PetActivityType.Petting));
             commandContext.sendMessage(Message.raw("Successfully applied pet"));
         }
     }
