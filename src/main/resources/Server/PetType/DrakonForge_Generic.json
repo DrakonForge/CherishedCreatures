@@ -1,6 +1,10 @@
 {
   "PetActivities": [
-    "DefaultAdventuring",
+    "DefaultCombat",
+    "DefaultExploring",
+    "DefaultFeeding",
+    "DefaultFeedingFavorite",
+    "DefaultLooting",
     "DefaultPetting"
   ],
   "FeatureFlags": {

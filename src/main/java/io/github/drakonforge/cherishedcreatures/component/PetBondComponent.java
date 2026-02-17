@@ -7,6 +7,8 @@ import com.hypixel.hytale.codec.codecs.map.Object2FloatMapCodec;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.math.vector.Vector3d;
+import com.hypixel.hytale.protocol.Position;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
@@ -41,6 +43,7 @@ public class PetBondComponent implements Component<EntityStore> {
     List<ObjectFloatMutablePair<String>> activityCooldowns = new ArrayList<>();
     private int bondingLevel = 0;
     private float bondingXp = 0.0f;
+    private final Vector3d lastExplorationMarker = new Vector3d(0.0,0.0,0.0); // Set upon the exploration system's first tick
 
     private Object2FloatMap<String> saveActivityCooldowns() {
         Object2FloatMap<String> map = new Object2FloatOpenHashMap<>();
@@ -83,6 +86,17 @@ public class PetBondComponent implements Component<EntityStore> {
 
     public float getBondingXp() {
         return bondingXp;
+    }
+
+    public Vector3d getLastExplorationMarker() {
+        return this.lastExplorationMarker;
+    }
+
+    public void setLastExplorationMarker(double x, double y, double z) {
+
+        this.lastExplorationMarker.x = x;
+        this.lastExplorationMarker.y = y;
+        this.lastExplorationMarker.z = z;
     }
 
     private int getIndexForActivity(String activityName) {
