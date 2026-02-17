@@ -1187,7 +1187,17 @@
                         }
                       ]
                     },
-
+                    {
+                      "Reference": "Component_Instruction_Leash_To_Pet_Owner",
+                      "$Comment": "This should only happen in follow state only, and maybe increase speed depending on distance",
+                      "Modify": {
+                        "WanderRadius": {
+                          "Compute": "WanderRadius"
+                        },
+                        "RelativeSpeed": 0.3,
+                        "StopDistance": 3
+                      }
+                    },
                     {
                       "Reference": "Component_Instruction_Leash_To_Flock_Leader",
                       "Modify": {
@@ -2706,10 +2716,6 @@
                 {
                   "Type": "State",
                   "State": "Idle"
-                },
-                {
-                  "Type": "Log",
-                  "Message": "Resetting to idle state, close enough"
                 }
               ]
             },
@@ -2737,10 +2743,6 @@
                 {
                   "Type": "State",
                   "State": "Idle"
-                },
-                {
-                  "Type": "Log",
-                  "Message": "Resetting to idle state, target lost"
                 }
               ]
             }
