@@ -1,7 +1,8 @@
 {
   "PetActivities": [
     "DefaultAdventuring",
-    "DefaultPetting"
+    "DefaultPetting",
+    "DefaultExploring"
   ],
   "FeatureFlags": {
     "Bonding": true,
