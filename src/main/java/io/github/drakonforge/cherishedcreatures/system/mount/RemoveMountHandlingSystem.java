@@ -1,4 +1,4 @@
-package io.github.drakonforge.cherishedcreatures.system;
+package io.github.drakonforge.cherishedcreatures.system.mount;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;

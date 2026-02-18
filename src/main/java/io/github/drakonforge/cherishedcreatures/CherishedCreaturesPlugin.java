@@ -37,6 +37,14 @@ import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSe
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetFollowMode;
 import io.github.drakonforge.cherishedcreatures.system.*;
 
+import io.github.drakonforge.cherishedcreatures.system.mount.AddMountHandlingSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.DetectNpcMountSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingTickingSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.RegenerateStoredStaminaSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.RegisterNpcMountDetectionSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.RemoveMountHandlingSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.RestoreMountStaminaSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.UseMountStaminaSystem;
 import javax.annotation.Nonnull;
 
 /**
@@ -151,6 +159,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new AddMountHandlingSystem());
         entityStoreRegistry.registerSystem(new RemoveMountHandlingSystem());
         entityStoreRegistry.registerSystem(new MountHandlingTickingSystem());
+        entityStoreRegistry.registerSystem(new UseMountStaminaSystem());
+        entityStoreRegistry.registerSystem(new RestoreMountStaminaSystem());
+        entityStoreRegistry.registerSystem(new RegenerateStoredStaminaSystem());
 
         // Core Components
         NPCPlugin npcPlugin = NPCPlugin.get();

@@ -1,4 +1,4 @@
-package io.github.drakonforge.cherishedcreatures.system;
+package io.github.drakonforge.cherishedcreatures.system.mount;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -27,7 +27,7 @@ public class MountHandlingTickingSystem extends EntityTickingSystem<EntityStore>
         EntityStatValue staminaValue = entityStatMap.get(DefaultEntityStatTypes.getStamina());
         if (staminaValue != null) {
             float value = staminaValue.get();
-            LOGGER.atInfo().log("Stamina: " + value);
+            // LOGGER.atInfo().log("Stamina: " + value);
         }
     }
 

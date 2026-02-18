@@ -1,4 +1,4 @@
-package io.github.drakonforge.cherishedcreatures.system;
+package io.github.drakonforge.cherishedcreatures.system.mount;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
@@ -6,9 +6,9 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
-import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.tracker.NetworkId;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerNpcMountDetection;
 import io.github.drakonforge.cherishedcreatures.event.DismountNpcEvent;
@@ -22,7 +22,7 @@ public class DetectNpcMountSystem extends
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(Player.getComponentType(), PlayerNpcMountDetection.getComponentType());
+        return Query.and(Player.getComponentType(), PlayerNpcMountDetection.getComponentType(), EntityStatMap.getComponentType());
     }
 
     @Override
@@ -57,4 +57,5 @@ public class DetectNpcMountSystem extends
             mountDetection.setCurrentMount(newMount);
         }
     }
+
 }
