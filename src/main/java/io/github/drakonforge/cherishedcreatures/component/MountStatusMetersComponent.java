@@ -1,0 +1,45 @@
+package io.github.drakonforge.cherishedcreatures.component;
+
+import com.hypixel.hytale.component.Component;
+import com.hypixel.hytale.component.ComponentType;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin;
+import io.github.drakonforge.cherishedcreatures.data.MountStatusMeter;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+public class MountStatusMetersComponent implements Component<EntityStore> {
+
+    public static ComponentType<EntityStore, MountStatusMetersComponent> getComponentType() {
+        return CherishedCreaturesPlugin.get().getMountStatusMetersComponentType();
+    }
+
+    private final MountStatusMeter healthMeter;
+    private final MountStatusMeter staminaMeter;
+
+    public MountStatusMetersComponent() {
+        healthMeter = new MountStatusMeter(100.0f,
+                "<div style='anchor-bottom: 100; anchor-height: 100; anchor-width: 100; anchor-left: 100; background-color: #ff0000;'><p>Hello World!</p></div>");
+        staminaMeter = new MountStatusMeter(10.0f,
+                "<div style='anchor-bottom: 100; anchor-height: 100; anchor-width: 100; anchor-right: 100; background-color: #0000ff;'><p>Hello World!</p></div>");
+    }
+
+    public MountStatusMetersComponent(MountStatusMeter healthMeter, MountStatusMeter staminaMeter) {
+        this.healthMeter = healthMeter;
+        this.staminaMeter = staminaMeter;
+    }
+
+    public MountStatusMeter getHealthMeter() {
+        return healthMeter;
+    }
+
+    public MountStatusMeter getStaminaMeter() {
+        return staminaMeter;
+    }
+
+    @NullableDecl
+    @Override
+    public Component<EntityStore> clone() {
+        MountStatusMetersComponent clone = new MountStatusMetersComponent(healthMeter, staminaMeter);
+        return clone;
+    }
+}
