@@ -8,7 +8,6 @@ public class ReceivePetUpdatesEvent extends EcsEvent {
     private final List<PetUpdate> petUpdates;
     private final boolean isImmediate;
 
-
     public ReceivePetUpdatesEvent(List<PetUpdate> petUpdates, boolean isImmediate) {
         this.petUpdates = petUpdates;
         this.isImmediate = isImmediate;

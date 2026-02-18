@@ -5,8 +5,6 @@ import com.hypixel.hytale.component.system.EcsEvent;
 public class BondingXpEvent extends EcsEvent {
     private float amountGained = 0.0f;
 
-    public BondingXpEvent() {}
-
     public BondingXpEvent(float amountGained) {
         this.amountGained = amountGained;
     }

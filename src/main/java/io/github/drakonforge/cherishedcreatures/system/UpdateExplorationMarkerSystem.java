@@ -16,20 +16,22 @@ import io.github.drakonforge.cherishedcreatures.event.TriggerPetActivityEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class UpdateExplorationMarker extends DelayedEntitySystem<EntityStore> {
-    public UpdateExplorationMarker() {super(1.0f);}
+public class UpdateExplorationMarkerSystem extends DelayedEntitySystem<EntityStore> {
+
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
+    public UpdateExplorationMarkerSystem() {super(1.0f);}
+
     @Override
-    public void tick(float v,
-                     int i,
-                     @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
-                     @NonNullDecl Store<EntityStore> store,
-                     @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        PetBondComponent petBondComponent = archetypeChunk.getComponent(i, PetBondComponent.getComponentType());
+    public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+        PetBondComponent petBondComponent = archetypeChunk.getComponent(i,
+                PetBondComponent.getComponentType());
         assert petBondComponent != null;
 
-        TransformComponent petTransformComponent = archetypeChunk.getComponent(i, TransformComponent.getComponentType());
+        TransformComponent petTransformComponent = archetypeChunk.getComponent(i,
+                TransformComponent.getComponentType());
         assert petTransformComponent != null;
 
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
@@ -41,25 +43,29 @@ public class UpdateExplorationMarker extends DelayedEntitySystem<EntityStore> {
         // Should be refactored to initialize component with pet's position when given bond component
         if (lastMarker.closeToZero(0.1)) {
             // Initialize lastMarker to current entityPosition
-            petBondComponent.setLastExplorationMarker(petPosition.x,petPosition.y,petPosition.z);
-            LOGGER.atInfo().log("Pet initial exploration position set to %f, %f, %f",petPosition.x,petPosition.y,petPosition.z);
+            petBondComponent.setLastExplorationMarker(petPosition.x, petPosition.y, petPosition.z);
+            LOGGER.atInfo()
+                    .log("Pet initial exploration position set to %f, %f, %f", petPosition.x,
+                            petPosition.y, petPosition.z);
 
             return;
         }
         if (distance >= 10.0f) {
             // Trigger exploration activity event
-            store.invoke(ref,new TriggerPetActivityEvent(PetActivityType.Exploring));
-            petBondComponent.setLastExplorationMarker(petPosition.x,petPosition.y,petPosition.z);
+            commandBuffer.invoke(ref, new TriggerPetActivityEvent(PetActivityType.Exploring));
+            petBondComponent.setLastExplorationMarker(petPosition.x, petPosition.y, petPosition.z);
 
-            LOGGER.atInfo().log("Fired exploration activity for pet at %f, %f, %f",petPosition.x,petPosition.y,petPosition.z);
+            LOGGER.atInfo()
+                    .log("Fired exploration activity for pet at %f, %f, %f", petPosition.x,
+                            petPosition.y, petPosition.z);
         }
     }
-
 
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
 
-        return Query.and(PetBondComponent.getComponentType(), TransformComponent.getComponentType());
+        return Query.and(PetBondComponent.getComponentType(),
+                TransformComponent.getComponentType());
     }
 }

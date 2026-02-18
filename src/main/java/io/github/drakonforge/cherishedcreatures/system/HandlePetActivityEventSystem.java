@@ -50,7 +50,7 @@ public class HandlePetActivityEventSystem extends EntityEventSystem<EntityStore,
             }
         }
         if (xpEarned > 0.0f) {
-            store.invoke(ref, new BondingXpEvent(xpEarned));
+            commandBuffer.invoke(ref, new BondingXpEvent(xpEarned));
         }
     }
 

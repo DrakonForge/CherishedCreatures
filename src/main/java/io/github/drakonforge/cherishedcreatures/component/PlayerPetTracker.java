@@ -99,6 +99,7 @@ public class PlayerPetTracker implements Component<EntityStore> {
     @Override
     public Component<EntityStore> clone() {
         PlayerPetTracker clone = new PlayerPetTracker();
+        // TODO: Clone over the entries by value
         return clone;
     }
 }
