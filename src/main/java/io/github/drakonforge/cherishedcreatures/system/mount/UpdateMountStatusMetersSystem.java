@@ -46,16 +46,10 @@ public class UpdateMountStatusMetersSystem extends EntityTickingSystem<EntitySto
             statusMeters.getHealthMeter().setValue(healthValue.asPercentage());
         }
 
-        // TODO: There's a bug where an NPC can never drop below 2/7ths stamina due to sprinting
         EntityStatValue staminaValue = mountStatMap.get(DefaultEntityStatTypes.getStamina());
         if (staminaValue != null) {
-            statusMeters.getStaminaMeter().setValue(staminaValue.asPercentage());
-            if (staminaValue.get() < 3) {
-                MovementStates states = movementStatesComponent.getMovementStates();
-                states.sprinting = false;
-                movementStatesComponent.setMovementStates(states);
-                LOGGER.atInfo().log("STOPPING SPRINT");
-            }
+            float staminaPercentage = Math.clamp(staminaValue.get() / staminaValue.getMax(), 0.0f, 1.0f);
+            statusMeters.getStaminaMeter().setValue(staminaPercentage);
         }
     }
 

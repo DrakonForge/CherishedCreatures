@@ -114,38 +114,39 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
             }
             Store<EntityStore> store = world.getEntityStore().getStore();
             Ref<EntityStore> playerRef = event.getPlayerRef();
-            PlayerPetTracker playerPetTracker = store.getComponent(playerRef,
-                    PlayerPetTracker.getComponentType());
-            if (playerPetTracker != null) {
-                int numFound = 0;
-                for (int i = 0; i < playerPetTracker.getNumPetEntries(); ++i) {
-                    TrackedPetEntry entry = playerPetTracker.getPetEntry(i);
-                    Ref<EntityStore> existingEntity = world.getEntityStore()
-                            .getRefFromUUID(entry.getUuid());
-                    if (existingEntity != null && existingEntity.isValid()) {
-                        entry.saveEntityFromRef(store, existingEntity);
-                        numFound += 1;
+            world.execute(() -> {
+                PlayerPetTracker playerPetTracker = store.getComponent(playerRef,
+                        PlayerPetTracker.getComponentType());
+                if (playerPetTracker != null) {
+                    int numFound = 0;
+                    for (int i = 0; i < playerPetTracker.getNumPetEntries(); ++i) {
+                        TrackedPetEntry entry = playerPetTracker.getPetEntry(i);
+                        Ref<EntityStore> existingEntity = world.getEntityStore()
+                                .getRefFromUUID(entry.getUuid());
+                        if (existingEntity != null && existingEntity.isValid()) {
+                            entry.saveEntityFromRef(store, existingEntity);
+                            numFound += 1;
+                        }
                     }
+
+                    LOGGER.atInfo()
+                            .log("Retrieved " + numFound + "/" + playerPetTracker.getNumPetEntries()
+                                    + " pets for " + playerName);
+                    store.getResource(this.getPetUpdateQueueResourceType())
+                            .deliverUpdatesForPlayer(store, playerRef);
+                } else {
+                    LOGGER.atWarning().log("Pet tracker not found for " + playerName);
                 }
 
-                LOGGER.atInfo()
-                        .log("Retrieved " + numFound + "/" + playerPetTracker.getNumPetEntries()
-                                + " pets for " + playerName);
-                store.getResource(this.getPetUpdateQueueResourceType())
-                        .deliverUpdatesForPlayer(store, playerRef);
-            } else {
-                LOGGER.atWarning().log("Pet tracker not found for " + playerName);
-            }
-
-            MountStatusMetersComponent statusMeters = store.getComponent(playerRef,
-                    MountStatusMetersComponent.getComponentType());
-            if (statusMeters != null) {
-                statusMeters.getStaminaMeter().hide();
-                statusMeters.getHealthMeter().hide();
-            } else {
-                LOGGER.atWarning().log("Mount status meter component not found for " + playerName);
-            }
-
+                MountStatusMetersComponent statusMeters = store.getComponent(playerRef,
+                        MountStatusMetersComponent.getComponentType());
+                if (statusMeters != null) {
+                    statusMeters.getStaminaMeter().hide();
+                    statusMeters.getHealthMeter().hide();
+                } else {
+                    LOGGER.atWarning().log("Mount status meter component not found for " + playerName);
+                }
+            });
         });
 
         // Commands
