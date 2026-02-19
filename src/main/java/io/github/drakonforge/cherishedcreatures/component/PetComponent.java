@@ -6,7 +6,6 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.component.ComponentType;
-import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin;
 import java.util.UUID;
@@ -22,6 +21,9 @@ public class PetComponent implements Component<EntityStore> {
                     PetComponent::setOwnerUuid, PetComponent::getOwnerUuid)
             .addValidator(Validators.nonNull())
             .add()
+            .append(new KeyedCodec<>("PetName", Codec.STRING),
+                    PetComponent::setPetName, PetComponent::getPetName)
+            .add()
             .build();
 
     public static ComponentType<EntityStore, PetComponent> getComponentType() {
@@ -35,9 +37,15 @@ public class PetComponent implements Component<EntityStore> {
     }
 
     private UUID ownerUuid;
+    @Nullable
+    private String petName;
 
     public void setOwnerUuid(@Nonnull UUID ownerUuid) {
         this.ownerUuid = ownerUuid;
+    }
+
+    public void setPetName(@NullableDecl String petName) {
+        this.petName = petName;
     }
 
     @Nullable
@@ -45,11 +53,17 @@ public class PetComponent implements Component<EntityStore> {
         return ownerUuid;
     }
 
+    @Nullable
+    public String getPetName() {
+        return petName;
+    }
+
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
         PetComponent clone = new PetComponent();
         clone.ownerUuid = ownerUuid;
+        clone.petName = petName;
         return clone;
     }
 }

@@ -20,6 +20,7 @@ import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
+import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
@@ -74,15 +75,26 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         return status == Status.STORED || status == Status.ALIVE;
     }
 
+    @Nonnull
     private static String getDisplayName(Holder<EntityStore> holder) {
-        // TODO: How is this different from Nameplate?
+        PetComponent petComponent = holder.getComponent(PetComponent.getComponentType());
         DisplayNameComponent displayNameComponent = holder.getComponent(DisplayNameComponent.getComponentType());
+        if (petComponent != null) {
+            String petName = petComponent.getPetName();
+            if (petName != null) {
+                return petName;
+            }
+        }
+
+        // Fallback to display name component
         if (displayNameComponent != null) {
             Message displayName = displayNameComponent.getDisplayName();
             if (displayName != null) {
                 return displayName.getAnsiMessage();
             }
         }
+
+        // Last fallback
         return "Your Pet";
     }
 

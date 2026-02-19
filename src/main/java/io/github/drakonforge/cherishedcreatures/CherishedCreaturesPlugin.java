@@ -1,5 +1,6 @@
 package io.github.drakonforge.cherishedcreatures;
 
+import com.hypixel.hytale.component.ComponentRegistry;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Ref;
@@ -17,6 +18,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.npc.NPCPlugin;
+import com.hypixel.hytale.server.npc.systems.BalancingInitialisationSystem;
 import io.github.drakonforge.cherishedcreatures.asset.PetActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;

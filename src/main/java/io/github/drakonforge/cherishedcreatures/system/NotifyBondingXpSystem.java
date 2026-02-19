@@ -28,9 +28,7 @@ public class NotifyBondingXpSystem extends BondingXpEventSystem {
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
             @NonNullDecl BondingXpEvent bondingXpEvent) {
         PetComponent petComponent = archetypeChunk.getComponent(i, PetComponent.getComponentType());
-        DisplayNameComponent nameComponent = archetypeChunk.getComponent(i, DisplayNameComponent.getComponentType());
         assert petComponent != null;
-        assert nameComponent != null;
         UUID ownerUuid = petComponent.getOwnerUuid();
         if (ownerUuid == null) {
             LOGGER.atWarning().log("Owner UUID is null, failed to notify");
@@ -42,9 +40,7 @@ public class NotifyBondingXpSystem extends BondingXpEventSystem {
         }
 
         // TODO: Can add a throttle here where it only sends messages after reaching certain checkpoints, every 5 XP, etc.
-        Message displayName = nameComponent.getDisplayName();
-        String petName = displayName == null ? "Unnamed Pet" : displayName.getAnsiMessage();
-        player.sendMessage(Message.raw("Your pet " + petName + " earned " + bondingXpEvent.getAmountGained() + " bonding XP!"));
+        player.sendMessage(Message.raw("Your pet " + petComponent.getPetName() + " earned " + bondingXpEvent.getAmountGained() + " bonding XP!"));
 
     }
 

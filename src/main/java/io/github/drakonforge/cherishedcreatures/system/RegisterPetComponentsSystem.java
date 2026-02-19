@@ -6,6 +6,8 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefChangeSystem;
+import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
@@ -29,13 +31,20 @@ public class RegisterPetComponentsSystem extends RefChangeSystem<EntityStore, Pe
             @NonNullDecl PetComponent petComponent, @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         PetTypeComponent petTypeComponent = store.getComponent(ref, PetTypeComponent.getComponentType());
+        DisplayNameComponent displayNameComponent = store.getComponent(ref, DisplayNameComponent.getComponentType());
         assert petTypeComponent != null;
+        assert displayNameComponent != null;
         PetType petType = petTypeComponent.getPetType();
 
         // Add relevant components
         commandBuffer.ensureComponent(ref, PetStateComponent.getComponentType());
         if (petType.hasFeatureFlag(PetFeatureFlag.Bonding)) {
             commandBuffer.ensureComponent(ref, PetBondComponent.getComponentType());
+        }
+
+        Message displayName = displayNameComponent.getDisplayName();
+        if (displayName != null) {
+            petComponent.setPetName(displayNameComponent.getDisplayName().getAnsiMessage());
         }
     }
 
@@ -64,6 +73,6 @@ public class RegisterPetComponentsSystem extends RefChangeSystem<EntityStore, Pe
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return PetTypeComponent.getComponentType();
+        return Query.and(PetTypeComponent.getComponentType(), DisplayNameComponent.getComponentType());
     }
 }
