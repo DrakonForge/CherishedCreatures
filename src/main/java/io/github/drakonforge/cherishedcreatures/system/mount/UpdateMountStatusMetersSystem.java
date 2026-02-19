@@ -7,13 +7,20 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.protocol.InteractionType;
 import com.hypixel.hytale.protocol.MovementStates;
+import com.hypixel.hytale.server.core.entity.InteractionChain;
+import com.hypixel.hytale.server.core.entity.InteractionContext;
+import com.hypixel.hytale.server.core.entity.InteractionManager;
 import com.hypixel.hytale.server.core.entity.entities.player.movement.MovementConfig;
 import com.hypixel.hytale.server.core.entity.entities.player.movement.MovementManager;
 import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
+import com.hypixel.hytale.server.core.modules.entitystats.asset.EntityStatType;
+import com.hypixel.hytale.server.core.modules.interaction.InteractionModule;
+import com.hypixel.hytale.server.core.modules.interaction.interaction.config.RootInteraction;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.MountStatusMetersComponent;
@@ -35,8 +42,7 @@ public class UpdateMountStatusMetersSystem extends EntityTickingSystem<EntitySto
         }
 
         EntityStatMap mountStatMap = store.getComponent(mountRef, EntityStatMap.getComponentType());
-        MovementStatesComponent movementStatesComponent = store.getComponent(mountRef, MovementStatesComponent.getComponentType());
-        if (mountStatMap == null || movementStatesComponent == null) {
+        if (mountStatMap == null) {
             return;
         }
 
@@ -64,8 +70,35 @@ public class UpdateMountStatusMetersSystem extends EntityTickingSystem<EntitySto
         assert statusMeters != null;
         assert mountDetection != null;
 
+        PlayerRef playerRefRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
         Ref<EntityStore> mountRef = mountDetection.getCurrentMount();
         updateStatusMeters(mountRef, store, statusMeters);
+
+        // TODO: This should go into another system
+        if (mountRef == null) {
+            return;
+        }
+        EntityStatMap mountStatMap = store.getComponent(mountRef, EntityStatMap.getComponentType());
+        if (mountStatMap == null) {
+            return;
+        }
+        EntityStatValue staminaValue = mountStatMap.get(DefaultEntityStatTypes.getStamina());
+        if (staminaValue == null) {
+            return;
+        }
+        MovementManager movementManager = archetypeChunk.getComponent(i, MovementManager.getComponentType());
+        MovementStatesComponent movementStatesComponent = store.getComponent(mountRef, MovementStatesComponent.getComponentType());
+        assert movementManager != null;
+        assert movementStatesComponent != null;
+        assert playerRefRef != null;
+
+
+        if (staminaValue.get() <= 0) {
+            movementManager.getSettings().forwardSprintSpeedMultiplier = 1;
+        } else {
+            movementManager.getSettings().forwardSprintSpeedMultiplier = 1.65f; // Hardcoding in the original multiplier
+        }
+        movementManager.update(playerRefRef.getPacketHandler());
 
         // Testing some behavior
         // PlayerRef playerRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
