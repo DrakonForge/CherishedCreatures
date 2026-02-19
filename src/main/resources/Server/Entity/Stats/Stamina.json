@@ -89,6 +89,10 @@
       "Conditions": [
         {
           "Id": "Sprinting"
+        },
+        {
+          "Id": "Riding",
+          "Inverse": true
         }
       ]
     },

@@ -9,6 +9,7 @@ import com.hypixel.hytale.component.SystemGroup;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
+import com.hypixel.hytale.server.core.modules.entitystats.asset.condition.Condition;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 
@@ -37,6 +38,7 @@ import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorBondingLevel;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetFollowMode;
+import io.github.drakonforge.cherishedcreatures.stat.RidingCondition;
 import io.github.drakonforge.cherishedcreatures.system.*;
 
 import io.github.drakonforge.cherishedcreatures.system.mount.AddMountHandlingSystem;
@@ -48,6 +50,7 @@ import io.github.drakonforge.cherishedcreatures.system.mount.RegenerateStoredSta
 import io.github.drakonforge.cherishedcreatures.system.mount.RegisterNpcMountDetectionSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RemoveMountHandlingSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RestoreMountStaminaSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.SetMountStaminaDelaySystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.ShowMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.UpdateMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.UseMountStaminaSystem;
@@ -195,13 +198,14 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new AddMountHandlingSystem());
         entityStoreRegistry.registerSystem(new RemoveMountHandlingSystem());
         entityStoreRegistry.registerSystem(new MountHandlingTickingSystem());
-        entityStoreRegistry.registerSystem(new UseMountStaminaSystem());
-        entityStoreRegistry.registerSystem(new RestoreMountStaminaSystem());
-        entityStoreRegistry.registerSystem(new RegenerateStoredStaminaSystem());
+        // entityStoreRegistry.registerSystem(new UseMountStaminaSystem());
+        // entityStoreRegistry.registerSystem(new RestoreMountStaminaSystem());
+        // entityStoreRegistry.registerSystem(new RegenerateStoredStaminaSystem());
         entityStoreRegistry.registerSystem(new EnsureMountStatusMetersSystem());
         entityStoreRegistry.registerSystem(new ShowMountStatusMetersSystem());
         entityStoreRegistry.registerSystem(new HideMountStatusMetersSystem());
         entityStoreRegistry.registerSystem(new UpdateMountStatusMetersSystem());
+        entityStoreRegistry.registerSystem(new SetMountStaminaDelaySystem());
 
         // Core Components
         NPCPlugin npcPlugin = NPCPlugin.get();
@@ -212,6 +216,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         npcPlugin.registerCoreComponentType("PetOwner", BuilderEntityFilterPetOwner::new);
         npcPlugin.registerCoreComponentType("TriggerPetActivity",
                 BuilderActionTriggerPetActivity::new);
+
+        // Entity Stats
+        Condition.CODEC.register("Riding", RidingCondition.class, RidingCondition.CODEC);
 
         config.save();
     }
