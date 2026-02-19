@@ -6,21 +6,19 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
-import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
 import com.hypixel.hytale.server.core.modules.entity.stamina.SprintStaminaRegenDelay;
 import com.hypixel.hytale.server.core.modules.entity.stamina.StaminaModule;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
 import io.github.drakonforge.cherishedcreatures.component.MountedActiveComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerNpcMountDetection;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class SetMountStaminaDelaySystem extends EntityTickingSystem<EntityStore> {
-    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-
+public class SetMountHandlingStaminaDelaySystem extends EntityTickingSystem<EntityStore> {
     @Override
     public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
             @NonNullDecl Store<EntityStore> store,
@@ -52,6 +50,7 @@ public class SetMountStaminaDelaySystem extends EntityTickingSystem<EntityStore>
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(PlayerNpcMountDetection.getComponentType(), MountedActiveComponent.getComponentType());
+        return Query.and(PlayerNpcMountDetection.getComponentType(), MountedActiveComponent.getComponentType(),
+                MountHandlingComponent.getComponentType());
     }
 }

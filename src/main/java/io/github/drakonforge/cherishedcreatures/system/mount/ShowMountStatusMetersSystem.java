@@ -6,7 +6,9 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.MountStatusMetersComponent;
+import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.event.MountNpcEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -22,12 +24,23 @@ public class ShowMountStatusMetersSystem extends MountNpcEventSystem {
         assert statusMeters != null;
 
         Ref<EntityStore> mountRef = mountNpcEvent.getNewMountRef();
+        PetTypeComponent petTypeComponent = store.getComponent(mountRef, PetTypeComponent.getComponentType());
+        boolean showStamina = false;
+        boolean showHealth = true;
+
+        if (petTypeComponent != null) {
+            showStamina = petTypeComponent.getPetType().hasFeatureFlag(PetFeatureFlag.AdvancedMountHandling);
+            showHealth = !petTypeComponent.getPetType().hasFeatureFlag(PetFeatureFlag.Immortal);
+        }
+
         UpdateMountStatusMetersSystem.updateStatusMeters(mountRef, store, statusMeters);
 
-        // TODO: Can put in some conditions here for if the meters should actually show up, perhaps based on pet type
-        statusMeters.getHealthMeter().show();
-        statusMeters.getStaminaMeter().show();
-
+        if (showStamina) {
+            statusMeters.getStaminaMeter().show();
+        }
+        if (showHealth) {
+            statusMeters.getHealthMeter().show();
+        }
     }
 
     @NullableDecl

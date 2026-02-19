@@ -33,5 +33,7 @@ public class RemoveMountHandlingSystem extends DismountNpcEventSystem {
         Ref<EntityStore> playerRef = archetypeChunk.getReferenceTo(i);
         commandBuffer.tryRemoveComponent(playerRef, MountHandlingComponent.getComponentType());
 
+        // TODO: Look into if we need to remove this when the player dies on the mount
+
     }
 }
