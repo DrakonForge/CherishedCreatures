@@ -2,6 +2,7 @@ package io.github.drakonforge.cherishedcreatures.system.mount;
 
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -19,9 +20,14 @@ public class ShowMountStatusMetersSystem extends MountNpcEventSystem {
             @NonNullDecl MountNpcEvent mountNpcEvent) {
         MountStatusMetersComponent statusMeters = archetypeChunk.getComponent(i, MountStatusMetersComponent.getComponentType());
         assert statusMeters != null;
+
+        Ref<EntityStore> mountRef = mountNpcEvent.getNewMountRef();
+        UpdateMountStatusMetersSystem.updateStatusMeters(mountRef, store, statusMeters);
+
         // TODO: Can put in some conditions here for if the meters should actually show up, perhaps based on pet type
         statusMeters.getHealthMeter().show();
         statusMeters.getStaminaMeter().show();
+
     }
 
     @NullableDecl

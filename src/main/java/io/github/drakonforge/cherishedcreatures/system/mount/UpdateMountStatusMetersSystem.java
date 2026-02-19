@@ -21,16 +21,9 @@ public class UpdateMountStatusMetersSystem extends EntityTickingSystem<EntitySto
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
-    @Override
-    public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+    public static void updateStatusMeters(Ref<EntityStore> mountRef,
             @NonNullDecl Store<EntityStore> store,
-            @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        MountStatusMetersComponent statusMeters = archetypeChunk.getComponent(i, MountStatusMetersComponent.getComponentType());
-        PlayerNpcMountDetection mountDetection = archetypeChunk.getComponent(i, PlayerNpcMountDetection.getComponentType());
-        assert statusMeters != null;
-        assert mountDetection != null;
-
-        Ref<EntityStore> mountRef = mountDetection.getCurrentMount();
+            @NonNullDecl MountStatusMetersComponent statusMeters) {
         if (mountRef == null || !mountRef.isValid()) {
             LOGGER.atWarning().log("Mount ref should exist but does not");
             return;
@@ -53,10 +46,26 @@ public class UpdateMountStatusMetersSystem extends EntityTickingSystem<EntitySto
         }
     }
 
+    @Override
+    public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+        MountStatusMetersComponent statusMeters = archetypeChunk.getComponent(i,
+                MountStatusMetersComponent.getComponentType());
+        PlayerNpcMountDetection mountDetection = archetypeChunk.getComponent(i,
+                PlayerNpcMountDetection.getComponentType());
+        assert statusMeters != null;
+        assert mountDetection != null;
+
+        Ref<EntityStore> mountRef = mountDetection.getCurrentMount();
+        updateStatusMeters(mountRef, store, statusMeters);
+    }
+
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(MountedActiveComponent.getComponentType(), MountStatusMetersComponent.getComponentType(),
+        return Query.and(MountedActiveComponent.getComponentType(),
+                MountStatusMetersComponent.getComponentType(),
                 PlayerNpcMountDetection.getComponentType());
     }
 }
