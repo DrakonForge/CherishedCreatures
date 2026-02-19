@@ -10,6 +10,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.tracker.NetworkId;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.component.MountedActiveComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerNpcMountDetection;
 import io.github.drakonforge.cherishedcreatures.event.DismountNpcEvent;
 import io.github.drakonforge.cherishedcreatures.event.MountNpcEvent;
@@ -40,6 +41,7 @@ public class DetectNpcMountSystem extends
             if (previousMount != null && previousMount.isValid()) {
                 // Mount no longer exists
                 commandBuffer.invoke(playerRef, new DismountNpcEvent(previousMount));
+                commandBuffer.tryRemoveComponent(playerRef, MountedActiveComponent.getComponentType());
                 mountDetection.setCurrentMount(null);
             }
         } else {
@@ -51,9 +53,11 @@ public class DetectNpcMountSystem extends
                 }
                 // Mount has changed
                 commandBuffer.invoke(playerRef, new DismountNpcEvent(previousMount));
+                commandBuffer.tryRemoveComponent(playerRef, MountedActiveComponent.getComponentType());
             }
             // Mount now exists
             commandBuffer.invoke(playerRef, new MountNpcEvent(newMount));
+            commandBuffer.ensureComponent(playerRef, MountedActiveComponent.getComponentType());
             mountDetection.setCurrentMount(newMount);
         }
     }

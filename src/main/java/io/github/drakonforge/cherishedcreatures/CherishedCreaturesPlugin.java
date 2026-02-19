@@ -21,6 +21,7 @@ import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
 import io.github.drakonforge.cherishedcreatures.component.MountStatusMetersComponent;
+import io.github.drakonforge.cherishedcreatures.component.MountedActiveComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetStateComponent;
@@ -48,12 +49,13 @@ import io.github.drakonforge.cherishedcreatures.system.mount.RegisterNpcMountDet
 import io.github.drakonforge.cherishedcreatures.system.mount.RemoveMountHandlingSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RestoreMountStaminaSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.ShowMountStatusMetersSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.UpdateMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.UseMountStaminaSystem;
 import javax.annotation.Nonnull;
 
 /**
- * This class serves as the entrypoint for your plugin. Use the setup method to register into game registries or add
- * event listeners.
+ * This class serves as the entrypoint for your plugin. Use the setup method to register into game
+ * registries or add event listeners.
  */
 public class CherishedCreaturesPlugin extends JavaPlugin {
 
@@ -75,6 +77,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
     private ComponentType<EntityStore, MountHandlingComponent> mountHandlingComponentType;
     private ComponentType<EntityStore, PlayerNpcMountDetection> playerNpcMountDetectionComponentType;
     private ComponentType<EntityStore, MountStatusMetersComponent> mountStatusMetersComponentType;
+    private ComponentType<EntityStore, MountedActiveComponent> mountedActiveComponentType;
 
     private SystemGroup<EntityStore> filterBondingXpEventGroup;
     private SystemGroup<EntityStore> inspectBondingXpEventGroup;
@@ -87,7 +90,10 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
     @Override
     protected void setup() {
         instance = this;
-        LOGGER.atInfo().log("Setting up plugin " + this.getName() + " version " + this.getManifest().getVersion().toString());
+        LOGGER.atInfo()
+                .log("Setting up plugin " + this.getName() + " version " + this.getManifest()
+                        .getVersion()
+                        .toString());
 
         // Custom Assets
         PetType.register();
@@ -106,25 +112,31 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
             }
             Store<EntityStore> store = world.getEntityStore().getStore();
             Ref<EntityStore> playerRef = event.getPlayerRef();
-            PlayerPetTracker playerPetTracker = store.getComponent(playerRef, PlayerPetTracker.getComponentType());
+            PlayerPetTracker playerPetTracker = store.getComponent(playerRef,
+                    PlayerPetTracker.getComponentType());
             if (playerPetTracker != null) {
                 int numFound = 0;
                 for (int i = 0; i < playerPetTracker.getNumPetEntries(); ++i) {
                     TrackedPetEntry entry = playerPetTracker.getPetEntry(i);
-                    Ref<EntityStore> existingEntity = world.getEntityStore().getRefFromUUID(entry.getUuid());
+                    Ref<EntityStore> existingEntity = world.getEntityStore()
+                            .getRefFromUUID(entry.getUuid());
                     if (existingEntity != null && existingEntity.isValid()) {
                         entry.saveEntityFromRef(store, existingEntity);
                         numFound += 1;
                     }
                 }
 
-                LOGGER.atInfo().log("Retrieved " + numFound + "/" + playerPetTracker.getNumPetEntries() + " pets for " + playerName);
-                store.getResource(this.getPetUpdateQueueResourceType()).deliverUpdatesForPlayer(store, playerRef);
+                LOGGER.atInfo()
+                        .log("Retrieved " + numFound + "/" + playerPetTracker.getNumPetEntries()
+                                + " pets for " + playerName);
+                store.getResource(this.getPetUpdateQueueResourceType())
+                        .deliverUpdatesForPlayer(store, playerRef);
             } else {
                 LOGGER.atWarning().log("Pet tracker not found for " + playerName);
             }
 
-            MountStatusMetersComponent statusMeters = store.getComponent(playerRef, MountStatusMetersComponent.getComponentType());
+            MountStatusMetersComponent statusMeters = store.getComponent(playerRef,
+                    MountStatusMetersComponent.getComponentType());
             if (statusMeters != null) {
                 statusMeters.getStaminaMeter().hide();
                 statusMeters.getHealthMeter().hide();
@@ -139,18 +151,26 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
         // Components
         ComponentRegistryProxy<EntityStore> entityStoreRegistry = this.getEntityStoreRegistry();
-        this.petUpdateQueueResourceType = entityStoreRegistry.registerResource(PetUpdateQueue.class, "PetUpdateQueue", PetUpdateQueue.CODEC);
+        this.petUpdateQueueResourceType = entityStoreRegistry.registerResource(PetUpdateQueue.class,
+                "PetUpdateQueue", PetUpdateQueue.CODEC);
 
-        this.playerPetTrackerComponentType = entityStoreRegistry.registerComponent(PlayerPetTracker.class, "PlayerPetTracker", PlayerPetTracker.CODEC);
-        this.petComponentType = entityStoreRegistry.registerComponent(PetComponent.class, "PetComponent", PetComponent.CODEC);
-        this.petStateComponentType = entityStoreRegistry.registerComponent(PetStateComponent.class, "PetStateComponent", PetStateComponent.CODEC);
-        this.petBondComponentType = entityStoreRegistry.registerComponent(PetBondComponent.class, "PetBondComponent", PetBondComponent.CODEC);
-        this.petTypeComponentType = entityStoreRegistry.registerComponent(PetTypeComponent.class, "PetType", PetTypeComponent.CODEC);
+        this.playerPetTrackerComponentType = entityStoreRegistry.registerComponent(
+                PlayerPetTracker.class, "PlayerPetTracker", PlayerPetTracker.CODEC);
+        this.petComponentType = entityStoreRegistry.registerComponent(PetComponent.class,
+                "PetComponent", PetComponent.CODEC);
+        this.petStateComponentType = entityStoreRegistry.registerComponent(PetStateComponent.class,
+                "PetStateComponent", PetStateComponent.CODEC);
+        this.petBondComponentType = entityStoreRegistry.registerComponent(PetBondComponent.class,
+                "PetBondComponent", PetBondComponent.CODEC);
+        this.petTypeComponentType = entityStoreRegistry.registerComponent(PetTypeComponent.class,
+                "PetType", PetTypeComponent.CODEC);
         this.mountHandlingComponentType = entityStoreRegistry.registerComponent(
                 MountHandlingComponent.class, MountHandlingComponent::new);
-        this.playerNpcMountDetectionComponentType = entityStoreRegistry.registerComponent(PlayerNpcMountDetection.class, PlayerNpcMountDetection::new);
+        this.playerNpcMountDetectionComponentType = entityStoreRegistry.registerComponent(
+                PlayerNpcMountDetection.class, PlayerNpcMountDetection::new);
         this.mountStatusMetersComponentType = entityStoreRegistry.registerComponent(
                 MountStatusMetersComponent.class, MountStatusMetersComponent::new);
+        this.mountedActiveComponentType = entityStoreRegistry.registerComponent(MountedActiveComponent.class, () -> MountedActiveComponent.INSTANCE);
 
         this.filterBondingXpEventGroup = entityStoreRegistry.registerSystemGroup();
         this.inspectBondingXpEventGroup = entityStoreRegistry.registerSystemGroup();
@@ -181,6 +201,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new EnsureMountStatusMetersSystem());
         entityStoreRegistry.registerSystem(new ShowMountStatusMetersSystem());
         entityStoreRegistry.registerSystem(new HideMountStatusMetersSystem());
+        entityStoreRegistry.registerSystem(new UpdateMountStatusMetersSystem());
 
         // Core Components
         NPCPlugin npcPlugin = NPCPlugin.get();
@@ -189,7 +210,8 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         npcPlugin.registerCoreComponentType("PetOwner", BuilderSensorPetOwner::new);
         npcPlugin.registerCoreComponentType("OpenPetMenu", BuilderActionOpenPetMenu::new);
         npcPlugin.registerCoreComponentType("PetOwner", BuilderEntityFilterPetOwner::new);
-        npcPlugin.registerCoreComponentType("TriggerPetActivity", BuilderActionTriggerPetActivity::new);
+        npcPlugin.registerCoreComponentType("TriggerPetActivity",
+                BuilderActionTriggerPetActivity::new);
 
         config.save();
     }
@@ -212,7 +234,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
     }
 
     public ComponentType<EntityStore, PetBondComponent> getPetBondComponentType() {
-       return this.petBondComponentType;
+        return this.petBondComponentType;
     }
 
     public ComponentType<EntityStore, PetTypeComponent> getPetTypeComponentType() {
@@ -229,6 +251,10 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
     public ComponentType<EntityStore, MountStatusMetersComponent> getMountStatusMetersComponentType() {
         return mountStatusMetersComponentType;
+    }
+
+    public ComponentType<EntityStore, MountedActiveComponent> getMountedActiveComponentType() {
+        return mountedActiveComponentType;
     }
 
     public ResourceType<EntityStore, PetUpdateQueue> getPetUpdateQueueResourceType() {

@@ -19,6 +19,7 @@ public class ShowMountStatusMetersSystem extends MountNpcEventSystem {
             @NonNullDecl MountNpcEvent mountNpcEvent) {
         MountStatusMetersComponent statusMeters = archetypeChunk.getComponent(i, MountStatusMetersComponent.getComponentType());
         assert statusMeters != null;
+        // TODO: Can put in some conditions here for if the meters should actually show up, perhaps based on pet type
         statusMeters.getHealthMeter().show();
         statusMeters.getStaminaMeter().show();
     }

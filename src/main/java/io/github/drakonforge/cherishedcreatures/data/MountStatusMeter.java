@@ -18,7 +18,7 @@ public class MountStatusMeter {
 
     public MountStatusMeter(String htmlPath) {
         data = new TemplateProcessor().setVariable(KEY_VALUE, 1.0f);
-        hudBuilder = HudBuilder.detachedHud().enableRuntimeTemplateUpdates(true).loadHtml(htmlPath, data);
+        hudBuilder = HudBuilder.detachedHud().enableRuntimeTemplateUpdates(true).withRefreshRate(5).loadHtml(htmlPath, data);
     }
 
     public void setValue(float value) {

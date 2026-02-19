@@ -1,23 +1,24 @@
 {
-    "Group": "DrakonForge",
-    "Name": "CherishedCreatures",
-    "Version": "1.0.0",
-    "Description": "A pet bonding and companionship system.",
-    "Authors": [
-        {
-            "Name": "Drakon",
-            "Url": "https://github.com/Drakonkinst"
-        }
-    ],
-    "Website": "https://github.com/DrakonForge",
-    "ServerVersion": "*",
-    "Dependencies": {
-        "Hytale:NPC": "*"
-    },
-    "OptionalDependencies": {
-        
-    },
-    "DisabledByDefault": false,
-    "IncludesAssetPack": true,
-    "Main": "io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin"
+  "Group": "DrakonForge",
+  "Name": "CherishedCreatures",
+  "Version": "1.0.0",
+  "Description": "A pet bonding and companionship system.",
+  "Authors": [
+    {
+      "Name": "Drakon",
+      "Email": "",
+      "Url": "https://github.com/Drakonkinst"
+    }
+  ],
+  "Website": "https://github.com/DrakonForge",
+  "Main": "io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin",
+  "ServerVersion": "2026.02.18-f3b8fff95",
+  "Dependencies": {
+    "Hytale:NPC": ""
+  },
+  "OptionalDependencies": {},
+  "LoadBefore": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": true,
+  "SubPlugins": []
 }
