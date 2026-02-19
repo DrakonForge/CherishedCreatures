@@ -17,12 +17,8 @@ import io.github.drakonforge.cherishedcreatures.event.DismountNpcEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class RestoreMountStaminaSystem extends EntityEventSystem<EntityStore, DismountNpcEvent> {
+public class RestoreMountStaminaSystem extends DismountNpcEventSystem {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-
-    public RestoreMountStaminaSystem() {
-        super(DismountNpcEvent.class);
-    }
 
     @Override
     public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,

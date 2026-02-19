@@ -1,0 +1,30 @@
+<style>
+  .screen-container {
+    anchor-height: 12;
+    anchor-width: 622;
+    anchor-bottom: 140;
+    layout-mode: Left;
+  }
+
+  .screen-half {
+    flex-weight: 1;
+    layout-mode: Right;
+  }
+
+  .meter-container {
+    flex-weight: 1;
+    anchor-right: 15;
+  }
+
+  .meter {
+    background-image: url('Assets/Hytale/HealthBackground.png');
+  }
+</style>
+<div class="screen-container">
+  <div class="screen-half">
+    <div class="meter-container" id="meter-container">
+      <progress class="meter" value="0.5" max="1.0" data-hyui-bar-texture-path="Assets/Hytale/HealthBarFill.png" data-hyui-effect-texture-path="Assets/Hytale/HealthBarEffect.png" data-hyui-direction="Start"></progress>
+    </div>
+  </div>
+  <div class="screen-half"></div>
+</div>

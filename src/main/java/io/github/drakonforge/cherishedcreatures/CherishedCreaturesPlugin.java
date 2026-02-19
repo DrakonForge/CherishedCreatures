@@ -41,11 +41,13 @@ import io.github.drakonforge.cherishedcreatures.system.*;
 import io.github.drakonforge.cherishedcreatures.system.mount.AddMountHandlingSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.DetectNpcMountSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.EnsureMountStatusMetersSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.HideMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingTickingSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RegenerateStoredStaminaSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RegisterNpcMountDetectionSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RemoveMountHandlingSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RestoreMountStaminaSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.ShowMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.UseMountStaminaSystem;
 import javax.annotation.Nonnull;
 
@@ -105,22 +107,31 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
             Store<EntityStore> store = world.getEntityStore().getStore();
             Ref<EntityStore> playerRef = event.getPlayerRef();
             PlayerPetTracker playerPetTracker = store.getComponent(playerRef, PlayerPetTracker.getComponentType());
-            if (playerPetTracker == null) {
-                LOGGER.atWarning().log("Pet tracker not found for " + playerName);
-                return;
-            }
-            int numFound = 0;
-            for (int i = 0; i < playerPetTracker.getNumPetEntries(); ++i) {
-                TrackedPetEntry entry = playerPetTracker.getPetEntry(i);
-                Ref<EntityStore> existingEntity = world.getEntityStore().getRefFromUUID(entry.getUuid());
-                if (existingEntity != null && existingEntity.isValid()) {
-                    entry.saveEntityFromRef(store, existingEntity);
-                    numFound += 1;
+            if (playerPetTracker != null) {
+                int numFound = 0;
+                for (int i = 0; i < playerPetTracker.getNumPetEntries(); ++i) {
+                    TrackedPetEntry entry = playerPetTracker.getPetEntry(i);
+                    Ref<EntityStore> existingEntity = world.getEntityStore().getRefFromUUID(entry.getUuid());
+                    if (existingEntity != null && existingEntity.isValid()) {
+                        entry.saveEntityFromRef(store, existingEntity);
+                        numFound += 1;
+                    }
                 }
+
+                LOGGER.atInfo().log("Retrieved " + numFound + "/" + playerPetTracker.getNumPetEntries() + " pets for " + playerName);
+                store.getResource(this.getPetUpdateQueueResourceType()).deliverUpdatesForPlayer(store, playerRef);
+            } else {
+                LOGGER.atWarning().log("Pet tracker not found for " + playerName);
             }
 
-            LOGGER.atInfo().log("Retrieved " + numFound + "/" + playerPetTracker.getNumPetEntries() + " pets for " + playerName);
-            store.getResource(this.getPetUpdateQueueResourceType()).deliverUpdatesForPlayer(store, playerRef);
+            MountStatusMetersComponent statusMeters = store.getComponent(playerRef, MountStatusMetersComponent.getComponentType());
+            if (statusMeters != null) {
+                statusMeters.getStaminaMeter().hide();
+                statusMeters.getHealthMeter().hide();
+            } else {
+                LOGGER.atWarning().log("Mount status meter component not found for " + playerName);
+            }
+
         });
 
         // Commands
@@ -168,6 +179,8 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new RestoreMountStaminaSystem());
         entityStoreRegistry.registerSystem(new RegenerateStoredStaminaSystem());
         entityStoreRegistry.registerSystem(new EnsureMountStatusMetersSystem());
+        entityStoreRegistry.registerSystem(new ShowMountStatusMetersSystem());
+        entityStoreRegistry.registerSystem(new HideMountStatusMetersSystem());
 
         // Core Components
         NPCPlugin npcPlugin = NPCPlugin.get();

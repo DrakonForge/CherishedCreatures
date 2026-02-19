@@ -20,12 +20,8 @@ import io.github.drakonforge.cherishedcreatures.event.MountNpcEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class UseMountStaminaSystem extends EntityEventSystem<EntityStore, MountNpcEvent> {
+public class UseMountStaminaSystem extends MountNpcEventSystem {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-
-    public UseMountStaminaSystem() {
-        super(MountNpcEvent.class);
-    }
 
     @Override
     public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,

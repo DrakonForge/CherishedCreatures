@@ -14,13 +14,9 @@ import io.github.drakonforge.cherishedcreatures.event.DismountNpcEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class RemoveMountHandlingSystem extends EntityEventSystem<EntityStore, DismountNpcEvent> {
+public class RemoveMountHandlingSystem extends DismountNpcEventSystem {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-
-    public RemoveMountHandlingSystem() {
-        super(DismountNpcEvent.class);
-    }
 
     @NullableDecl
     @Override

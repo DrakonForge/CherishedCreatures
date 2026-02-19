@@ -17,10 +17,8 @@ public class MountStatusMetersComponent implements Component<EntityStore> {
     private final MountStatusMeter staminaMeter;
 
     public MountStatusMetersComponent() {
-        healthMeter = new MountStatusMeter(100.0f,
-                "<div style='anchor-bottom: 100; anchor-height: 100; anchor-width: 100; anchor-left: 100; background-color: #ff0000;'><p>Hello World!</p></div>");
-        staminaMeter = new MountStatusMeter(10.0f,
-                "<div style='anchor-bottom: 100; anchor-height: 100; anchor-width: 100; anchor-right: 100; background-color: #0000ff;'><p>Hello World!</p></div>");
+        healthMeter = new MountStatusMeter("Hud/MountHealthMeter.html");
+        staminaMeter = new MountStatusMeter("Hud/MountStaminaMeter.html");
     }
 
     public MountStatusMetersComponent(MountStatusMeter healthMeter, MountStatusMeter staminaMeter) {
@@ -39,7 +37,8 @@ public class MountStatusMetersComponent implements Component<EntityStore> {
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
-        MountStatusMetersComponent clone = new MountStatusMetersComponent(healthMeter, staminaMeter);
+        MountStatusMetersComponent clone = new MountStatusMetersComponent(healthMeter,
+                staminaMeter);
         return clone;
     }
 }

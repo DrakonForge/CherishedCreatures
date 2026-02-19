@@ -17,13 +17,9 @@ import io.github.drakonforge.cherishedcreatures.event.MountNpcEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class AddMountHandlingSystem extends EntityEventSystem<EntityStore, MountNpcEvent> {
+public class AddMountHandlingSystem extends MountNpcEventSystem {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-
-    public AddMountHandlingSystem() {
-        super(MountNpcEvent.class);
-    }
 
     @NullableDecl
     @Override
