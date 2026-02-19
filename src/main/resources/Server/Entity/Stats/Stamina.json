@@ -83,6 +83,20 @@
     },
     {
       "Interval": 0.1,
+      "Amount": -0.2,
+      "ClampAtZero": true,
+      "RegenType": "Additive",
+      "Conditions": [
+        {
+          "Id": "Mount"
+        },
+        {
+          "Id": "Sprinting"
+        }
+      ]
+    },
+    {
+      "Interval": 0.1,
       "Amount": -0.1,
       "ClampAtZero": true,
       "RegenType": "Additive",
@@ -92,6 +106,10 @@
         },
         {
           "Id": "Riding",
+          "Inverse": true
+        },
+        {
+          "Id": "Mount",
           "Inverse": true
         }
       ]

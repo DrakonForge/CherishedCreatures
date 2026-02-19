@@ -1,6 +1,5 @@
 package io.github.drakonforge.cherishedcreatures;
 
-import com.hypixel.hytale.component.ComponentRegistry;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Ref;
@@ -18,7 +17,6 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.npc.NPCPlugin;
-import com.hypixel.hytale.server.npc.systems.BalancingInitialisationSystem;
 import io.github.drakonforge.cherishedcreatures.asset.PetActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
@@ -40,11 +38,13 @@ import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorBondingLevel;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetFollowMode;
+import io.github.drakonforge.cherishedcreatures.stat.MountCondition;
 import io.github.drakonforge.cherishedcreatures.stat.RidingCondition;
 import io.github.drakonforge.cherishedcreatures.system.*;
 
 import io.github.drakonforge.cherishedcreatures.system.mount.AddMountHandlingSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.DetectNpcMountSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.DismountOnNpcMountDeath;
 import io.github.drakonforge.cherishedcreatures.system.mount.EnsureMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.HideMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingTickingSystem;
@@ -202,6 +202,8 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new HideMountStatusMetersSystem());
         entityStoreRegistry.registerSystem(new UpdateMountStatusMetersSystem());
         entityStoreRegistry.registerSystem(new SetMountStaminaDelaySystem());
+        // entityStoreRegistry.registerSystem(new MountHandlingInputSystem());
+        entityStoreRegistry.registerSystem(new DismountOnNpcMountDeath());
 
         // Core Components
         NPCPlugin npcPlugin = NPCPlugin.get();
@@ -215,6 +217,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
         // Entity Stats
         Condition.CODEC.register("Riding", RidingCondition.class, RidingCondition.CODEC);
+        Condition.CODEC.register("Mount", MountCondition.class, MountCondition.CODEC);
 
         config.save();
     }

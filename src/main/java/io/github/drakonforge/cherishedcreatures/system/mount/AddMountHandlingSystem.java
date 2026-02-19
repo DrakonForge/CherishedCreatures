@@ -32,7 +32,6 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer,
             @NonNullDecl MountNpcEvent mountNpcEvent) {
-        LOGGER.atInfo().log("MOUNTED NPC");
         Ref<EntityStore> mountRef = mountNpcEvent.getNewMountRef();
         Ref<EntityStore> playerRef = archetypeChunk.getReferenceTo(i);
         PetTypeComponent petTypeComponent = store.getComponent(mountRef, PetTypeComponent.getComponentType());

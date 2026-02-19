@@ -7,9 +7,14 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.protocol.MovementStates;
+import com.hypixel.hytale.server.core.entity.entities.player.movement.MovementConfig;
+import com.hypixel.hytale.server.core.entity.entities.player.movement.MovementManager;
+import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.MountStatusMetersComponent;
 import io.github.drakonforge.cherishedcreatures.component.MountedActiveComponent;
@@ -30,7 +35,8 @@ public class UpdateMountStatusMetersSystem extends EntityTickingSystem<EntitySto
         }
 
         EntityStatMap mountStatMap = store.getComponent(mountRef, EntityStatMap.getComponentType());
-        if (mountStatMap == null) {
+        MovementStatesComponent movementStatesComponent = store.getComponent(mountRef, MovementStatesComponent.getComponentType());
+        if (mountStatMap == null || movementStatesComponent == null) {
             return;
         }
 
@@ -40,9 +46,16 @@ public class UpdateMountStatusMetersSystem extends EntityTickingSystem<EntitySto
             statusMeters.getHealthMeter().setValue(healthValue.asPercentage());
         }
 
+        // TODO: There's a bug where an NPC can never drop below 2/7ths stamina due to sprinting
         EntityStatValue staminaValue = mountStatMap.get(DefaultEntityStatTypes.getStamina());
         if (staminaValue != null) {
             statusMeters.getStaminaMeter().setValue(staminaValue.asPercentage());
+            if (staminaValue.get() < 3) {
+                MovementStates states = movementStatesComponent.getMovementStates();
+                states.sprinting = false;
+                movementStatesComponent.setMovementStates(states);
+                LOGGER.atInfo().log("STOPPING SPRINT");
+            }
         }
     }
 
@@ -59,6 +72,39 @@ public class UpdateMountStatusMetersSystem extends EntityTickingSystem<EntitySto
 
         Ref<EntityStore> mountRef = mountDetection.getCurrentMount();
         updateStatusMeters(mountRef, store, statusMeters);
+
+        // Testing some behavior
+        // PlayerRef playerRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
+        // MovementManager manager = archetypeChunk.getComponent(i, MovementManager.getComponentType());
+        // MovementStatesComponent movementStatesComponent = archetypeChunk.getComponent(i, MovementStatesComponent.getComponentType());
+        // assert movementStatesComponent != null;
+        // assert playerRef != null;
+        // assert manager != null;
+        // if (movementStatesComponent.getMovementStates().walking) {
+        //     LOGGER.atInfo().log("WALKING");
+        //     manager.getSettings().baseSpeed = 0;
+        // } else if (movementStatesComponent.getMovementStates().sprinting) {
+        //     LOGGER.atInfo().log("SPRINTING");
+        //     manager.getSettings().baseSpeed = 20;
+        // } else {
+        //     LOGGER.atInfo().log("RUNNING");
+        //     manager.getSettings().baseSpeed = 10;
+        // }
+        // MovementStatesComponent movementStatesComponent1 = archetypeChunk.getComponent(i, MovementStatesComponent.getComponentType());
+        // assert  movementStatesComponent1 != null;
+        // if (movementStatesComponent1.getMovementStates().walking) {
+        //     LOGGER.atInfo().log("WALKING 2");
+        //     manager.getSettings().baseSpeed = 0;
+        // } else if (movementStatesComponent1.getMovementStates().sprinting) {
+        //     LOGGER.atInfo().log("SPRINTING 2");
+        //     manager.getSettings().baseSpeed = 20;
+        // } else {
+        //     LOGGER.atInfo().log("RUNNING 2");
+        //     manager.getSettings().baseSpeed = 10;
+        // }
+        //
+        // manager.getSettings().forwardSprintSpeedMultiplier = 1;
+        // manager.update(playerRef.getPacketHandler());
     }
 
     @NullableDecl
