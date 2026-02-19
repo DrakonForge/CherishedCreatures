@@ -16,23 +16,9 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class RegisterNpcMountDetectionSystem extends HolderSystem<EntityStore> {
 
-    @NullableDecl
-    @Override
-    public Query<EntityStore> getQuery() {
-        return Query.and(Player.getComponentType(), EntityStatMap.getComponentType());
-    }
-
     @Override
     public void onEntityAdd(@NonNullDecl Holder<EntityStore> holder,
             @NonNullDecl AddReason addReason, @NonNullDecl Store<EntityStore> store) {
-        EntityStatMap entityStatMap = holder.getComponent(EntityStatMap.getComponentType());
-        assert entityStatMap != null;
-
-        int staminaIndex = DefaultEntityStatTypes.getStamina();
-        if (entityStatMap.getModifier(staminaIndex, PlayerNpcMountDetection.MOUNT_MAX_STAMINA_MODIFIER) != null) {
-            entityStatMap.removeModifier(staminaIndex,
-                    PlayerNpcMountDetection.MOUNT_MAX_STAMINA_MODIFIER);
-        }
         holder.ensureComponent(PlayerNpcMountDetection.getComponentType());
 
     }
@@ -41,5 +27,11 @@ public class RegisterNpcMountDetectionSystem extends HolderSystem<EntityStore> {
     public void onEntityRemoved(@NonNullDecl Holder<EntityStore> holder,
             @NonNullDecl RemoveReason removeReason, @NonNullDecl Store<EntityStore> store) {
 
+    }
+
+    @NullableDecl
+    @Override
+    public Query<EntityStore> getQuery() {
+        return Query.and(Player.getComponentType());
     }
 }
