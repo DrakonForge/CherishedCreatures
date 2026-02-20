@@ -1,15 +1,13 @@
 package io.github.drakonforge.cherishedcreatures.system;
 
-import com.hypixel.hytale.component.ArchetypeChunk;
-import com.hypixel.hytale.component.CommandBuffer;
-import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.component.SystemGroup;
+import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
+import io.github.drakonforge.cherishedcreatures.event.BondingLevelChangeEvent;
 import io.github.drakonforge.cherishedcreatures.event.BondingXpEvent;
 import io.github.drakonforge.cherishedcreatures.util.BondingHelpers;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -29,8 +27,12 @@ public class UpdateBondingLevelSystem extends BondingXpEventSystem {
         PetType petType = petTypeComponent.getPetType();
         float[] bondingLevelValues = petType.getBondingLevelValues();
         float bondingXp = petBondComponent.getBondingXp();
+        int currBondingLevel = petBondComponent.getBondingLevel();
         int newBondingLevel = BondingHelpers.getBondingLevel(bondingLevelValues, bondingXp);
-        // TODO: Notifications upon gaining a level?
+        if (currBondingLevel < newBondingLevel) { // new Bonding level was gained
+            Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
+            commandBuffer.invoke(ref, new BondingLevelChangeEvent(newBondingLevel));
+        }
         petBondComponent.setBondingLevel(newBondingLevel);
     }
 
