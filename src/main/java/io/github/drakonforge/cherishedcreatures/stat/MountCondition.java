@@ -14,6 +14,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent.MountGait;
+import io.github.drakonforge.cherishedcreatures.component.MountHandlingNpcComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import java.time.Instant;
 import javax.annotation.Nullable;
@@ -42,31 +43,13 @@ public class MountCondition extends Condition {
     @Override
     public boolean eval0(@NonNullDecl ComponentAccessor<EntityStore> componentAccessor,
             @NonNullDecl Ref<EntityStore> ref, @NonNullDecl Instant instant) {
-        NPCMountComponent npcMountComponent = componentAccessor.getComponent(ref,
-                NPCMountComponent.getComponentType());
-        PetTypeComponent petTypeComponent = componentAccessor.getComponent(ref,
-                PetTypeComponent.getComponentType());
-        if (npcMountComponent == null || petTypeComponent == null){
-            return false;
-        }
-        if (!petTypeComponent.getPetType().hasFeatureFlag(PetFeatureFlag.AdvancedMountHandling)) {
-            return false;
-        }
-        PlayerRef playerRef = npcMountComponent.getOwnerPlayerRef();
-        if (playerRef == null) {
+        MountHandlingNpcComponent mountHandlingNpcComponent = componentAccessor.getComponent(ref, MountHandlingNpcComponent.getComponentType());
+        if (mountHandlingNpcComponent == null){
             return false;
         }
 
         if (gait != null) {
-            Ref<EntityStore> riderRef = playerRef.getReference();
-            if (riderRef == null || !riderRef.isValid()) {
-                return false;
-            }
-            MountHandlingComponent mountHandlingComponent = componentAccessor.getComponent(riderRef, MountHandlingComponent.getComponentType());
-            if (mountHandlingComponent == null) {
-                return false;
-            }
-            if (mountHandlingComponent.getCurrentGait() != gait) {
+            if (mountHandlingNpcComponent.getCurrentGait() != gait) {
                 return false;
             }
         }
