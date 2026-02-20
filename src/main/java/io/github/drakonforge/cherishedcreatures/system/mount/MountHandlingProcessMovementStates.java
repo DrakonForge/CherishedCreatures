@@ -65,13 +65,12 @@ public class MountHandlingProcessMovementStates extends EntityTickingSystem<Enti
                 // Giddy-up - For responsiveness, immediately increase the canter to at least TROT when tapped
                 nextGait = MountGait.toGait(Math.max(prevGait.ordinal(), MountGait.Trot.ordinal()));
             }
-            if (heldSprintTime >= HELD_SPRINT_THRESHOLD) {
+            if (heldSprintTime >= HELD_SPRINT_THRESHOLD && prevGait.ordinal() < MountGait.Gallop.ordinal()) {
                 // Natural Increase - When you hold sprint for a certain amount of time, gait increases up to GALLOP
                 // Maintain FULL_GALLOP if already there
                 // Need to tap to reach FULL_GALLOP
                 mountHandlingComponent.resetSprinting();
-                nextGait = MountGait.toGait(
-                        Math.max(prevGait.ordinal(), Math.min(prevGait.ordinal() + 1, MountGait.Gallop.ordinal())));
+                nextGait = MountGait.toGait(prevGait.ordinal() + 1);
             }
             mountHandlingComponent.incrementHeldSprintTime(dt);
         } else {
