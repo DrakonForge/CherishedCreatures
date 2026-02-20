@@ -44,7 +44,7 @@ public class MountHandlingComponent implements Component<EntityStore> {
 
     @Nonnull
     private PetType mountedPetType;
-    private MountGait currentGait = MountGait.Trot;
+    private MountGait currentGait = MountGait.Walk;
     private boolean isStaminaDepleted = false;
     private long lastForwardInput = 0;
     private long lastBackwardInput = 0;

@@ -13,6 +13,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
+import io.github.drakonforge.cherishedcreatures.component.MountHandlingNpcComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.event.MountNpcEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -43,6 +44,8 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
         mountHandlingComponent.setBaseSpeed(petType.getBaseSpeed());
         commandBuffer.addComponent(ref, MountHandlingComponent.getComponentType(),
                 mountHandlingComponent);
+        commandBuffer.ensureComponent(mountRef, MountHandlingNpcComponent.getComponentType());
+
         MovementManager movementManager = archetypeChunk.getComponent(i, MovementManager.getComponentType());
         PlayerRef playerRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
         assert movementManager != null;

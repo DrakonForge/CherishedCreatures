@@ -33,11 +33,6 @@ public class MountHandlingUpdateMovementSystem extends EntityTickingSystem<Entit
         MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i, MountHandlingComponent.getComponentType());
         assert movementManager != null;
         assert mountHandlingComponent != null;
-        NPCEntity npcEntity = store.getComponent(mountRef,
-                Objects.requireNonNull(NPCEntity.getComponentType()));
-        if (npcEntity != null) {
-            npcEntity.playAnimation(mountRef, AnimationSlot.Movement, "Walk", store);
-        }
         boolean anyChange = false;
 
         float baseSpeed = mountHandlingComponent.getBaseSpeed();

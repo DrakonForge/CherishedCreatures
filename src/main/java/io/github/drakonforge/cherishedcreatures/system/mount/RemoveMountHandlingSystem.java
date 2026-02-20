@@ -10,6 +10,7 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
+import io.github.drakonforge.cherishedcreatures.component.MountHandlingNpcComponent;
 import io.github.drakonforge.cherishedcreatures.event.DismountNpcEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -32,6 +33,9 @@ public class RemoveMountHandlingSystem extends DismountNpcEventSystem {
         LOGGER.atInfo().log("DISMOUNTED NPC");
         Ref<EntityStore> playerRef = archetypeChunk.getReferenceTo(i);
         commandBuffer.tryRemoveComponent(playerRef, MountHandlingComponent.getComponentType());
+
+        Ref<EntityStore> mountRef = dismountNpcEvent.getOldMountRef();
+        commandBuffer.tryRemoveComponent(mountRef, MountHandlingNpcComponent.getComponentType());
 
         // TODO: Look into if we need to remove this when the player dies on the mount
 
