@@ -31,21 +31,27 @@ public class MountHandlingAccelerateGaitSystem extends EntityTickingSystem<Entit
         assert movementStatesComponent != null;
         assert mountHandlingComponent != null;
 
+        float currentSpeedMultiplier = calculateSpeedMultiplier(dt, mountHandlingComponent);
+        mountHandlingComponent.setSpeedMultiplier(currentSpeedMultiplier);
+    }
+
+    private static float calculateSpeedMultiplier(float dt,
+            MountHandlingComponent mountHandlingComponent) {
         PetType petType = mountHandlingComponent.getMountedPetType();
-        float targetSpeedMultiplier = mountHandlingComponent.getDesiredGait().getSpeedMultiplier();
+        float targetSpeedMultiplier = mountHandlingComponent.getCurrentGait().getDesiredSpeedMultiplier();
         float currentSpeedMultiplier = mountHandlingComponent.getSpeedMultiplier();
         if (currentSpeedMultiplier < targetSpeedMultiplier) {
-            currentSpeedMultiplier = Math.min(targetSpeedMultiplier, currentSpeedMultiplier + petType.getGaitAcceleration() * dt);
+            return Math.min(targetSpeedMultiplier, currentSpeedMultiplier + petType.getGaitAcceleration() * dt);
         } else if (currentSpeedMultiplier > targetSpeedMultiplier) {
-            currentSpeedMultiplier = Math.max(targetSpeedMultiplier, currentSpeedMultiplier - petType.getGaitAcceleration() * dt);
+            return Math.max(targetSpeedMultiplier, currentSpeedMultiplier - petType.getGaitAcceleration() * dt);
         }
-        mountHandlingComponent.setSpeedMultiplier(currentSpeedMultiplier);
+        return currentSpeedMultiplier;
     }
 
     @NonNullDecl
     @Override
     public Set<Dependency<EntityStore>> getDependencies() {
-        return Set.of(new SystemDependency<>(Order.AFTER, MountHandlingProcessInput.class), new SystemDependency<>(Order.AFTER, MountHandlingProcessMovementStates.class));
+        return Set.of(new SystemDependency<>(Order.AFTER, MountHandlingProcessInputSystem.class), new SystemDependency<>(Order.AFTER, MountHandlingProcessMovementStates.class));
     }
 
     @NullableDecl

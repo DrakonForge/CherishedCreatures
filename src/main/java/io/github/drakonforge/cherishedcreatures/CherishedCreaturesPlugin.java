@@ -48,11 +48,10 @@ import io.github.drakonforge.cherishedcreatures.system.mount.DismountOnNpcMountD
 import io.github.drakonforge.cherishedcreatures.system.mount.EnsureMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.HideMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingAccelerateGaitSystem;
-import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingCalculateSpeedSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingProcessInputSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingUpdateMovementSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingUpdateStatsSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingProcessMovementStates;
-import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingProcessInput;
 import io.github.drakonforge.cherishedcreatures.system.mount.RegisterNpcMountDetectionSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RemoveMountHandlingSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.SetMountHandlingStaminaDelaySystem;
@@ -210,10 +209,9 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new DismountOnNpcMountDeath());
         // Mount Handling logic - order matters when loading
         entityStoreRegistry.registerSystem(new MountHandlingUpdateStatsSystem());
-        entityStoreRegistry.registerSystem(new MountHandlingProcessInput());
+        entityStoreRegistry.registerSystem(new MountHandlingProcessInputSystem());
         entityStoreRegistry.registerSystem(new MountHandlingProcessMovementStates());
         entityStoreRegistry.registerSystem(new MountHandlingAccelerateGaitSystem());
-        entityStoreRegistry.registerSystem(new MountHandlingCalculateSpeedSystem());
         entityStoreRegistry.registerSystem(new MountHandlingUpdateMovementSystem());
 
         // Core Components

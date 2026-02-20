@@ -29,6 +29,7 @@ public class RegisterDefaultPetTypeSystem extends HolderSystem<EntityStore> {
         idToPetTypeId.put("Cow", "DrakonForge_Generic");
         idToPetTypeId.put("Crab", "DrakonForge_Generic");
         idToPetTypeId.put("Rabbit", "DrakonForge_Generic");
+        idToPetTypeId.put("Tamed_Horse", "DrakonForge_Generic");
         idToPetTypeId.put("DrakonForge_Test_Mount", "DrakonForge_Horse");
         return idToPetTypeId;
     }
@@ -46,11 +47,7 @@ public class RegisterDefaultPetTypeSystem extends HolderSystem<EntityStore> {
 
         String id = npcComponent.getNPCTypeId();
         String petTypeId = idToPetTypeId.get(id);
-        if (petTypeId == null) {
-            petTypeId = "DrakonForge_Generic"; // TODO: Temporary debug, let anything be tamed
-        }
         if (petTypeId != null) {
-            LOGGER.atFinest().log("Assigning entity of type " + id + " to pet type " + petTypeId);
             holder.addComponent(PetTypeComponent.getComponentType(), new PetTypeComponent(petTypeId));
         }
     }

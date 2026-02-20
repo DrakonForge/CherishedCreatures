@@ -41,8 +41,10 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
             return;
         }
 
+        MountHandlingComponent mountHandlingComponent = new MountHandlingComponent(petType);
+        mountHandlingComponent.setBaseSpeed(petType.getBaseSpeed());
         commandBuffer.addComponent(ref, MountHandlingComponent.getComponentType(),
-                new MountHandlingComponent(petType));
+                mountHandlingComponent);
         MovementManager movementManager = archetypeChunk.getComponent(i, MovementManager.getComponentType());
         PlayerRef playerRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
         assert movementManager != null;
@@ -50,6 +52,10 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
 
         // Using this system, sprint only changes the desired gait, not the speed
         movementManager.getSettings().forwardSprintSpeedMultiplier = 1.0f;
+        movementManager.getSettings().forwardWalkSpeedMultiplier = 1.0f;
+        movementManager.getSettings().backwardWalkSpeedMultiplier = 0.3f;
+        movementManager.getSettings().backwardCrouchSpeedMultiplier = 0.3f;
+        movementManager.getSettings().backwardRunSpeedMultiplier = 0.3f;
         movementManager.update(playerRef.getPacketHandler());
     }
 

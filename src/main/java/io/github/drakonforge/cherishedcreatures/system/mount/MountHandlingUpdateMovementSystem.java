@@ -9,6 +9,7 @@ import com.hypixel.hytale.component.dependency.SystemDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.protocol.MovementSettings;
 import com.hypixel.hytale.server.core.entity.entities.player.movement.MovementManager;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -20,32 +21,54 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class MountHandlingUpdateMovementSystem extends EntityTickingSystem<EntityStore> {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    public static int packetsSent = 0;
 
     @Override
     public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        PlayerRef playerRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
         MovementManager movementManager = archetypeChunk.getComponent(i, MovementManager.getComponentType());
         MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i, MountHandlingComponent.getComponentType());
-        assert playerRef != null;
         assert movementManager != null;
         assert mountHandlingComponent != null;
 
-        float currentSpeed = mountHandlingComponent.getCurrentSpeed();
+        boolean anyChange = false;
+
+        float baseSpeed = mountHandlingComponent.getBaseSpeed();
         // TODO: Epsilon check for close enough? If it reduces bandwidth usage
-        if (currentSpeed != mountHandlingComponent.getLastSentSpeed()) {
-            LOGGER.atInfo().log("Sending speed: " + currentSpeed);
-            movementManager.getSettings().baseSpeed = currentSpeed;
+        MovementSettings movementSettings = movementManager.getSettings();
+        if (baseSpeed != mountHandlingComponent.getLastSentBaseSpeed()) {
+            mountHandlingComponent.setLastSentBaseSpeed(baseSpeed);
+            movementSettings.baseSpeed = baseSpeed;
+            anyChange = true;
+        }
+
+        float speedMultiplier = mountHandlingComponent.getSpeedMultiplier();
+        if (speedMultiplier != mountHandlingComponent.getLastSentSpeedMultiplier()) {
+            mountHandlingComponent.setLastSentSpeedMultiplier(speedMultiplier);
+            movementSettings.forwardRunSpeedMultiplier = speedMultiplier;
+            movementSettings.forwardWalkSpeedMultiplier = speedMultiplier;
+            movementSettings.forwardSprintSpeedMultiplier = speedMultiplier;
+            movementSettings.forwardCrouchSpeedMultiplier = speedMultiplier;
+            anyChange = true;
+        }
+
+        if (anyChange) {
+            PlayerRef playerRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
+            assert playerRef != null;
+            packetsSent += 1;
             movementManager.update(playerRef.getPacketHandler());
-            mountHandlingComponent.setLastSentSpeed(currentSpeed);
+        }
+
+        if (packetsSent % 100 == 0) {
+            LOGGER.atInfo().log("SENT " + packetsSent + " PACKETS");
         }
     }
 
     @NonNullDecl
     @Override
     public Set<Dependency<EntityStore>> getDependencies() {
-        return Set.of(new SystemDependency<>(Order.AFTER, MountHandlingCalculateSpeedSystem.class));
+        return Set.of(new SystemDependency<>(Order.AFTER, MountHandlingAccelerateGaitSystem.class));
     }
 
     @NullableDecl

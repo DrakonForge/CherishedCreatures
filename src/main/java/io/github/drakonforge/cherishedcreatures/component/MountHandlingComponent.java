@@ -13,47 +13,48 @@ public class MountHandlingComponent implements Component<EntityStore> {
 
     // Stamina drain is defined in Stamina.json
     public enum MountGait {
-        WALK(0.15f),
-        TROT(0.3f),
-        CANTER(1.0f),
-        GALLOP(1.35f),
-        FULL_GALLOP(1.65f);
+        Walk(0.3f),
+        Trot(0.5f),
+        Canter(1.0f),
+        Gallop(1.35f),
+        FullGallop(1.65f);
 
-        private static final MountGait[] GAITS = {WALK, TROT, CANTER, GALLOP, FULL_GALLOP};
+        private static final MountGait[] GAITS = { Walk, Trot, Canter, Gallop, FullGallop };
 
         public static MountGait toGait(int index) {
             if (index < 0) {
-                return WALK;
+                return Walk;
             }
             if (index >= GAITS.length) {
-                return FULL_GALLOP;
+                return FullGallop;
             }
             return GAITS[index];
         }
 
-        private final float speedMultiplier;
+        private final float desiredSpeedMultiplier;
 
-        MountGait(float speedMultiplier) {
-            this.speedMultiplier = speedMultiplier;
+        MountGait(float desiredSpeedMultiplier) {
+            this.desiredSpeedMultiplier = desiredSpeedMultiplier;
         }
 
-        public float getSpeedMultiplier() {
-            return speedMultiplier;
+        public float getDesiredSpeedMultiplier() {
+            return desiredSpeedMultiplier;
         }
     }
 
     @Nonnull
     private PetType mountedPetType;
-    private MountGait desiredGait = MountGait.TROT;
+    private MountGait currentGait = MountGait.Trot;
     private boolean isStaminaDepleted = false;
     private long lastForwardInput = 0;
     private long lastBackwardInput = 0;
     private float heldSprintTime = 0.0f;
 
     // Speed
-    private float lastSentSpeed = -99.0f;
-    private float currentSpeed = 1.0f;
-    private float currentSpeedMultiplier = 1.0f;
+    private float lastSentBaseSpeed = -99.0f;
+    private float lastSentSpeedMultiplier = -99.0f;
+    private float baseSpeed = 1.0f;
+    private float speedMultiplier = 1.0f;
 
     public MountHandlingComponent() {
         mountedPetType = PetType.DEFAULT;
@@ -67,10 +68,10 @@ public class MountHandlingComponent implements Component<EntityStore> {
         return CherishedCreaturesPlugin.get().getMountHandlingComponentType();
     }
 
-    public void setDesiredGait(MountGait desiredGait, boolean instant) {
-        this.desiredGait = desiredGait;
+    public void setCurrentGait(MountGait desiredGait, boolean instant) {
+        this.currentGait = desiredGait;
         if (instant) {
-            setSpeedMultiplier(desiredGait.getSpeedMultiplier());
+            setSpeedMultiplier(desiredGait.getDesiredSpeedMultiplier());
         }
     }
 
@@ -94,16 +95,20 @@ public class MountHandlingComponent implements Component<EntityStore> {
         heldSprintTime = 0.0f;
     }
 
-    public void setLastSentSpeed(float lastSentSpeed) {
-        this.lastSentSpeed = lastSentSpeed;
+    public void setLastSentBaseSpeed(float lastSentBaseSpeed) {
+        this.lastSentBaseSpeed = lastSentBaseSpeed;
     }
 
-    public void setCurrentSpeed(float currentSpeed) {
-        this.currentSpeed = currentSpeed;
+    public void setLastSentSpeedMultiplier(float lastSentSpeedMultiplier) {
+        this.lastSentSpeedMultiplier = lastSentSpeedMultiplier;
     }
 
-    public void setSpeedMultiplier(float currentSpeedMultiplier) {
-        this.currentSpeedMultiplier = currentSpeedMultiplier;
+    public void setBaseSpeed(float baseSpeed) {
+        this.baseSpeed = baseSpeed;
+    }
+
+    public void setSpeedMultiplier(float speedMultiplier) {
+        this.speedMultiplier = speedMultiplier;
     }
 
     public boolean isStaminaDepleted() {
@@ -115,8 +120,8 @@ public class MountHandlingComponent implements Component<EntityStore> {
         return mountedPetType;
     }
 
-    public MountGait getDesiredGait() {
-        return desiredGait;
+    public MountGait getCurrentGait() {
+        return currentGait;
     }
 
     public long getLastForwardInput() {
@@ -127,20 +132,20 @@ public class MountHandlingComponent implements Component<EntityStore> {
         return lastBackwardInput;
     }
 
-    public float getLastSentSpeed() {
-        return lastSentSpeed;
+    public float getLastSentBaseSpeed() {
+        return lastSentBaseSpeed;
     }
 
-    public float getCurrentSpeed() {
-        return currentSpeed;
+    public float getLastSentSpeedMultiplier() {
+        return lastSentSpeedMultiplier;
+    }
+
+    public float getBaseSpeed() {
+        return baseSpeed;
     }
 
     public float getSpeedMultiplier() {
-        return currentSpeedMultiplier;
-    }
-
-    public boolean isSprinting() {
-        return heldSprintTime > 0.0f;
+        return speedMultiplier;
     }
 
     public float getHeldSprintTime() {

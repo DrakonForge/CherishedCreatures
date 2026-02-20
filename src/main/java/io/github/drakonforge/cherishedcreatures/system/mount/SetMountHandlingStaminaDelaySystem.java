@@ -13,6 +13,7 @@ import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
+import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent.MountGait;
 import io.github.drakonforge.cherishedcreatures.component.MountedActiveComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerNpcMountDetection;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -24,7 +25,9 @@ public class SetMountHandlingStaminaDelaySystem extends EntityTickingSystem<Enti
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         PlayerNpcMountDetection mountDetection = archetypeChunk.getComponent(i, PlayerNpcMountDetection.getComponentType());
+        MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i, MountHandlingComponent.getComponentType());
         assert mountDetection != null;
+        assert mountHandlingComponent != null;
         Ref<EntityStore> mountRef = mountDetection.getCurrentMount();
         if (mountRef == null) {
             return;
@@ -35,7 +38,8 @@ public class SetMountHandlingStaminaDelaySystem extends EntityTickingSystem<Enti
             return;
         }
 
-        if (movementStates.getMovementStates().sprinting) {
+        // TODO: It might be more optimal to drain stamina here, rather than in the Stamina.json system
+        if (!movementStates.getMovementStates().idle && mountHandlingComponent.getCurrentGait().ordinal() >= MountGait.Gallop.ordinal()) {
             SprintStaminaRegenDelay regenDelay = store.getResource(StaminaModule.get()
                     .getSprintRegenDelayResourceType());
             EntityStatValue statValue = entityStatMap.get(regenDelay.getIndex());

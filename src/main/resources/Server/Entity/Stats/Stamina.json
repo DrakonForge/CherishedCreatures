@@ -32,6 +32,18 @@
         {
           "Id": "Gliding",
           "Inverse": true
+        },
+        {
+          "Id": "Mount",
+          "MustBeMoving": true,
+          "Gait": "Gallop",
+          "Inverse": true
+        },
+        {
+          "Id": "Mount",
+          "MustBeMoving": true,
+          "Gait": "FullGallop",
+          "Inverse": true
         }
       ]
     },
@@ -88,10 +100,22 @@
       "RegenType": "Additive",
       "Conditions": [
         {
-          "Id": "Mount"
-        },
+          "Id": "Mount",
+          "MustBeMoving": true,
+          "Gait": "Gallop"
+        }
+      ]
+    },
+    {
+      "Interval": 0.1,
+      "Amount": -0.2,
+      "ClampAtZero": true,
+      "RegenType": "Additive",
+      "Conditions": [
         {
-          "Id": "Sprinting"
+          "Id": "Mount",
+          "MustBeMoving": true,
+          "Gait": "FullGallop"
         }
       ]
     },

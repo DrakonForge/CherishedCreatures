@@ -6,18 +6,25 @@
     "Authors": [
         {
             "Name": "Drakon",
+            "Email": "",
             "Url": "https://github.com/Drakonkinst"
         }
     ],
     "Website": "https://github.com/DrakonForge",
-    "ServerVersion": "*",
+    "Main": "io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin",
+    "ServerVersion": "2026.02.18-f3b8fff95",
     "Dependencies": {
-        "Hytale:NPC": "*"
+        "Hytale:NPC": ""
     },
     "OptionalDependencies": {
         
     },
+    "LoadBefore": {
+        
+    },
     "DisabledByDefault": false,
     "IncludesAssetPack": true,
-    "Main": "io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin"
+    "SubPlugins": [
+        
+    ]
 }

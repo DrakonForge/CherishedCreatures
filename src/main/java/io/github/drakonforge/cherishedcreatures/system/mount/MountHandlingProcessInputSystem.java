@@ -26,7 +26,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 // Based on ProcessPlayerInputSystem
 // This doesn't actually replace the system (which we could do by clearing the queue and applying it ourselves
 // We're just listening in
-public class MountHandlingProcessInput extends EntityTickingSystem<EntityStore> {
+public class MountHandlingProcessInputSystem extends EntityTickingSystem<EntityStore> {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private static final double DIRECTION_THRESHOLD = 0.9;
@@ -51,19 +51,28 @@ public class MountHandlingProcessInput extends EntityTickingSystem<EntityStore> 
         Vector3d direction = transform.getDirection().clone().normalize();
         double directionX = direction.getX();
         double directionZ = direction.getZ();
+        long now = System.currentTimeMillis();
+        boolean movingForward = false;
+        boolean movingBackward = false;
         for (PlayerInput.InputUpdate entry : movementUpdateQueue) {
             if (entry instanceof SetClientVelocity setClientVelocity) {
                 Vector3d velocity = setClientVelocity.getVelocity().clone().normalize();
                 double velocityX = velocity.getX();
                 double velocityZ = velocity.getZ();
                 double dot = directionX * velocityX + directionZ * velocityZ;
-                long now = System.currentTimeMillis();
                 if (dot >= DIRECTION_THRESHOLD) {
-                    mountHandlingComponent.setLastForwardInput(now);
+                    movingForward = true;
                 } else if (dot <= -DIRECTION_THRESHOLD) {
-                    mountHandlingComponent.setLastBackwardInput(now);
+                    movingBackward = true;
                 }
             }
+        }
+
+        if (movingForward) {
+            mountHandlingComponent.setLastForwardInput(now);
+        }
+        if (movingBackward) {
+            mountHandlingComponent.setLastBackwardInput(now);
         }
     }
 

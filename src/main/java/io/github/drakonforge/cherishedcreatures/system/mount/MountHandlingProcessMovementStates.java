@@ -10,6 +10,7 @@ import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.protocol.MovementStates;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
@@ -22,64 +23,84 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class MountHandlingProcessMovementStates extends EntityTickingSystem<EntityStore> {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-    private static final float IDLE_THRESHOLD_TO_RESET_MS = 3 * 1000;
-    private static final float HELD_SPRINT_THRESHOLD = 2.0f;
+    private static final long IDLE_THRESHOLD_TO_RESET_MS = 500;
+    private static final float HELD_SPRINT_THRESHOLD = 0.35f;
+    private static final float TAP_SPRINT_THRESHOLD = 0.2f;
+    private static final long BRAKE_THRESHOLD_MS = 200;
 
     @Override
     public void tick(float dt, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
             @NonNullDecl Store<EntityStore> store,
             @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        MovementStatesComponent movementStatesComponent = archetypeChunk.getComponent(i, MovementStatesComponent.getComponentType());
-        MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i, MountHandlingComponent.getComponentType());
+        MovementStatesComponent movementStatesComponent = archetypeChunk.getComponent(i,
+                MovementStatesComponent.getComponentType());
+        MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i,
+                MountHandlingComponent.getComponentType());
         assert movementStatesComponent != null;
         assert mountHandlingComponent != null;
 
         MovementStates movementStates = movementStatesComponent.getMovementStates();
         boolean staminaDepleted = mountHandlingComponent.isStaminaDepleted();
 
-        MountGait prevGait = mountHandlingComponent.getDesiredGait();
+        MountGait prevGait = mountHandlingComponent.getCurrentGait();
         MountGait nextGait = prevGait;
         boolean instant = false;
 
         long now = System.currentTimeMillis();
-        long lastInput = Math.max(mountHandlingComponent.getLastForwardInput(),
-                mountHandlingComponent.getLastBackwardInput());
-        if (now - lastInput > IDLE_THRESHOLD_TO_RESET_MS) {
-            nextGait = MountGait.WALK;
+        long lastForwardInput = mountHandlingComponent.getLastForwardInput();
+        long lastBackwardInput = mountHandlingComponent.getLastBackwardInput();
+        float heldSprintTime = mountHandlingComponent.getHeldSprintTime();
+        if (now - lastForwardInput > IDLE_THRESHOLD_TO_RESET_MS || (now - lastBackwardInput <= BRAKE_THRESHOLD_MS && lastBackwardInput < lastForwardInput)) {
+            // Mount was inactive for too long, reset gait to WALK
+            nextGait = MountGait.Walk;
             instant = true;
-        } if (staminaDepleted) {
-            if (prevGait.ordinal() > MountGait.CANTER.ordinal()) {
-                nextGait = MountGait.CANTER;
+        } else if (staminaDepleted) {
+            if (prevGait.ordinal() > MountGait.Canter.ordinal()) {
+                // Rest - Stamina is depleted, cannot maintain anything higher than a CANTER
+                nextGait = MountGait.Canter;
                 instant = true;
             }
         } else if (movementStates.sprinting) {
-            if (!mountHandlingComponent.isSprinting()) {
-                // When you tap sprint or held sprint time resets, the gait updates
-                nextGait = MountGait.toGait(prevGait.ordinal() + 1);
+            if (heldSprintTime >= TAP_SPRINT_THRESHOLD) {
+                // Giddy-up - For responsiveness, immediately increase the canter to at least TROT when tapped
+                nextGait = MountGait.toGait(Math.max(prevGait.ordinal(), MountGait.Trot.ordinal()));
+            }
+            if (heldSprintTime >= HELD_SPRINT_THRESHOLD) {
+                // Natural Increase - When you hold sprint for a certain amount of time, gait increases up to GALLOP
+                // Maintain FULL_GALLOP if already there
+                // Need to tap to reach FULL_GALLOP
+                mountHandlingComponent.resetSprinting();
+                nextGait = MountGait.toGait(
+                        Math.max(prevGait.ordinal(), Math.min(prevGait.ordinal() + 1, MountGait.Gallop.ordinal())));
             }
             mountHandlingComponent.incrementHeldSprintTime(dt);
-            if (mountHandlingComponent.getHeldSprintTime() >= HELD_SPRINT_THRESHOLD) {
-                mountHandlingComponent.resetSprinting();
-            }
         } else {
+            if (0.0f < heldSprintTime && heldSprintTime <= TAP_SPRINT_THRESHOLD) {
+                // Faster! - When you tap sprint and release quickly, gait increases
+                // TODO: Don't double-dip with Giddy-up
+                nextGait = MountGait.toGait(prevGait.ordinal() + 1);
+            }
             mountHandlingComponent.resetSprinting();
         }
 
         if (prevGait != nextGait) {
             LOGGER.atInfo().log("Set gait to " + nextGait.name());
-            mountHandlingComponent.setDesiredGait(nextGait, instant);
+            store.getExternalData().getWorld().sendMessage(Message.raw("Set gait to " + nextGait.name()));
+            mountHandlingComponent.setCurrentGait(nextGait, instant);
         }
     }
 
     @NonNullDecl
     @Override
     public Set<Dependency<EntityStore>> getDependencies() {
-        return Set.of(new SystemDependency<>(Order.AFTER, MountHandlingProcessInput.class), new SystemDependency<>(Order.AFTER, MountHandlingUpdateStatsSystem.class));
+        return Set.of(new SystemDependency<>(Order.AFTER, MountHandlingProcessInputSystem.class),
+                new SystemDependency<>(Order.AFTER, MountHandlingUpdateStatsSystem.class));
     }
 
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(MountHandlingComponent.getComponentType(), MovementStatesComponent.getComponentType());
+        return Query.and(MountHandlingComponent.getComponentType(),
+                MovementStatesComponent.getComponentType());
     }
 }
