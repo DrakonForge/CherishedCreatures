@@ -95,7 +95,7 @@
     },
     {
       "Interval": 0.1,
-      "Amount": -0.1,
+      "Amount": -0.05,
       "ClampAtZero": true,
       "RegenType": "Additive",
       "Conditions": [
@@ -108,7 +108,7 @@
     },
     {
       "Interval": 0.1,
-      "Amount": -0.2,
+      "Amount": -0.1,
       "ClampAtZero": true,
       "RegenType": "Additive",
       "Conditions": [

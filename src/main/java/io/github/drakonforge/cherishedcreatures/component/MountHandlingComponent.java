@@ -16,7 +16,7 @@ public class MountHandlingComponent implements Component<EntityStore> {
         Walk(0.3f),
         Trot(0.5f),
         Canter(1.0f),
-        Gallop(1.35f),
+        Gallop(1.25f),
         FullGallop(1.65f);
 
         private static final MountGait[] GAITS = { Walk, Trot, Canter, Gallop, FullGallop };
