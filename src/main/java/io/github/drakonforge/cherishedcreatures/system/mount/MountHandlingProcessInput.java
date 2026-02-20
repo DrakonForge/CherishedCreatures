@@ -26,7 +26,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 // Based on ProcessPlayerInputSystem
 // This doesn't actually replace the system (which we could do by clearing the queue and applying it ourselves
 // We're just listening in
-public class ProcessMountedPlayerInputSystem extends EntityTickingSystem<EntityStore> {
+public class MountHandlingProcessInput extends EntityTickingSystem<EntityStore> {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
     private static final double DIRECTION_THRESHOLD = 0.9;

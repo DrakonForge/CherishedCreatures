@@ -1,0 +1,57 @@
+package io.github.drakonforge.cherishedcreatures.system.mount;
+
+import com.hypixel.hytale.component.ArchetypeChunk;
+import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.dependency.Dependency;
+import com.hypixel.hytale.component.dependency.Order;
+import com.hypixel.hytale.component.dependency.SystemDependency;
+import com.hypixel.hytale.component.query.Query;
+import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
+import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.entity.entities.player.movement.MovementManager;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
+import java.util.Set;
+import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+
+public class MountHandlingUpdateMovementSystem extends EntityTickingSystem<EntityStore> {
+
+    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+
+    @Override
+    public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+        PlayerRef playerRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
+        MovementManager movementManager = archetypeChunk.getComponent(i, MovementManager.getComponentType());
+        MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i, MountHandlingComponent.getComponentType());
+        assert playerRef != null;
+        assert movementManager != null;
+        assert mountHandlingComponent != null;
+
+        float currentSpeed = mountHandlingComponent.getCurrentSpeed();
+        // TODO: Epsilon check for close enough? If it reduces bandwidth usage
+        if (currentSpeed != mountHandlingComponent.getLastSentSpeed()) {
+            LOGGER.atInfo().log("Sending speed: " + currentSpeed);
+            movementManager.getSettings().baseSpeed = currentSpeed;
+            movementManager.update(playerRef.getPacketHandler());
+            mountHandlingComponent.setLastSentSpeed(currentSpeed);
+        }
+    }
+
+    @NonNullDecl
+    @Override
+    public Set<Dependency<EntityStore>> getDependencies() {
+        return Set.of(new SystemDependency<>(Order.AFTER, MountHandlingCalculateSpeedSystem.class));
+    }
+
+    @NullableDecl
+    @Override
+    public Query<EntityStore> getQuery() {
+        return Query.and(MountHandlingComponent.getComponentType(), MovementManager.getComponentType(),
+                PlayerRef.getComponentType());
+    }
+}

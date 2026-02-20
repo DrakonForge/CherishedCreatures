@@ -16,8 +16,7 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 // Update state from the mounted entity
-// TODO: Set dependencies
-public class MountHandlingUpdateStateSystem extends EntityTickingSystem<EntityStore> {
+public class MountHandlingUpdateStatsSystem extends EntityTickingSystem<EntityStore> {
 
     @Override
     public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
@@ -32,7 +31,6 @@ public class MountHandlingUpdateStateSystem extends EntityTickingSystem<EntitySt
         if (mountRef == null || !mountRef.isValid()) {
             return;
         }
-
 
         EntityStatMap mountStats = store.getComponent(mountRef, EntityStatMap.getComponentType());
         if (mountStats != null) {

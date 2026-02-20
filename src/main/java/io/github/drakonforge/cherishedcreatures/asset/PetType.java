@@ -81,6 +81,13 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected float[] bondingLevelValuesOverride;
     protected JoinsFlock joinsFlock = JoinsFlock.FollowOnly;
     protected AbandonBehavior abandonBehavior = AbandonBehavior.UntameIfSpawned;
+    protected float baseSpeed = 10.0f; // TODO: Adjust defaults, make it customizable
+    protected float gaitAcceleration = 1.0f; // Only used for mounts. How much speed multiplier changes per second. Must be positive.
+    protected float baseSpeedPerLevel = 0.0f;
+
+    // TODO: Mount acceleration
+    // TODO: Base speed
+    // TODO: Base stamina (lower priority)
 
     private PetType() {
         featureFlags = new Object2BooleanArrayMap<>();
@@ -106,6 +113,14 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
             return CherishedCreaturesConfig.get().getDefaultBondingLevelValues();
         }
         return bondingLevelValuesOverride;
+    }
+
+    public float getBaseSpeed() {
+        return baseSpeed;
+    }
+
+    public float getGaitAcceleration() {
+        return gaitAcceleration;
     }
 
     @Override

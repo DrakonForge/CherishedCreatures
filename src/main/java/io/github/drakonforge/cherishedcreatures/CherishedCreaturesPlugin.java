@@ -47,9 +47,12 @@ import io.github.drakonforge.cherishedcreatures.system.mount.DetectNpcMountSyste
 import io.github.drakonforge.cherishedcreatures.system.mount.DismountOnNpcMountDeath;
 import io.github.drakonforge.cherishedcreatures.system.mount.EnsureMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.HideMountStatusMetersSystem;
-import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingTickingSystem;
-import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingUpdateStateSystem;
-import io.github.drakonforge.cherishedcreatures.system.mount.ProcessMountedPlayerInputSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingAccelerateGaitSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingCalculateSpeedSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingUpdateMovementSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingUpdateStatsSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingProcessMovementStates;
+import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingProcessInput;
 import io.github.drakonforge.cherishedcreatures.system.mount.RegisterNpcMountDetectionSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RemoveMountHandlingSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.SetMountHandlingStaminaDelaySystem;
@@ -194,7 +197,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new NotifyBondingXpSystem());
         entityStoreRegistry.registerSystem(new UpdateBondingLevelSystem());
         entityStoreRegistry.registerSystem(new UpdateExplorationMarkerSystem());
-        // Mount Handling
+        // Mounts
         entityStoreRegistry.registerSystem(new RegisterNpcMountDetectionSystem());
         entityStoreRegistry.registerSystem(new DetectNpcMountSystem());
         entityStoreRegistry.registerSystem(new AddMountHandlingSystem());
@@ -205,9 +208,13 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new UpdateMountStatusMetersSystem());
         entityStoreRegistry.registerSystem(new SetMountHandlingStaminaDelaySystem());
         entityStoreRegistry.registerSystem(new DismountOnNpcMountDeath());
-        entityStoreRegistry.registerSystem(new MountHandlingUpdateStateSystem());
-        entityStoreRegistry.registerSystem(new MountHandlingTickingSystem());
-        entityStoreRegistry.registerSystem(new ProcessMountedPlayerInputSystem());
+        // Mount Handling logic - order matters when loading
+        entityStoreRegistry.registerSystem(new MountHandlingUpdateStatsSystem());
+        entityStoreRegistry.registerSystem(new MountHandlingProcessInput());
+        entityStoreRegistry.registerSystem(new MountHandlingProcessMovementStates());
+        entityStoreRegistry.registerSystem(new MountHandlingAccelerateGaitSystem());
+        entityStoreRegistry.registerSystem(new MountHandlingCalculateSpeedSystem());
+        entityStoreRegistry.registerSystem(new MountHandlingUpdateMovementSystem());
 
         // Core Components
         NPCPlugin npcPlugin = NPCPlugin.get();

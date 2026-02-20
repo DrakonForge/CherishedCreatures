@@ -50,7 +50,7 @@ public class RegisterDefaultPetTypeSystem extends HolderSystem<EntityStore> {
             petTypeId = "DrakonForge_Generic"; // TODO: Temporary debug, let anything be tamed
         }
         if (petTypeId != null) {
-            LOGGER.atInfo().log("Assigning entity of type " + id + " to pet type " + petTypeId);
+            LOGGER.atFinest().log("Assigning entity of type " + id + " to pet type " + petTypeId);
             holder.addComponent(PetTypeComponent.getComponentType(), new PetTypeComponent(petTypeId));
         }
     }
