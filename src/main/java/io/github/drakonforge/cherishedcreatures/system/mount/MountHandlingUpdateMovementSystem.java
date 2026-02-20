@@ -9,11 +9,14 @@ import com.hypixel.hytale.component.dependency.SystemDependency;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.protocol.AnimationSlot;
 import com.hypixel.hytale.protocol.MovementSettings;
 import com.hypixel.hytale.server.core.entity.entities.player.movement.MovementManager;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
+import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -21,7 +24,6 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class MountHandlingUpdateMovementSystem extends EntityTickingSystem<EntityStore> {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-    public static int packetsSent = 0;
 
     @Override
     public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
@@ -31,11 +33,16 @@ public class MountHandlingUpdateMovementSystem extends EntityTickingSystem<Entit
         MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i, MountHandlingComponent.getComponentType());
         assert movementManager != null;
         assert mountHandlingComponent != null;
-
+        NPCEntity npcEntity = store.getComponent(mountRef,
+                Objects.requireNonNull(NPCEntity.getComponentType()));
+        if (npcEntity != null) {
+            npcEntity.playAnimation(mountRef, AnimationSlot.Movement, "Walk", store);
+        }
         boolean anyChange = false;
 
         float baseSpeed = mountHandlingComponent.getBaseSpeed();
         // TODO: Epsilon check for close enough? If it reduces bandwidth usage
+        // TODO: Can consider throttling it as well but I don't think it's an issue
         MovementSettings movementSettings = movementManager.getSettings();
         if (baseSpeed != mountHandlingComponent.getLastSentBaseSpeed()) {
             mountHandlingComponent.setLastSentBaseSpeed(baseSpeed);
@@ -56,12 +63,7 @@ public class MountHandlingUpdateMovementSystem extends EntityTickingSystem<Entit
         if (anyChange) {
             PlayerRef playerRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
             assert playerRef != null;
-            packetsSent += 1;
             movementManager.update(playerRef.getPacketHandler());
-        }
-
-        if (packetsSent % 100 == 0) {
-            LOGGER.atInfo().log("SENT " + packetsSent + " PACKETS");
         }
     }
 

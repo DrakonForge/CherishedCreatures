@@ -14,7 +14,8 @@
     "Main": "io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin",
     "ServerVersion": "2026.02.19-ad6f58ec8",
     "Dependencies": {
-        "Hytale:NPC": ""
+        "Hytale:NPC": "",
+        "Ellie:HyUI": ""
     },
     "OptionalDependencies": {
         

@@ -22,8 +22,6 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
-
-
     @Override
     public void handle(int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
             @NonNullDecl Store<EntityStore> store,
