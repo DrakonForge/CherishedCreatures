@@ -11,8 +11,23 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class MountHandlingComponent implements Component<EntityStore> {
 
+    public enum MountGait {
+        WALK(0.3f),
+        TROT(0.3f),
+        CANTER(1.0f),
+        GALLOP(1.65f);
+
+        MountGait(float speedMultiplier) {
+
+        }
+    }
+
     @Nonnull
     private PetType mountedPetType;
+    private MountGait desiredGait = MountGait.TROT;
+    private boolean isStaminaDepleted = false;
+    private long lastForwardInput = 0;
+    private long lastBackwardInput = 0;
 
     public MountHandlingComponent() {
         mountedPetType = PetType.DEFAULT;
@@ -26,9 +41,41 @@ public class MountHandlingComponent implements Component<EntityStore> {
         return CherishedCreaturesPlugin.get().getMountHandlingComponentType();
     }
 
+    public void setDesiredGait(MountGait desiredGait) {
+        this.desiredGait = desiredGait;
+    }
+
+    public void setStaminaDepleted(boolean staminaDepleted) {
+        isStaminaDepleted = staminaDepleted;
+    }
+
+    public void setLastForwardInput(long lastForwardInput) {
+        this.lastForwardInput = lastForwardInput;
+    }
+
+    public void setLastBackwardInput(long lastBackwardInput) {
+        this.lastBackwardInput = lastBackwardInput;
+    }
+
+    public boolean isStaminaDepleted() {
+        return isStaminaDepleted;
+    }
+
     @NonNullDecl
     public PetType getMountedPetType() {
         return mountedPetType;
+    }
+
+    public MountGait getDesiredGait() {
+        return desiredGait;
+    }
+
+    public long getLastForwardInput() {
+        return lastForwardInput;
+    }
+
+    public long getLastBackwardInput() {
+        return lastBackwardInput;
     }
 
     @NullableDecl

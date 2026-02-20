@@ -70,68 +70,11 @@ public class UpdateMountStatusMetersSystem extends EntityTickingSystem<EntitySto
         assert statusMeters != null;
         assert mountDetection != null;
 
-        PlayerRef playerRefRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
+
         Ref<EntityStore> mountRef = mountDetection.getCurrentMount();
         updateStatusMeters(mountRef, store, statusMeters);
 
-        // TODO: This should go into another system
-        if (mountRef == null) {
-            return;
-        }
-        EntityStatMap mountStatMap = store.getComponent(mountRef, EntityStatMap.getComponentType());
-        if (mountStatMap == null) {
-            return;
-        }
-        EntityStatValue staminaValue = mountStatMap.get(DefaultEntityStatTypes.getStamina());
-        if (staminaValue == null) {
-            return;
-        }
-        MovementManager movementManager = archetypeChunk.getComponent(i, MovementManager.getComponentType());
-        MovementStatesComponent movementStatesComponent = store.getComponent(mountRef, MovementStatesComponent.getComponentType());
-        assert movementManager != null;
-        assert movementStatesComponent != null;
-        assert playerRefRef != null;
 
-
-        if (staminaValue.get() <= 0) {
-            movementManager.getSettings().forwardSprintSpeedMultiplier = 1;
-        } else {
-            movementManager.getSettings().forwardSprintSpeedMultiplier = 1.65f; // Hardcoding in the original multiplier
-        }
-        movementManager.update(playerRefRef.getPacketHandler());
-
-        // Testing some behavior
-        // PlayerRef playerRef = archetypeChunk.getComponent(i, PlayerRef.getComponentType());
-        // MovementManager manager = archetypeChunk.getComponent(i, MovementManager.getComponentType());
-        // MovementStatesComponent movementStatesComponent = archetypeChunk.getComponent(i, MovementStatesComponent.getComponentType());
-        // assert movementStatesComponent != null;
-        // assert playerRef != null;
-        // assert manager != null;
-        // if (movementStatesComponent.getMovementStates().walking) {
-        //     LOGGER.atInfo().log("WALKING");
-        //     manager.getSettings().baseSpeed = 0;
-        // } else if (movementStatesComponent.getMovementStates().sprinting) {
-        //     LOGGER.atInfo().log("SPRINTING");
-        //     manager.getSettings().baseSpeed = 20;
-        // } else {
-        //     LOGGER.atInfo().log("RUNNING");
-        //     manager.getSettings().baseSpeed = 10;
-        // }
-        // MovementStatesComponent movementStatesComponent1 = archetypeChunk.getComponent(i, MovementStatesComponent.getComponentType());
-        // assert  movementStatesComponent1 != null;
-        // if (movementStatesComponent1.getMovementStates().walking) {
-        //     LOGGER.atInfo().log("WALKING 2");
-        //     manager.getSettings().baseSpeed = 0;
-        // } else if (movementStatesComponent1.getMovementStates().sprinting) {
-        //     LOGGER.atInfo().log("SPRINTING 2");
-        //     manager.getSettings().baseSpeed = 20;
-        // } else {
-        //     LOGGER.atInfo().log("RUNNING 2");
-        //     manager.getSettings().baseSpeed = 10;
-        // }
-        //
-        // manager.getSettings().forwardSprintSpeedMultiplier = 1;
-        // manager.update(playerRef.getPacketHandler());
     }
 
     @NullableDecl
