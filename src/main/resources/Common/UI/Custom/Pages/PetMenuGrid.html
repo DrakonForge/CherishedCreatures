@@ -1,0 +1,167 @@
+<style>
+  .container {
+    padding: 10;
+    anchor-width: 800;
+    anchor-height: 550;
+  }
+
+  .menu-description {
+    anchor-bottom: 10;
+  }
+
+  .pet-card {
+    anchor-height: 300;
+    vertical-align: center;
+    background-color: #202d44;
+    anchor-vertical: 5;
+    padding: 10;
+    anchor-horizontal: 5;
+    layout-mode: Top;
+    anchor-width: 245;
+  }
+
+  .pet-info {
+    flex-weight: 1;
+    layout-mode: Top;
+    anchor-vertical: 10;
+    anchor-right: 10;
+    anchor-left: 5;
+  }
+
+  .pet-info-header {
+    layout-mode: Left;
+  }
+
+  .pet-name {
+    font-weight: bold;
+    font-size: 20;
+    flex-weight: 1;
+  }
+
+  .pet-role {
+    font-weight: bold;
+    color: #b4c8c9;
+    font-size: 14;
+  }
+
+  .pet-info-tags {
+    anchor-top: 5;
+    layout-mode: Top;
+  }
+
+  .pet-controls {
+    anchor-right: 10;
+    anchor-vertical: 10;
+    layout-mode: Right;
+  }
+
+  .pet-card-list {
+    flex-weight: 1;
+    layout-mode: TopScrolling;
+  }
+
+  .pet-status-meters {
+    layout-mode: Left;
+    anchor-top: 5;
+  }
+
+  .pet-control {
+    flex-weight: 1;
+    anchor-left: 10;
+    anchor-height: 50;
+  }
+
+  .pet-image-container {
+    anchor-width: 110;
+    anchor-height: 110;
+    background-color: #111922;
+    anchor-left: 5;
+    anchor-right: 5;
+  }
+  .pet-card-row {
+    layout-mode: Left;
+  }
+</style>
+<div class="page-overlay">
+  <div class="container" data-hyui-title="Your Pets">
+    <div class="container-contents">
+      <div class="menu-description">
+        <p>Displaying {{$numPets}} pets</p>
+      </div>
+      <div id="pet-card-list" class="pet-card-list"
+           data-hyui-scrollbar-style="DefaultScrollbarStyle" data-hyui-keep-scroll-position="true">
+        {{#each petCards}}
+        {{#if idx == 0}}
+        <div class="pet-card-row">
+        {{/if}}
+        <div class="pet-card" id="pet-{{$id}}">
+          <div class="pet-image-container">
+
+          </div>
+          <div class="pet-info">
+            <div class="pet-info-header">
+              <p class="pet-name">
+                {{$name}}
+                <tooltip>
+                  <span>{{$roleName}} - {{$id}}</span>
+                </tooltip>
+              </p>
+              <div class="pet-info-tags">
+              </div>
+            </div>
+
+            {{@PetStatus:status={{$status}},fontSize=14}}
+
+            <div class="pet-status-meters">
+              {{#if bondingInfo != null}}
+              <div>
+                {{@CircularStatusMeter:iconPath=Assets/BondingMeter_Core.png,size=60,fillProgress={{$bondingInfo.fillProgress}},fillColor=#07eb2e,meter={{$bondingInfo.type}}}}
+                <tooltip>
+                  <span>Bonding Level {{$bondingInfo.bondingLevel}}</span>
+                </tooltip>
+              </div>
+              {{else}}
+              <div style="anchor-width: 52"></div>
+              {{/if}}
+
+              {{#if healthInfo != null}}
+              <div>
+                {{#if status == DEAD}}
+                  {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Dead_Core.png,size=60,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                {{else}}
+                  {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Core.png,size=60,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                {{/if}}
+                <tooltip>
+                  <span>Health: </span>
+                  <span data-hyui-bold=true>{{$healthInfo.value}}/{{$healthInfo.max}}</span>
+                </tooltip>
+              </div>
+              {{else}}
+              <div style="anchor-width: 52"></div>
+              {{/if}}
+            </div>
+          </div>
+          <div class="pet-controls" style="flex-weight: 1;">
+              {{#if showSummonToggle}}
+                {{#if isLoaded}}
+                <button class="pet-control small-tertiary-button" id="toggle-summon-{{$id}}">Unsummon</button>
+                {{else}}
+                <button class="pet-control small-tertiary-button" id="toggle-summon-{{$id}}">Summon</button>
+                {{/if}}
+              {{/if}}
+              {{#if status == DEAD}}
+                {{@DestructiveButton:id=accept-death-{{$id}},text=Accept,height=50}}
+              {{/if}}
+              <button class="pet-control small-tertiary-button" id="view-details-{{$id}}">Details</button>
+          </div>
+        </div>
+        {{#if idx == 2 }}
+          </div>
+        {{/if}}
+        {{/each}}
+        <!-- Handle incomplete rows with a closing of the row -->
+      </p>
+
+    </div>
+  </div>
+</div>

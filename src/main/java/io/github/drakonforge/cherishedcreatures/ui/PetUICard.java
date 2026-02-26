@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-public record PetUICard(UUID id, String name, String roleName, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo) {
+public record PetUICard(UUID id, String name, String roleName, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo, @Nullable Integer idx) {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
@@ -47,7 +47,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
 
     public record PetUIHealthInfo(float fillProgress, int value, int max) {}
 
-    public static PetUICard fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, @NonNullDecl Store<EntityStore> store) {
+    public static PetUICard fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, @NonNullDecl Store<EntityStore> store, @Nullable Integer idx) {
         entry.attemptSaveEntityFromLive(store);
         Holder<EntityStore> holder = entry.getHolder(false);
         PetType petType = entry.getPetType();
@@ -68,7 +68,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         PetUIHealthInfo healthInfo = getHealthInfo(petType, status, holder);
         boolean showSummonToggle = petType.hasFeatureFlag(PetFeatureFlag.SummonControls) && canSummonPetWithStatus(entry.getStatus());
         // If the pet has Status ALIVE but is unloaded, we basically treat it as un-summoned for our purposes.
-        return new PetUICard(entry.getUuid(), displayName, roleName, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo);
+        return new PetUICard(entry.getUuid(), displayName, roleName, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo, idx);
     }
 
     private static boolean canSummonPetWithStatus(Status status) {
@@ -149,7 +149,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         if (index > -1) {
             TrackedPetEntry entry = petTracker.getPetEntry(petUuid);
             if (entry != null) {
-                petCards.set(index, PetUICard.fromTrackedPetEntry(entry, store));
+                petCards.set(index, PetUICard.fromTrackedPetEntry(entry, store, index));
             }
         }
     }

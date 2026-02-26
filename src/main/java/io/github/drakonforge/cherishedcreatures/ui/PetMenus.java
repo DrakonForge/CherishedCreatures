@@ -31,8 +31,10 @@ public final class PetMenus {
         }
 
         List<PetUICard> petCards = new ArrayList<>();
-        for (TrackedPetEntry petEntry : playerPetTracker.getPetEntries()) {
-            petCards.add(PetUICard.fromTrackedPetEntry(petEntry, store));
+        List<TrackedPetEntry> trackedPetEntries = playerPetTracker.getPetEntries();
+        for (int i = 0; i < trackedPetEntries.size(); i++) {
+            TrackedPetEntry petEntry = trackedPetEntries.get(i);
+            petCards.add(PetUICard.fromTrackedPetEntry(petEntry, store, i % 3));
         }
 
         TemplateProcessor template = new TemplateProcessor()
@@ -45,11 +47,12 @@ public final class PetMenus {
         PageBuilder builder = PageBuilder.detachedPage()
                 .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
                 .enableRuntimeTemplateUpdates(true)
-                .loadHtml("Pages/PetMenu.html", template);
+                .loadHtml("Pages/PetMenuGrid.html", template);
         // The data-hyui tags don't seem to work properly, so add the scroll position manually
         builder.getById("pet-card-list", GroupBuilder.class).ifPresent(groupBuilder -> {
             groupBuilder.withKeepScrollPosition(true);
         });
+
         for (PetUICard petUICard : petCards) {
             petUICard.registerMenuEventListeners(builder, store, ref, playerRef, playerPetTracker, petCards);
         }
@@ -70,7 +73,7 @@ public final class PetMenus {
             return false;
         }
 
-        PetUICard petCard = PetUICard.fromTrackedPetEntry(petEntry, store);
+        PetUICard petCard = PetUICard.fromTrackedPetEntry(petEntry, store,0);
         // Making a list so we can change the contents later
         List<PetUICard> petCardHolder = new ArrayList<>();
         petCardHolder.add(petCard);
