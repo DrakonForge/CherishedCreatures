@@ -30,6 +30,8 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
             .append(new KeyedCodec<>("PetActivities", Codec.STRING_ARRAY),
                     (asset, petActivities) -> asset.petActivities = petActivities,
                     asset -> asset.petActivities)
+            .addValidatorLate(() -> PetActivity.VALIDATOR_CACHE.getArrayValidator().late())
+            .addValidator(Validators.uniqueInArray())
             .documentation("What kinds of pet activities that pets of this type can gain bonding XP and happiness from.")
             .add()
             .append(new KeyedCodec<>("FeatureFlags", new Object2BooleanMapCodec<>(new EnumCodec<>(
