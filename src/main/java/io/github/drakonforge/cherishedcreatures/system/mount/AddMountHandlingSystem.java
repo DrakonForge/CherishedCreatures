@@ -41,7 +41,7 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
         }
 
         MountHandlingComponent mountHandlingComponent = new MountHandlingComponent(petType);
-        mountHandlingComponent.setBaseSpeed(petType.getBaseSpeed());
+        mountHandlingComponent.setBaseSpeed(petType.getMountBaseSpeed());
         commandBuffer.addComponent(ref, MountHandlingComponent.getComponentType(),
                 mountHandlingComponent);
         commandBuffer.ensureComponent(mountRef, MountHandlingNpcComponent.getComponentType());

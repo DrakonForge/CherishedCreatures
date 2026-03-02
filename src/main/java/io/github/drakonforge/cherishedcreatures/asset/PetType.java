@@ -12,11 +12,13 @@ import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.codec.validation.ValidatorCache;
+import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
 import io.github.drakonforge.cherishedcreatures.CherishedCreaturesConfig;
 import io.github.drakonforge.cherishedcreatures.util.Object2BooleanMapCodec;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String, PetType>> {
@@ -28,20 +30,28 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
             .append(new KeyedCodec<>("PetActivities", Codec.STRING_ARRAY),
                     (asset, petActivities) -> asset.petActivities = petActivities,
                     asset -> asset.petActivities)
-            .documentation("TODO")
+            .documentation("What kinds of pet activities that pets of this type can gain bonding XP and happiness from.")
             .add()
             .append(new KeyedCodec<>("FeatureFlags", new Object2BooleanMapCodec<>(new EnumCodec<>(
                             PetFeatureFlag.class), Object2BooleanArrayMap::new)),
                     (asset, featureFlags) -> asset.featureFlags = featureFlags,
                     asset -> asset.featureFlags)
-            .documentation("TODO")
+            .documentation("A list of toggleable features for this pet type.")
             .add()
             .append(new KeyedCodec<>("BondingLevelValuesOverride", Codec.FLOAT_ARRAY),
                     (asset, bondingLevelValues) -> asset.bondingLevelValuesOverride = bondingLevelValues,
                     PetType::getBondingLevelValues)
-            .documentation("TODO")
+            .documentation("A list of bonding XP level thresholds which overrides the server default for this pet type only.")
             .add()
-            .documentation("TODO");
+            .append(new KeyedCodec<>("MountBaseSpeed", Codec.FLOAT), (asset, baseSpeed) -> asset.mountBaseSpeed = baseSpeed, PetType::getMountBaseSpeed)
+            .addValidator(Validators.greaterThan(0.0f))
+            .documentation("Only for mounts with AdvancedMountHandling enabled. The base speed of the mount when ridden by the player.")
+            .add()
+            .append(new KeyedCodec<>("MountGaitAcceleration", Codec.FLOAT), (asset, acceleration) -> asset.gaitAcceleration = acceleration, PetType::getGaitAcceleration)
+            .addValidator(Validators.greaterThan(0.0f))
+            .documentation("Only for mounts with AdvancedMountHandling enabled. How quickly the mount's speed multiplier due to gait changes per second.")
+            .add()
+            .documentation("The pet type determines the configuration of an NPC when it is tamed as a pet.");
     public static final AssetCodec<String, PetType> CODEC = CODEC_BUILDER.build();
     private static AssetStore<String, PetType, DefaultAssetMap<String, PetType>> ASSET_STORE;
     public static final ValidatorCache<String> VALIDATOR_CACHE = new ValidatorCache<>(new AssetKeyValidator<>(
@@ -81,12 +91,10 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected float[] bondingLevelValuesOverride;
     protected JoinsFlock joinsFlock = JoinsFlock.FollowOnly;
     protected AbandonBehavior abandonBehavior = AbandonBehavior.UntameIfSpawned;
-    protected float baseSpeed = 10.0f; // TODO: Adjust defaults, make it customizable
-    protected float gaitAcceleration = 1.0f; // Only used for mounts. How much speed multiplier changes per second. Must be positive.
-    protected float baseSpeedPerLevel = 0.0f;
+    protected float mountBaseSpeed = 10.0f;
+    protected float gaitAcceleration = 1.0f;
+    protected float mountBaseSpeedPerLevel = 0.0f;
 
-    // TODO: Mount acceleration
-    // TODO: Base speed
     // TODO: Base stamina (lower priority)
 
     private PetType() {
@@ -115,8 +123,8 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
         return bondingLevelValuesOverride;
     }
 
-    public float getBaseSpeed() {
-        return baseSpeed;
+    public float getMountBaseSpeed() {
+        return mountBaseSpeed;
     }
 
     public float getGaitAcceleration() {
@@ -128,22 +136,29 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
         return id;
     }
 
-    public enum PetFeatureFlag {
-        Bonding(false),
-        Immortal(false), // Pet that cannot take damage or die, so health doesn't matter
-        FollowModeControls(true),
-        SummonControls(true),
-        AdvancedMountHandling(false), // If this is a mount, use the advanced handling system
-        HealsOnSpawn(false);
+    public enum PetFeatureFlag implements Supplier<String> {
+        Bonding(true, "Whether this pet uses the bonding system."),
+        Immortal(false, "If the pet cannot take damage or die. Will stop displaying health-related UI."),
+        FollowModeControls(true, "Whether this pet's follow mode can be toggled via UI."),
+        SummonControls(true, "Whether this pet can be summoned or unsummoned via UI."),
+        AdvancedMountHandling(false, "If this is a mount, uses the advanced mount handling system."),
+        HealsOnSpawn(false, "Whether this pet should fully heal upon being spawned in.");
 
         private final boolean defaultValue;
+        private final String description;
 
-        PetFeatureFlag(boolean defaultValue) {
+        PetFeatureFlag(boolean defaultValue, String description) {
             this.defaultValue = defaultValue;
+            this.description = description;
         }
 
         public boolean getDefaultValue() {
             return defaultValue;
+        }
+
+        @Override
+        public String get() {
+            return this.description;
         }
     }
 }
