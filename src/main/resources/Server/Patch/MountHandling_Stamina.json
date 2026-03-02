@@ -1,0 +1,67 @@
+{
+  "_BaseAssetPath": "Server/Entity/Stats/Stamina.json",
+  "Regenerating": [
+    {
+      "_index": 0,
+      "Conditions": [
+        {
+          "_op": "add",
+          "Id": "Mount",
+          "MustBeMoving": true,
+          "Gait": "Gallop",
+          "Inverse": true
+        },
+        {
+          "_op": "add",
+          "Id": "Mount",
+          "MustBeMoving": true,
+          "Gait": "FullGallop",
+          "Inverse": true
+        }
+      ]
+    },
+    {
+      "_index": 3,
+      "Conditions": [
+        {
+          "_op": "add",
+          "Id": "Riding",
+          "Inverse": true
+        },
+        {
+          "_op": "add",
+          "Id": "Mount",
+          "Inverse": true
+        }
+      ]
+    },
+    {
+      "_op": "add",
+      "Interval": 0.1,
+      "Amount": -0.05,
+      "ClampAtZero": true,
+      "RegenType": "Additive",
+      "Conditions": [
+        {
+          "Id": "Mount",
+          "MustBeMoving": true,
+          "Gait": "Gallop"
+        }
+      ]
+    },
+    {
+      "_op": "add",
+      "Interval": 0.1,
+      "Amount": -0.1,
+      "ClampAtZero": true,
+      "RegenType": "Additive",
+      "Conditions": [
+        {
+          "Id": "Mount",
+          "MustBeMoving": true,
+          "Gait": "FullGallop"
+        }
+      ]
+    }
+  ]
+}
