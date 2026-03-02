@@ -11,7 +11,6 @@ public enum PetActivityType implements Supplier<String> {
     Looting("Finding precious items with your pet"),
     Petting("Petting your pet");
 
-
     private final String description;
 
     PetActivityType(String description) {

@@ -3,7 +3,6 @@ package io.github.drakonforge.cherishedcreatures.event;
 import com.hypixel.hytale.component.system.EcsEvent;
 import io.github.drakonforge.cherishedcreatures.data.PetActivityType;
 
-// TODO: We may want to rename this to just "PetActivity" and let it trigger for any pet
 // Just in case a pet still uses Happiness but not Bonding
 public class TriggerPetActivityEvent extends EcsEvent {
     private final PetActivityType type;

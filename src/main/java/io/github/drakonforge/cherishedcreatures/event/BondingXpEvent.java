@@ -3,7 +3,7 @@ package io.github.drakonforge.cherishedcreatures.event;
 import com.hypixel.hytale.component.system.EcsEvent;
 
 public class BondingXpEvent extends EcsEvent {
-    private float amountGained = 0.0f;
+    private float amountGained;
 
     public BondingXpEvent(float amountGained) {
         this.amountGained = amountGained;
