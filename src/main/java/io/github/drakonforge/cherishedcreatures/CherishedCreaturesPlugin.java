@@ -57,6 +57,7 @@ import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingUpdate
 import io.github.drakonforge.cherishedcreatures.system.mount.MountHandlingProcessMovementStates;
 import io.github.drakonforge.cherishedcreatures.system.mount.RegisterNpcMountDetectionSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.RemoveMountHandlingSystem;
+import io.github.drakonforge.cherishedcreatures.system.mount.ResetMountHandlingNpcSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.SetMountHandlingStaminaDelaySystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.ShowMountStatusMetersSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.UpdateMountStatusMetersSystem;
@@ -213,7 +214,8 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new UpdateMountStatusMetersSystem());
         entityStoreRegistry.registerSystem(new SetMountHandlingStaminaDelaySystem());
         entityStoreRegistry.registerSystem(new DismountOnNpcMountDeath());
-        // Mount Handling logic - order matters when loading
+        entityStoreRegistry.registerSystem(new ResetMountHandlingNpcSystem());
+        // Mount Handling ticking logic - order matters when loading
         entityStoreRegistry.registerSystem(new MountHandlingUpdateStatsSystem());
         entityStoreRegistry.registerSystem(new MountHandlingProcessInputSystem());
         entityStoreRegistry.registerSystem(new MountHandlingProcessMovementStates());

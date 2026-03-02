@@ -5,7 +5,6 @@ import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.query.Query;
-import com.hypixel.hytale.component.system.EntityEventSystem;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -36,8 +35,6 @@ public class RemoveMountHandlingSystem extends DismountNpcEventSystem {
 
         Ref<EntityStore> mountRef = dismountNpcEvent.getOldMountRef();
         commandBuffer.tryRemoveComponent(mountRef, MountHandlingNpcComponent.getComponentType());
-
-        // TODO: Look into if we need to remove this when the player dies on the mount
 
     }
 }
