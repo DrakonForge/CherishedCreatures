@@ -24,6 +24,7 @@ import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingNpcComponent;
 import io.github.drakonforge.cherishedcreatures.component.MountStatusMetersComponent;
 import io.github.drakonforge.cherishedcreatures.component.MountedActiveComponent;
+import io.github.drakonforge.cherishedcreatures.component.PetAttributes;
 import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetStateComponent;
@@ -89,6 +90,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
     private ComponentType<EntityStore, MountStatusMetersComponent> mountStatusMetersComponentType;
     private ComponentType<EntityStore, MountedActiveComponent> mountedActiveComponentType;
     private ComponentType<EntityStore, MountHandlingNpcComponent> mountHandlingNpcComponentType;
+    private ComponentType<EntityStore, PetAttributes> petAttributesComponentType;
 
     private SystemGroup<EntityStore> filterBondingXpEventGroup;
     private SystemGroup<EntityStore> inspectBondingXpEventGroup;
@@ -176,6 +178,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
                 "PetBondComponent", PetBondComponent.CODEC);
         this.petTypeComponentType = entityStoreRegistry.registerComponent(PetTypeComponent.class,
                 "PetType", PetTypeComponent.CODEC);
+        this.petAttributesComponentType = entityStoreRegistry.registerComponent(PetAttributes.class, "PetAttributes", PetAttributes.CODEC);
         this.mountHandlingComponentType = entityStoreRegistry.registerComponent(
                 MountHandlingComponent.class, MountHandlingComponent::new);
         this.playerNpcMountDetectionComponentType = entityStoreRegistry.registerComponent(
@@ -203,6 +206,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new NotifyBondingXpSystem());
         entityStoreRegistry.registerSystem(new UpdateBondingLevelSystem());
         entityStoreRegistry.registerSystem(new UpdateExplorationMarkerSystem());
+        entityStoreRegistry.registerSystem(new EnsurePetAttributesSystem());
         // Mounts
         entityStoreRegistry.registerSystem(new RegisterNpcMountDetectionSystem());
         entityStoreRegistry.registerSystem(new DetectNpcMountSystem());
@@ -284,6 +288,10 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
     public ComponentType<EntityStore, MountHandlingNpcComponent> getMountHandlingNpcComponentType() {
         return mountHandlingNpcComponentType;
+    }
+
+    public ComponentType<EntityStore, PetAttributes> getPetAttributesComponentType() {
+        return petAttributesComponentType;
     }
 
     public ResourceType<EntityStore, PetUpdateQueue> getPetUpdateQueueResourceType() {
