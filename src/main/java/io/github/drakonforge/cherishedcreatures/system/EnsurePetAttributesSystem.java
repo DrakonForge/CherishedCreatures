@@ -54,8 +54,8 @@ public class EnsurePetAttributesSystem extends HolderSystem<EntityStore> {
             return;
         }
 
-        float average = numericAttribute.getDefaultAvgValue();
-        float standardDeviation = numericAttribute.getDefaultStandardDeviation();
+        float average = numericAttribute.getAverage();
+        float standardDeviation = numericAttribute.getStandardDeviation();
         float value = (float) random.nextGaussian(average, standardDeviation);
         float clampedValue = numericAttribute.clamp(value);
         petAttributes.putAttribute(key, clampedValue);

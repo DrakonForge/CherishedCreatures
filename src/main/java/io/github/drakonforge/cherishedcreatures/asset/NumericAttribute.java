@@ -17,10 +17,10 @@ public class NumericAttribute {
             .append(new KeyedCodec<>("Max", Codec.FLOAT), (obj, value) -> obj.max = value, NumericAttribute::getMax)
             .documentation("TODO")
             .add()
-            .append(new KeyedCodec<>("DefaultAvgValue", Codec.FLOAT), (obj, value) -> obj.defaultAvgValue = value, NumericAttribute::getDefaultAvgValue)
+            .append(new KeyedCodec<>("Average", Codec.FLOAT), (obj, value) -> obj.average = value, NumericAttribute::getAverage)
             .documentation("TODO")
             .add()
-            .append(new KeyedCodec<>("DefaultStandardDeviation", Codec.FLOAT), (obj, value) -> obj.defaultStandardDeviation = value, NumericAttribute::getDefaultStandardDeviation)
+            .append(new KeyedCodec<>("StandardDeviation", Codec.FLOAT), (obj, value) -> obj.standardDeviation = value, NumericAttribute::getStandardDeviation)
             .documentation("TODO")
             .add()
             .append(new KeyedCodec<>("RoundToNearest", Codec.FLOAT), (obj, value) -> obj.roundToNearest = value, NumericAttribute::getRoundToNearest)
@@ -36,17 +36,17 @@ public class NumericAttribute {
     private Mode mode = Mode.Disabled;
     private float min = 0.0f;
     private float max = 1.0f;
-    private float defaultAvgValue = 0.5f;
-    private float defaultStandardDeviation = 0.25f;
+    private float average = 0.5f;
+    private float standardDeviation = 0.25f;
     private float roundToNearest = -1.0f;
 
     private NumericAttribute() {}
 
-    public NumericAttribute(float min, float max, float defaultAvgValue, float defaultStandardDeviation, float roundToNearest) {
+    public NumericAttribute(float min, float max, float average, float standardDeviation, float roundToNearest) {
         this.min = min;
         this.max = max;
-        this.defaultAvgValue = defaultAvgValue;
-        this.defaultStandardDeviation = defaultStandardDeviation;
+        this.average = average;
+        this.standardDeviation = standardDeviation;
         this.roundToNearest = roundToNearest;
     }
 
@@ -69,12 +69,12 @@ public class NumericAttribute {
         return Math.clamp(value, min, max);
     }
 
-    public float getDefaultAvgValue() {
-        return defaultAvgValue;
+    public float getAverage() {
+        return average;
     }
 
-    public float getDefaultStandardDeviation() {
-        return defaultStandardDeviation;
+    public float getStandardDeviation() {
+        return standardDeviation;
     }
 
     public float getRoundToNearest() {

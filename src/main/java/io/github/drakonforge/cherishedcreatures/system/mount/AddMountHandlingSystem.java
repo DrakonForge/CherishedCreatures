@@ -42,7 +42,7 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
 
         MountHandlingComponent mountHandlingComponent = new MountHandlingComponent(petType);
         // TODO: Pull from stored stats
-        mountHandlingComponent.setBaseSpeed(petType.getMountBaseSpeed().getDefaultAvgValue());
+        mountHandlingComponent.setBaseSpeed(petType.getMountBaseSpeed().getAverage());
         commandBuffer.addComponent(ref, MountHandlingComponent.getComponentType(),
                 mountHandlingComponent);
         commandBuffer.ensureComponent(mountRef, MountHandlingNpcComponent.getComponentType());
