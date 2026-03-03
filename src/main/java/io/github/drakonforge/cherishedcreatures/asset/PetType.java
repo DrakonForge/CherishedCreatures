@@ -45,12 +45,16 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
                     PetType::getBondingLevelValues)
             .documentation("A list of bonding XP level thresholds which overrides the server default for this pet type only.")
             .add()
-            .append(new KeyedCodec<>("MountBaseSpeed", Codec.FLOAT), (asset, baseSpeed) -> asset.mountBaseSpeed = baseSpeed, PetType::getMountBaseSpeed)
-            .addValidator(Validators.greaterThan(0.0f))
+            .append(new KeyedCodec<>("BaseHealthModifier", NumericAttributeModifier.CODEC), (asset, baseHealth) -> asset.baseHealthModifier = baseHealth, PetType::getBaseHealthModifier)
+            .documentation("TODO")
+            .add()
+            .append(new KeyedCodec<>("BaseStaminaModifier", NumericAttributeModifier.CODEC), (asset, baseStamina) -> asset.baseHealthModifier = baseStamina, PetType::getBaseHealthModifier)
+            .documentation("TODO")
+            .add()
+            .append(new KeyedCodec<>("MountBaseSpeed", NumericAttributeModifier.CODEC), (asset, baseSpeed) -> asset.mountBaseSpeed = baseSpeed, PetType::getMountBaseSpeed)
             .documentation("Only for mounts with AdvancedMountHandling enabled. The base speed of the mount when ridden by the player.")
             .add()
-            .append(new KeyedCodec<>("MountGaitAcceleration", Codec.FLOAT), (asset, acceleration) -> asset.gaitAcceleration = acceleration, PetType::getGaitAcceleration)
-            .addValidator(Validators.greaterThan(0.0f))
+            .append(new KeyedCodec<>("MountGaitAcceleration", NumericAttributeModifier.CODEC), (asset, acceleration) -> asset.mountGaitAcceleration = acceleration, PetType::getMountGaitAcceleration)
             .documentation("Only for mounts with AdvancedMountHandling enabled. How quickly the mount's speed multiplier due to gait changes per second.")
             .add()
             .documentation("The pet type determines the configuration of an NPC when it is tamed as a pet.");
@@ -93,9 +97,11 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected float[] bondingLevelValuesOverride;
     protected JoinsFlock joinsFlock = JoinsFlock.FollowOnly;
     protected AbandonBehavior abandonBehavior = AbandonBehavior.UntameIfSpawned;
-    protected float mountBaseSpeed = 10.0f;
-    protected float gaitAcceleration = 1.0f;
-    protected float mountBaseSpeedPerLevel = 0.0f;
+    protected NumericAttributeModifier baseHealthModifier = new NumericAttributeModifier(-5.0f, 5.0f, 0.0f, 1.0f, -1.0f);
+    protected NumericAttributeModifier baseStaminaModifier = new NumericAttributeModifier(-5.0f, 5.0f, 0.0f, 1.0f, -1.0f);
+    protected NumericAttributeModifier mountBaseSpeed = new NumericAttributeModifier(5.0f, 15.0f, 10.0f, 2.0f, 1.0f);
+    protected NumericAttributeModifier mountGaitAcceleration = new NumericAttributeModifier(0.5f, 1.5f, 1.0f, 0.0f, 0.1f);
+
 
     // TODO: Base stamina (lower priority)
 
@@ -125,12 +131,20 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
         return bondingLevelValuesOverride;
     }
 
-    public float getMountBaseSpeed() {
+    public NumericAttributeModifier getBaseHealthModifier() {
+        return baseHealthModifier;
+    }
+
+    public NumericAttributeModifier getBaseStaminaModifier() {
+        return baseStaminaModifier;
+    }
+
+    public NumericAttributeModifier getMountBaseSpeed() {
         return mountBaseSpeed;
     }
 
-    public float getGaitAcceleration() {
-        return gaitAcceleration;
+    public NumericAttributeModifier getMountGaitAcceleration() {
+        return mountGaitAcceleration;
     }
 
     @Override

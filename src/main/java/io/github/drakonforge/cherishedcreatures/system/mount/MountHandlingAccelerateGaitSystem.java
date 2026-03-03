@@ -40,10 +40,12 @@ public class MountHandlingAccelerateGaitSystem extends EntityTickingSystem<Entit
         PetType petType = mountHandlingComponent.getMountedPetType();
         float targetSpeedMultiplier = mountHandlingComponent.getCurrentGait().getDesiredSpeedMultiplier();
         float currentSpeedMultiplier = mountHandlingComponent.getSpeedMultiplier();
+        // TODO: Pull from stored stats
+        float gaitAcceleration = petType.getMountGaitAcceleration().getDefaultAvgValue();
         if (currentSpeedMultiplier < targetSpeedMultiplier) {
-            return Math.min(targetSpeedMultiplier, currentSpeedMultiplier + petType.getGaitAcceleration() * dt);
+            return Math.min(targetSpeedMultiplier, currentSpeedMultiplier + gaitAcceleration * dt);
         } else if (currentSpeedMultiplier > targetSpeedMultiplier) {
-            return Math.max(targetSpeedMultiplier, currentSpeedMultiplier - petType.getGaitAcceleration() * dt);
+            return Math.max(targetSpeedMultiplier, currentSpeedMultiplier - gaitAcceleration * dt);
         }
         return currentSpeedMultiplier;
     }
