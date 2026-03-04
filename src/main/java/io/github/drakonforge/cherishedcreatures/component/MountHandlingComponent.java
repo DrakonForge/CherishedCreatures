@@ -43,7 +43,9 @@ public class MountHandlingComponent implements Component<EntityStore> {
     }
 
     @Nonnull
-    private PetType mountedPetType;
+    private final PetType mountedPetType;
+    @Nonnull
+    private final PetAttributes mountPetAttributes;
     private MountGait currentGait = MountGait.Walk;
     private boolean isStaminaDepleted = false;
     private long lastForwardInput = 0;
@@ -58,10 +60,12 @@ public class MountHandlingComponent implements Component<EntityStore> {
 
     public MountHandlingComponent() {
         mountedPetType = PetType.DEFAULT;
+        mountPetAttributes = PetAttributes.EMPTY;
     }
 
-    public MountHandlingComponent(@NonNullDecl PetType mountedPetType) {
+    public MountHandlingComponent(@NonNullDecl PetType mountedPetType, @NonNullDecl PetAttributes petAttributes) {
         this.mountedPetType = mountedPetType;
+        this.mountPetAttributes = petAttributes;
     }
 
     public static ComponentType<EntityStore, MountHandlingComponent> getComponentType() {
@@ -152,11 +156,14 @@ public class MountHandlingComponent implements Component<EntityStore> {
         return heldSprintTime;
     }
 
+    public PetAttributes getMountPetAttributes() {
+        return mountPetAttributes;
+    }
+
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
-        MountHandlingComponent clone = new MountHandlingComponent();
-        clone.mountedPetType = mountedPetType;
+        MountHandlingComponent clone = new MountHandlingComponent(mountedPetType, mountPetAttributes);
         return clone;
     }
 }

@@ -21,6 +21,7 @@ public class PetAttributes implements Component<EntityStore> {
     public static final String MOUNT_BASE_SPEED = "MountBaseSpeed";
     public static final String MOUNT_GAIT_ACCELERATION = "MountGaitAcceleration";
 
+    public static final PetAttributes EMPTY = new PetAttributes();
     public static final BuilderCodec<PetAttributes> CODEC = BuilderCodec.builder(
             PetAttributes.class, PetAttributes::new)
             .append(new KeyedCodec<>("Attributes", new Object2FloatMapCodec<>(Codec.STRING, Object2FloatOpenHashMap::new, false)), (petAttributes, attributeMap) -> petAttributes.attributes = attributeMap, petAttributes -> petAttributes.attributes)

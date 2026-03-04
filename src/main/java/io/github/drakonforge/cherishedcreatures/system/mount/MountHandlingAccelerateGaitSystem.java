@@ -24,8 +24,9 @@ public class MountHandlingAccelerateGaitSystem extends EntityTickingSystem<Entit
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
     private static float calculateSpeedMultiplier(float dt,
-            MountHandlingComponent mountHandlingComponent, PetAttributes petAttributes) {
+            MountHandlingComponent mountHandlingComponent) {
         PetType petType = mountHandlingComponent.getMountedPetType();
+        PetAttributes petAttributes = mountHandlingComponent.getMountPetAttributes();
         float targetSpeedMultiplier = mountHandlingComponent.getCurrentGait()
                 .getDesiredSpeedMultiplier();
         float currentSpeedMultiplier = mountHandlingComponent.getSpeedMultiplier();
@@ -51,14 +52,11 @@ public class MountHandlingAccelerateGaitSystem extends EntityTickingSystem<Entit
                 MovementStatesComponent.getComponentType());
         MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i,
                 MountHandlingComponent.getComponentType());
-        PetAttributes petAttributes = archetypeChunk.getComponent(i,
-                PetAttributes.getComponentType());
         assert movementStatesComponent != null;
         assert mountHandlingComponent != null;
-        assert petAttributes != null;
 
-        float currentSpeedMultiplier = calculateSpeedMultiplier(dt, mountHandlingComponent,
-                petAttributes);
+
+        float currentSpeedMultiplier = calculateSpeedMultiplier(dt, mountHandlingComponent);
         mountHandlingComponent.setSpeedMultiplier(currentSpeedMultiplier);
     }
 
@@ -73,6 +71,6 @@ public class MountHandlingAccelerateGaitSystem extends EntityTickingSystem<Entit
     @Override
     public Query<EntityStore> getQuery() {
         return Query.and(MountHandlingComponent.getComponentType(),
-                MovementStatesComponent.getComponentType(), PetAttributes.getComponentType());
+                MovementStatesComponent.getComponentType());
     }
 }

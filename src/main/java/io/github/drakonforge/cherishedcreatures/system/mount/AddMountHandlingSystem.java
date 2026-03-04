@@ -42,7 +42,7 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
             return;
         }
 
-        MountHandlingComponent mountHandlingComponent = new MountHandlingComponent(petType);
+        MountHandlingComponent mountHandlingComponent = new MountHandlingComponent(petType, petAttributes);
 
         float baseSpeed;
         if (petAttributes.hasAttribute(PetAttributes.MOUNT_BASE_SPEED)) {
