@@ -1,4 +1,5 @@
 {
+  "IconPath": "Pages/Memories/npcs/Horse.png",
   "PetActivities": [
     "DefaultAdventuring",
     "DefaultPetting",

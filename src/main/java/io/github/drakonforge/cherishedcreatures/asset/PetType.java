@@ -27,6 +27,9 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     private static final AssetBuilderCodec.Builder<String, PetType> CODEC_BUILDER = AssetBuilderCodec.builder(
                     PetType.class, PetType::new, Codec.STRING, (asset, id) -> asset.id = id, PetType::getId,
                     (asset, data) -> asset.extraData = data, asset -> asset.extraData)
+            .append(new KeyedCodec<>("IconPath", Codec.STRING), (asset, iconPath) -> asset.iconPath = iconPath, asset -> asset.iconPath)
+            .documentation("TODO")
+            .add()
             .append(new KeyedCodec<>("PetActivities", Codec.STRING_ARRAY),
                     (asset, petActivities) -> asset.petActivities = petActivities,
                     asset -> asset.petActivities)
@@ -90,6 +93,7 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     }
 
     protected String id;
+    protected String iconPath;
     protected AssetExtraInfo.Data extraData;
     protected Object2BooleanMap<PetFeatureFlag> featureFlags;
     // TODO: Optimize this out to a set or bit flag later
@@ -143,6 +147,10 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
 
     public NumericAttribute getMountGaitAcceleration() {
         return mountGaitAcceleration;
+    }
+
+    public String getIconPath() {
+        return iconPath;
     }
 
     @Override

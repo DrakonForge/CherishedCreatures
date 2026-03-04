@@ -73,12 +73,10 @@
   }
 
   .pet-image-container {
-    anchor-width: 110;
+    anchor-width: 100;
     anchor-height: 100;
     background-color: #111922;
     anchor-top: 5;
-    anchor-left: 5;
-    anchor-right: 5;
   }
   .pet-card-row {
     layout-mode: Left;
@@ -98,7 +96,7 @@
         {{/if}}
         <div class="pet-card" id="pet-{{$id}}">
           <div class="pet-image-container">
-
+            <img src="{{$iconPath}}" width="80" height="80" />
           </div>
           <div class="pet-info">
             <div class="pet-info-header">
