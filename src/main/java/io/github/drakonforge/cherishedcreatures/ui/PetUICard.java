@@ -39,13 +39,6 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
-    public record PetUIDetails() {
-        public static PetUIDetails fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, @NonNullDecl Store<EntityStore> store) {
-            // TODO
-            return new PetUIDetails();
-        }
-    }
-
     public record PetUIBondingInfo(Type type, float fillProgress, int bondingLevel) {
         public enum Type {
             FOUR_SEGMENT, LINEAR
@@ -76,7 +69,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         boolean showSummonToggle = petType.hasFeatureFlag(PetFeatureFlag.SummonControls) && canSummonPetWithStatus(entry.getStatus());
         PetUIDetails details = null;
         if (generateDetails) {
-            details = PetUIDetails.fromTrackedPetEntry(entry, store);
+            details = PetUIDetails.fromTrackedPetEntry(entry, holder);
         }
         // If the pet has Status ALIVE but is unloaded, we basically treat it as un-summoned for our purposes.
         return new PetUICard(entry.getUuid(), displayName, roleName, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo, details, index);
@@ -174,7 +167,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         return -1;
     }
 
-    public void registerPetDetailsEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards, boolean generateDetails) {
+    public void registerPetDetailsEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
         builder.addEventListener("back", CustomUIEventBindingType.Activating, (_, _) -> {
             PetMenus.openMenu(store, ref, playerRef);
         });
@@ -272,7 +265,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
                         }
                         if (hasChanged) {
                             store.getExternalData().getWorld().execute(() -> {
-                                refreshPetCard(store, petTracker, petCards, generateDetails, id);
+                                refreshPetCard(store, petTracker, petCards, true, id);
                                 ctx.updatePage(false);
                             });
                         }

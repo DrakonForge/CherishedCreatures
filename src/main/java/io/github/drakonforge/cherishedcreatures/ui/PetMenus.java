@@ -94,7 +94,7 @@ public final class PetMenus {
         });
 
 
-        petCard.registerPetDetailsEventListeners(builder, store, ref, playerRef, playerPetTracker, petCardHolder, false);
+        petCard.registerPetDetailsEventListeners(builder, store, ref, playerRef, playerPetTracker, petCardHolder);
 
         builder.open(playerRef, store);
         return true;
