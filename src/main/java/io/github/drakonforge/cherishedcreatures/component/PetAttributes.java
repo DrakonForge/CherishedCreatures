@@ -39,6 +39,14 @@ public class PetAttributes implements Component<EntityStore> {
         attributes.put(key, value);
     }
 
+    public boolean hasAttribute(String key) {
+        return attributes.containsKey(key);
+    }
+
+    public float get(String key) {
+        return attributes.getFloat(key);
+    }
+
     public float getOrDefault(String key, float defaultValue) {
         return attributes.getOrDefault(key, defaultValue);
     }

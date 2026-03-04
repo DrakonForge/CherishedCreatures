@@ -207,6 +207,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new UpdateBondingLevelSystem());
         entityStoreRegistry.registerSystem(new UpdateExplorationMarkerSystem());
         entityStoreRegistry.registerSystem(new EnsurePetAttributesSystem());
+        entityStoreRegistry.registerSystem(new ApplyPetAttributesSystem());
         // Mounts
         entityStoreRegistry.registerSystem(new RegisterNpcMountDetectionSystem());
         entityStoreRegistry.registerSystem(new DetectNpcMountSystem());

@@ -48,7 +48,7 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
             .append(new KeyedCodec<>("BaseHealthModifier", NumericAttribute.CODEC), (asset, baseHealth) -> asset.baseHealthModifier = baseHealth, PetType::getBaseHealthModifier)
             .documentation("TODO")
             .add()
-            .append(new KeyedCodec<>("BaseStaminaModifier", NumericAttribute.CODEC), (asset, baseStamina) -> asset.baseHealthModifier = baseStamina, PetType::getBaseHealthModifier)
+            .append(new KeyedCodec<>("BaseStaminaModifier", NumericAttribute.CODEC), (asset, baseStamina) -> asset.baseStaminaModifier = baseStamina, PetType::getBaseStaminaModifier)
             .documentation("TODO")
             .add()
             .append(new KeyedCodec<>("MountBaseSpeed", NumericAttribute.CODEC), (asset, baseSpeed) -> asset.mountBaseSpeed = baseSpeed, PetType::getMountBaseSpeed)

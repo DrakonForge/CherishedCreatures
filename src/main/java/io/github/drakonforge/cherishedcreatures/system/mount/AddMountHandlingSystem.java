@@ -14,6 +14,7 @@ import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingNpcComponent;
+import io.github.drakonforge.cherishedcreatures.component.PetAttributes;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.event.MountNpcEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -32,7 +33,8 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
         PetTypeComponent petTypeComponent = store.getComponent(mountRef,
                 PetTypeComponent.getComponentType());
-        if (petTypeComponent == null) {
+        PetAttributes petAttributes = store.getComponent(mountRef, PetAttributes.getComponentType());
+        if (petTypeComponent == null || petAttributes == null) {
             return;
         }
         PetType petType = petTypeComponent.getPetType();
@@ -41,8 +43,15 @@ public class AddMountHandlingSystem extends MountNpcEventSystem {
         }
 
         MountHandlingComponent mountHandlingComponent = new MountHandlingComponent(petType);
-        // TODO: Pull from stored stats
-        mountHandlingComponent.setBaseSpeed(petType.getMountBaseSpeed().getAverage());
+
+        float baseSpeed;
+        if (petAttributes.hasAttribute(PetAttributes.MOUNT_BASE_SPEED)) {
+            baseSpeed = petAttributes.get(PetAttributes.MOUNT_BASE_SPEED);
+        } else {
+            baseSpeed = petType.getMountBaseSpeed().getAverage();
+        }
+
+        mountHandlingComponent.setBaseSpeed(baseSpeed);
         commandBuffer.addComponent(ref, MountHandlingComponent.getComponentType(),
                 mountHandlingComponent);
         commandBuffer.ensureComponent(mountRef, MountHandlingNpcComponent.getComponentType());

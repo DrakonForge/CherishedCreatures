@@ -13,6 +13,7 @@ import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
+import io.github.drakonforge.cherishedcreatures.component.PetAttributes;
 import java.util.Set;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -22,26 +23,18 @@ public class MountHandlingAccelerateGaitSystem extends EntityTickingSystem<Entit
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
-    @Override
-    public void tick(float dt, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
-            @NonNullDecl Store<EntityStore> store,
-            @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        MovementStatesComponent movementStatesComponent = archetypeChunk.getComponent(i, MovementStatesComponent.getComponentType());
-        MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i, MountHandlingComponent.getComponentType());
-        assert movementStatesComponent != null;
-        assert mountHandlingComponent != null;
-
-        float currentSpeedMultiplier = calculateSpeedMultiplier(dt, mountHandlingComponent);
-        mountHandlingComponent.setSpeedMultiplier(currentSpeedMultiplier);
-    }
-
     private static float calculateSpeedMultiplier(float dt,
-            MountHandlingComponent mountHandlingComponent) {
+            MountHandlingComponent mountHandlingComponent, PetAttributes petAttributes) {
         PetType petType = mountHandlingComponent.getMountedPetType();
-        float targetSpeedMultiplier = mountHandlingComponent.getCurrentGait().getDesiredSpeedMultiplier();
+        float targetSpeedMultiplier = mountHandlingComponent.getCurrentGait()
+                .getDesiredSpeedMultiplier();
         float currentSpeedMultiplier = mountHandlingComponent.getSpeedMultiplier();
-        // TODO: Pull from stored stats
-        float gaitAcceleration = petType.getMountGaitAcceleration().getAverage();
+        float gaitAcceleration;
+        if (petAttributes.hasAttribute(PetAttributes.MOUNT_GAIT_ACCELERATION)) {
+            gaitAcceleration = petAttributes.get(PetAttributes.MOUNT_GAIT_ACCELERATION);
+        } else {
+            gaitAcceleration = petType.getMountGaitAcceleration().getAverage();
+        }
         if (currentSpeedMultiplier < targetSpeedMultiplier) {
             return Math.min(targetSpeedMultiplier, currentSpeedMultiplier + gaitAcceleration * dt);
         } else if (currentSpeedMultiplier > targetSpeedMultiplier) {
@@ -50,15 +43,36 @@ public class MountHandlingAccelerateGaitSystem extends EntityTickingSystem<Entit
         return currentSpeedMultiplier;
     }
 
+    @Override
+    public void tick(float dt, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+        MovementStatesComponent movementStatesComponent = archetypeChunk.getComponent(i,
+                MovementStatesComponent.getComponentType());
+        MountHandlingComponent mountHandlingComponent = archetypeChunk.getComponent(i,
+                MountHandlingComponent.getComponentType());
+        PetAttributes petAttributes = archetypeChunk.getComponent(i,
+                PetAttributes.getComponentType());
+        assert movementStatesComponent != null;
+        assert mountHandlingComponent != null;
+        assert petAttributes != null;
+
+        float currentSpeedMultiplier = calculateSpeedMultiplier(dt, mountHandlingComponent,
+                petAttributes);
+        mountHandlingComponent.setSpeedMultiplier(currentSpeedMultiplier);
+    }
+
     @NonNullDecl
     @Override
     public Set<Dependency<EntityStore>> getDependencies() {
-        return Set.of(new SystemDependency<>(Order.AFTER, MountHandlingProcessInputSystem.class), new SystemDependency<>(Order.AFTER, MountHandlingProcessMovementStates.class));
+        return Set.of(new SystemDependency<>(Order.AFTER, MountHandlingProcessInputSystem.class),
+                new SystemDependency<>(Order.AFTER, MountHandlingProcessMovementStates.class));
     }
 
     @NullableDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(MountHandlingComponent.getComponentType(), MovementStatesComponent.getComponentType());
+        return Query.and(MountHandlingComponent.getComponentType(),
+                MovementStatesComponent.getComponentType(), PetAttributes.getComponentType());
     }
 }
