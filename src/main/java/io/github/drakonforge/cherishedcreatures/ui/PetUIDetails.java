@@ -49,6 +49,6 @@ public record PetUIDetails(List<PetNumericAttributeDisplay> numericAttributes) {
 
         // TODO: Hardcoded bar type for now
         // TODO: Calculate potential percentage via numeric attribute & bonding level
-        numericAttributes.add(new PetNumericAttributeDisplay(label, BarType.FIVE_SEGMENT, percentage, 0.75f));
+        numericAttributes.add(new PetNumericAttributeDisplay(label, BarType.FIVE_SEGMENT, percentage, percentage));
     }
 }

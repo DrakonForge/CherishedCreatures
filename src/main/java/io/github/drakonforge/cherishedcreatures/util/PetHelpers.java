@@ -186,4 +186,15 @@ public final class PetHelpers {
         LOGGER.atInfo().log("Finished executing unsummon pet");
         return true;
     }
+
+    // TODO: Implement
+    public static boolean renamePet(TrackedPetEntry entry, Store<EntityStore> store, String newName) {
+        Ref<EntityStore> ref = entry.getEntityRef();
+        if (entry.isLoaded() && ref != null) {
+            // TODO: Rename pet ref
+        }
+
+        return true;
+        // TODO: Rename pet holder too, or just save it
+    }
 }
