@@ -34,7 +34,7 @@ public final class PetMenus {
         List<TrackedPetEntry> trackedPetEntries = playerPetTracker.getPetEntries();
         for (int i = 0; i < trackedPetEntries.size(); i++) {
             TrackedPetEntry petEntry = trackedPetEntries.get(i);
-            petCards.add(PetUICard.fromTrackedPetEntry(petEntry, store, i % 3));
+            petCards.add(PetUICard.fromTrackedPetEntry(petEntry, store, false, i % 3));
         }
 
         TemplateProcessor template = new TemplateProcessor()
@@ -73,7 +73,7 @@ public final class PetMenus {
             return false;
         }
 
-        PetUICard petCard = PetUICard.fromTrackedPetEntry(petEntry, store,0);
+        PetUICard petCard = PetUICard.fromTrackedPetEntry(petEntry, store,true, -1);
         // Making a list so we can change the contents later
         List<PetUICard> petCardHolder = new ArrayList<>();
         petCardHolder.add(petCard);
@@ -94,7 +94,7 @@ public final class PetMenus {
         });
 
 
-        petCard.registerPetDetailsEventListeners(builder, store, ref, playerRef, playerPetTracker, petCardHolder);
+        petCard.registerPetDetailsEventListeners(builder, store, ref, playerRef, playerPetTracker, petCardHolder, false);
 
         builder.open(playerRef, store);
         return true;

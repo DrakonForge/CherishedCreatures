@@ -93,7 +93,7 @@
       <div id="pet-card-list" class="pet-card-list"
            data-hyui-scrollbar-style="DefaultScrollbarStyle" data-hyui-keep-scroll-position="true">
         {{#each petCards}}
-        {{#if idx == 0}}
+        {{#if index == 0}}
         <div class="pet-card-row">
         {{/if}}
         <div class="pet-card" id="pet-{{$id}}">
@@ -157,7 +157,7 @@
               <button class="pet-control small-tertiary-button" id="view-details-{{$id}}">Details</button>
           </div>
         </div>
-        {{#if idx == 2 }}
+        {{#if index == 2 }}
           </div>
         {{/if}}
         {{/each}}

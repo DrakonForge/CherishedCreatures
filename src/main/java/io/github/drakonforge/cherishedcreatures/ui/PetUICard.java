@@ -35,9 +35,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-public record PetUICard(UUID id, String name, String roleName, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo, @Nullable Integer idx) {
+public record PetUICard(UUID id, String name, String roleName, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo, @Nullable PetUIDetails details, @Nullable Integer index) {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+
+    public record PetUIDetails() {
+        public static PetUIDetails fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, @NonNullDecl Store<EntityStore> store) {
+            // TODO
+            return new PetUIDetails();
+        }
+    }
 
     public record PetUIBondingInfo(Type type, float fillProgress, int bondingLevel) {
         public enum Type {
@@ -47,7 +54,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
 
     public record PetUIHealthInfo(float fillProgress, int value, int max) {}
 
-    public static PetUICard fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, @NonNullDecl Store<EntityStore> store, @Nullable Integer idx) {
+    public static PetUICard fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, @NonNullDecl Store<EntityStore> store, boolean generateDetails, int index) {
         entry.attemptSaveEntityFromLive(store);
         Holder<EntityStore> holder = entry.getHolder(false);
         PetType petType = entry.getPetType();
@@ -67,8 +74,12 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         PetUIBondingInfo bondingInfo = getBondingInfo(petType, holder);
         PetUIHealthInfo healthInfo = getHealthInfo(petType, status, holder);
         boolean showSummonToggle = petType.hasFeatureFlag(PetFeatureFlag.SummonControls) && canSummonPetWithStatus(entry.getStatus());
+        PetUIDetails details = null;
+        if (generateDetails) {
+            details = PetUIDetails.fromTrackedPetEntry(entry, store);
+        }
         // If the pet has Status ALIVE but is unloaded, we basically treat it as un-summoned for our purposes.
-        return new PetUICard(entry.getUuid(), displayName, roleName, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo, idx);
+        return new PetUICard(entry.getUuid(), displayName, roleName, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo, details, index);
     }
 
     private static boolean canSummonPetWithStatus(Status status) {
@@ -144,12 +155,12 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         return new PetUIHealthInfo(statValue.asPercentage(), currentValue, maxValue);
     }
 
-    private void refreshPetCard(Store<EntityStore> store, PlayerPetTracker petTracker, List<PetUICard> petCards, UUID petUuid) {
+    private void refreshPetCard(Store<EntityStore> store, PlayerPetTracker petTracker, List<PetUICard> petCards, boolean generateDetails, UUID petUuid) {
         int index = findPetCard(petCards, petUuid);
         if (index > -1) {
             TrackedPetEntry entry = petTracker.getPetEntry(petUuid);
             if (entry != null) {
-                petCards.set(index, PetUICard.fromTrackedPetEntry(entry, store, index));
+                petCards.set(index, PetUICard.fromTrackedPetEntry(entry, store, generateDetails, index));
             }
         }
     }
@@ -163,7 +174,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
         return -1;
     }
 
-    public void registerPetDetailsEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
+    public void registerPetDetailsEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards, boolean generateDetails) {
         builder.addEventListener("back", CustomUIEventBindingType.Activating, (_, _) -> {
             PetMenus.openMenu(store, ref, playerRef);
         });
@@ -261,7 +272,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
                         }
                         if (hasChanged) {
                             store.getExternalData().getWorld().execute(() -> {
-                                refreshPetCard(store, petTracker, petCards, id);
+                                refreshPetCard(store, petTracker, petCards, generateDetails, id);
                                 ctx.updatePage(false);
                             });
                         }
@@ -296,7 +307,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
                 }
                 if (hasChanged) {
                     store.getExternalData().getWorld().execute(() -> {
-                        refreshPetCard(store, petTracker, petCards, id);
+                        refreshPetCard(store, petTracker, petCards, false, id);
                         ctx.updatePage(false);
                     });
                 }
