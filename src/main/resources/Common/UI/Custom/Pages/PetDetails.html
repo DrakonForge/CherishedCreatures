@@ -65,9 +65,15 @@
     font-weight: bold;
     color: #b4c8c9;
     font-size: 14;
+    vertical-align: center;
   }
 
   .pet-edit-name {
+    /* visibility: hidden; */
+    anchor-top: 10;
+  }
+
+  .name-change-button {
     visibility: hidden;
   }
 
@@ -93,11 +99,14 @@
   }
 
   .pet-main-stats {
-    layout-mode: Left;
-    vertical-align: center;
+    layout-mode: Top;
     anchor-width: 250;
     anchor-top: 10;
     flex-weight: 1;
+  }
+  .pet-main-stat {
+    layout-mode: Left;
+    vertical-align: center;
   }
   .pet-main-stat-label {
     flex-weight: 1;
@@ -173,6 +182,7 @@
                         <span>{{$id}}</span>
                       </tooltip>
                     </p>
+                    <p class="role-name">{{$roleName|upper}}</p>
                     {{#if status != DEAD}}
                     <button class="name-change-button small-secondary-button"
                             id="change-name-{{$id}}">Change Name
@@ -184,11 +194,11 @@
                       <input type="text" class="name-input" id="change-name-input-{{$id}}"
                              placeholder="{{$name}}" maxlength="32"/>
                     </div>
-                    <button class="name-change-button small-secondary-button"
-                            id="change-name-submit-{{$id}}">Submit
+                    <button class="name-change-submit-button small-secondary-button"
+                            id="change-name-submit-{{$id}}">Change Name
                     </button>
                   </div>
-                  <p class="role-name">{{$roleName|upper}}</p>
+
                 </div>
                 <div class="pet-status-meters">
                   {{#if bondingInfo != null}}
@@ -219,8 +229,10 @@
             </div>
             <div class="pet-info">
               <div class="pet-main-stats">
-                <div class="pet-main-stat-label">Status</div>
-                <div class="pet-main-stat-value">{{@PetStatus:status={{$status}},fontSize=16}}</div>
+                <div class="pet-main-stat">
+                  <div class="pet-main-stat-label">Status</div>
+                  <div class="pet-main-stat-value">{{@PetStatus:status={{$status}},fontSize=16}}</div>
+                </div>
               </div>
               <div class="pet-secondary-stats">
                 <div class="pet-secondary-stats-column pet-numeric-stats">

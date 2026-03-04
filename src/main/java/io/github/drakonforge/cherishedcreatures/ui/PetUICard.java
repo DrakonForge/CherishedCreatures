@@ -194,23 +194,39 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
             return;
         }
 
-        builder.addEventListener("change-name-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
+        // builder.addEventListener("change-name-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
+        //     LOGGER.atInfo().log("Called");
+        //     // TODO: Restore IDs if possible
+        //     ctx.getById("change-name-container", GroupBuilder.class).ifPresent(changeBuilder -> {
+        //         changeBuilder.withVisible(true);
+        //         ctx.updatePage(true);
+        //     });
+        //     ctx.getById("display-name-container", GroupBuilder.class).ifPresent(displayBuilder -> {
+        //         displayBuilder.withVisible(false);
+        //         ctx.updatePage(true);
+        //     });
+        //
+        //     LOGGER.atWarning().log("Exiting");
+        //
+        //     Optional<GroupBuilder> changeBuilder = ctx.getById("change-name-container", GroupBuilder.class);
+        //     Optional<GroupBuilder> displayBuilder = ctx.getById("display-name-container", GroupBuilder.class);
+        //
+        //     if (changeBuilder.isPresent() && displayBuilder.isPresent()) {
+        //         LOGGER.atInfo().log("Success");
+        //         changeBuilder.get().withVisible(true);
+        //         displayBuilder.get().withVisible(false);
+        //         ctx.updatePage(true);
+        //     } else {
+        //         LOGGER.atWarning().log("Fail");
+        //     }
+        //     LOGGER.atWarning().log("Exiting");
+        // });
+
+        builder.addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
             LOGGER.atInfo().log("Called");
-            // TODO: Restore IDs if possible
-            ctx.getById("change-name-container", GroupBuilder.class).ifPresent(changeBuilder -> {
-                changeBuilder.withVisible(true);
-                ctx.updatePage(true);
-            });
-            ctx.getById("display-name-container", GroupBuilder.class).ifPresent(displayBuilder -> {
-                displayBuilder.withVisible(false);
-                ctx.updatePage(true);
-            });
-
-            LOGGER.atWarning().log("Exiting");
-
             // Optional<GroupBuilder> changeBuilder = ctx.getById("change-name-container", GroupBuilder.class);
             // Optional<GroupBuilder> displayBuilder = ctx.getById("display-name-container", GroupBuilder.class);
-            //
+
             // if (changeBuilder.isPresent() && displayBuilder.isPresent()) {
             //     LOGGER.atInfo().log("Success");
             //     changeBuilder.get().withVisible(true);
@@ -219,22 +235,7 @@ public record PetUICard(UUID id, String name, String roleName, Status status, bo
             // } else {
             //     LOGGER.atWarning().log("Fail");
             // }
-            // LOGGER.atWarning().log("Exiting");
-        });
-
-        builder.addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
-            LOGGER.atInfo().log("Called");
-            Optional<GroupBuilder> changeBuilder = ctx.getById("change-name-container", GroupBuilder.class);
-            Optional<GroupBuilder> displayBuilder = ctx.getById("display-name-container", GroupBuilder.class);
-
-            if (changeBuilder.isPresent() && displayBuilder.isPresent()) {
-                LOGGER.atInfo().log("Success");
-                changeBuilder.get().withVisible(true);
-                displayBuilder.get().withVisible(false);
-                ctx.updatePage(true);
-            } else {
-                LOGGER.atWarning().log("Fail");
-            }
+            // TODO: Change name
         });
 
         if (showSummonToggle) {
