@@ -23,6 +23,7 @@
 
   .content-wrapper-controls {
     layout-mode: TopScrolling;
+    anchor-horizontal: 50;
   }
 
   .pet-info-container {
@@ -153,9 +154,15 @@
     anchor-bottom: -10;
   }
 
-  .pet-control {
+  .pet-control-button {
   }
 
+  .follow-mode-controls {
+    layout-mode: Top;
+  }
+  .follow-mode-slider-container {
+    anchor-top: 20;
+  }
   .footer {
     anchor-top: 40;
     layout-mode: Center;
@@ -254,31 +261,40 @@
         </div>
       </div>
       <div class="pet-controls-container decorated-container" data-hyui-title="Commands">
-        <div class="container-contents content-wrapper-controls">
-          <div class="content-wrapper" data-hyui-scrollbar-style="DefaultScrollbarStyle"
-               data-hyui-keep-scroll-position="true">{{#if showSummonToggle}}
+        <div class="container-contents">
+          <div class="content-wrapper content-wrapper-controls" data-hyui-scrollbar-style="DefaultScrollbarStyle"
+               data-hyui-keep-scroll-position="true">
             {{#if status == DEAD}}
-            {{@DestructiveButton:id=accept-death-{{$id}},text=Accept}}
+              {{@DestructiveButton:id=accept-death-{{$id}},text=Accept}}
             {{else}}
-            {{#if isLoaded}}
-            <button class="pet-control tertiary-button" id="toggle-summon-{{$id}}">Unsummon
-            </button>
-            {{else}}
-            <button class="pet-control tertiary-button" id="toggle-summon-{{$id}}">Summon
-            </button>
-            {{/if}}
-            {{/if}}
-            <select id="difficulty">
-              <option value="easy">Easy</option>
-              <option value="medium" selected>Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-            <input type="range" class="slider-number-field" min="0" max="100" value="50"/>
-            <progress value="75" max="100"></progress>
-            {{@DestructiveButton:id=abandon-{{$id}},text=Abandon}}
+              {{#if isLoaded}}
+                {{#if showSummonToggle}}
+                <button class="pet-control-button tertiary-button" id="toggle-summon-{{$id}}">Unsummon
+                </button>
+                {{else}}
+                <button class="pet-control-button tertiary-button" id="toggle-summon-{{$id}}">Summon
+                </button>
+                {{/if}}
+              {{/if}}
+              <div class="follow-mode-controls">
+                <select class="follow-mode-select" id="follow-mode-select-{{$id}}">
+                  <option value="Stay">Stay</option>
+                  <option value="Follow" selected>Follow</option>
+                </select>
+                <div class="slider-container follow-mode-slider-container">
+                  <input type="range" class="slider-number-field follow-mode-slider" min="0" max="100" value="50"/>
+                  <progress value="75" max="100"></progress>
+                </div>
+                <div class="slider-container follow-mode-slider-container">
+                  <input type="range" class="slider-number-field follow-mode-slider" min="0" max="100" value="50"/>
+                  <progress value="75" max="100"></progress>
+                </div>
+              </div>
+
+
+              {{@DestructiveButton:id=abandon-{{$id}},text=Abandon}}
             {{/if}}
           </div>
-
         </div>
       </div>
     </div>

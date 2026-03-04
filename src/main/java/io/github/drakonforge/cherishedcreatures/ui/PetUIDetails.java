@@ -18,8 +18,7 @@ public record PetUIDetails(List<PetNumericAttributeDisplay> numericAttributes) {
     public static PetUIDetails fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, Holder<EntityStore> holder) {
         // TODO
         PetType petType = entry.getPetType();
-        PetAttributes petAttributes = holder.getComponent(PetAttributes.getComponentType());
-
+        PetAttributes petAttributes = holder.ensureAndGetComponent(PetAttributes.getComponentType());
         List<PetNumericAttributeDisplay> numericAttributes = new ArrayList<>();
 
         // TODO: L10n support
