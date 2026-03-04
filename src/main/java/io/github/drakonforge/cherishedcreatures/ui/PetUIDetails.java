@@ -21,22 +21,25 @@ public record PetUIDetails(List<PetNumericAttributeDisplay> numericAttributes) {
         PetAttributes petAttributes = holder.getComponent(PetAttributes.getComponentType());
 
         List<PetNumericAttributeDisplay> numericAttributes = new ArrayList<>();
-        addNumericAttribute(numericAttributes, petType.getBaseHealthModifier(), PetAttributes.HEALTH, petAttributes);
-        addNumericAttribute(numericAttributes, petType.getBaseStaminaModifier(), PetAttributes.STAMINA, petAttributes);
+
+        // TODO: L10n support
+        addNumericAttribute(numericAttributes, petType.getBaseHealthModifier(), PetAttributes.HEALTH, "Health", petAttributes);
+        addNumericAttribute(numericAttributes, petType.getBaseStaminaModifier(), PetAttributes.STAMINA, "Stamina", petAttributes);
         if (petType.hasFeatureFlag(PetFeatureFlag.AdvancedMountHandling)) {
-            addNumericAttribute(numericAttributes, petType.getMountBaseSpeed(), PetAttributes.MOUNT_BASE_SPEED, petAttributes);
-            addNumericAttribute(numericAttributes, petType.getMountGaitAcceleration(), PetAttributes.MOUNT_GAIT_ACCELERATION, petAttributes);
+            addNumericAttribute(numericAttributes, petType.getMountBaseSpeed(), PetAttributes.MOUNT_BASE_SPEED, "Speed", petAttributes);
+            addNumericAttribute(numericAttributes, petType.getMountGaitAcceleration(), PetAttributes.MOUNT_GAIT_ACCELERATION, "Acceleration", petAttributes);
         }
         return new PetUIDetails(numericAttributes);
     }
 
-    public record PetNumericAttributeDisplay(BarType barType, float percentage) {
+    // TODO: Tooltip, maybe color?
+    public record PetNumericAttributeDisplay(String label, BarType barType, float percentage, float potentialPercentage) {
         public enum BarType {
             FIVE_SEGMENT
         }
     }
 
-    private static void addNumericAttribute(List<PetNumericAttributeDisplay> numericAttributes, NumericAttribute numericAttribute, String key, PetAttributes petAttributes) {
+    private static void addNumericAttribute(List<PetNumericAttributeDisplay> numericAttributes, NumericAttribute numericAttribute, String key, String label, PetAttributes petAttributes) {
         if (numericAttribute.getMode() != Mode.Display) {
             return;
         }
@@ -46,6 +49,7 @@ public record PetUIDetails(List<PetNumericAttributeDisplay> numericAttributes) {
         float percentage = Math.clamp((value - min) / (max - min), 0.0f, 1.0f);
 
         // TODO: Hardcoded bar type for now
-        numericAttributes.add(new PetNumericAttributeDisplay(BarType.FIVE_SEGMENT, percentage));
+        // TODO: Calculate potential percentage via numeric attribute & bonding level
+        numericAttributes.add(new PetNumericAttributeDisplay(label, BarType.FIVE_SEGMENT, percentage, 0.75f));
     }
 }

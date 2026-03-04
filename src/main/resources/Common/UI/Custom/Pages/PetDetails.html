@@ -12,9 +12,17 @@
   }
 
   .content-wrapper {
+    anchor-horizontal: 10;
+    anchor-vertical: 10;
+    flex-weight: 1;
+  }
+
+  .content-wrapper-info {
+    layout-mode: Top;
+  }
+
+  .content-wrapper-controls {
     layout-mode: TopScrolling;
-    anchor-horizontal: 0;
-    anchor-vertical: 5;
   }
 
   .pet-info-container {
@@ -81,6 +89,7 @@
 
   .pet-info {
     layout-mode: Top;
+    flex-weight: 1;
   }
 
   .pet-main-stats {
@@ -88,6 +97,7 @@
     vertical-align: center;
     anchor-width: 250;
     anchor-top: 10;
+    flex-weight: 1;
   }
   .pet-main-stat-label {
     flex-weight: 1;
@@ -95,6 +105,33 @@
     horizontal-align: left;
   }
   .pet-main-stat-value {
+  }
+
+  .pet-secondary-stats {
+    anchor-height: 200;
+    layout-mode: Left;
+
+  }
+  .pet-secondary-stats-column {
+    layout-mode: TopScrolling;
+    flex-weight: 1;
+  }
+  .pet-numeric-stats {
+    anchor-right: 10;
+  }
+
+  .pet-numeric-stat {
+    layout-mode: Right;
+    justify-content: space-between;
+    anchor-bottom: 5;
+    anchor-horizontal: 0;
+  }
+  .pet-numeric-label {
+    flex-weight: 1;
+  }
+  .pet-numeric-value {
+    anchor-right: 0;
+    anchor-width: 200;
   }
 
   .status-label {
@@ -122,7 +159,7 @@
     <div class="pet-contents">
       <div class="pet-info-container decorated-container" data-hyui-title="Pet Details">
         <div class="container-contents">
-          <div class="content-wrapper" data-hyui-scrollbar-style="DefaultScrollbarStyle"
+          <div class="content-wrapper content-wrapper-info" data-hyui-scrollbar-style="DefaultScrollbarStyle"
                data-hyui-keep-scroll-position="true">
             <div class="pet-header">
               <div class="pet-image-container">
@@ -185,12 +222,27 @@
                 <div class="pet-main-stat-label">Status</div>
                 <div class="pet-main-stat-value">{{@PetStatus:status={{$status}},fontSize=16}}</div>
               </div>
+              <div class="pet-secondary-stats">
+                <div class="pet-secondary-stats-column pet-numeric-stats">
+                  {{#each details.numericAttributes}}
+                    <div class="pet-numeric-stat">
+                      <p class="pet-numeric-label">{{$label}}</p>
+                      <div class="pet-numeric-value">
+                        {{@AttributeBar:percentage={{$percentage}},potentialPercentage={{$potentialPercentage}}}}
+                      </div>
+                    </div>
+                  {{/each}}
+                </div>
+                <div class="pet-secondary-stats-column panel pet-text-stats">
+
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div class="pet-controls-container decorated-container" data-hyui-title="Commands">
-        <div class="container-contents">
+        <div class="container-contents content-wrapper-controls">
           <div class="content-wrapper" data-hyui-scrollbar-style="DefaultScrollbarStyle"
                data-hyui-keep-scroll-position="true">{{#if showSummonToggle}}
             {{#if status == DEAD}}

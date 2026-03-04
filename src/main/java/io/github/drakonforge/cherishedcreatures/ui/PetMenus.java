@@ -82,6 +82,7 @@ public final class PetMenus {
                 .registerComponentFromFile("PetStatus", "Components/PetStatus.html")
                 .registerComponentFromFile("CircularStatusMeter", "Components/CircularStatusMeter.html")
                 .registerComponentFromFile("DestructiveButton", "Components/DestructiveButton.html")
+                .registerComponentFromFile("AttributeBar", "Components/AttributeBar.html")
                 .setVariable("petCard", petCardHolder);
 
         PageBuilder builder = PageBuilder.detachedPage()
