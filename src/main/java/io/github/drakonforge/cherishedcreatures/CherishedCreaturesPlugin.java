@@ -9,7 +9,7 @@ import com.hypixel.hytale.component.SystemGroup;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
-import com.hypixel.hytale.server.core.modules.entitystats.asset.condition.Condition;
+import com.hypixel.hytale.server.core.modules.entity.condition.Condition;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 

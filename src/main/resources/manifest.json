@@ -12,7 +12,7 @@
     ],
     "Website": "https://github.com/DrakonForge",
     "Main": "io.github.drakonforge.cherishedcreatures.CherishedCreaturesPlugin",
-    "ServerVersion": "2026.02.26-7681d338c",
+    "ServerVersion": "2026.03.05-9fdc5985d",
     "Dependencies": {
         "Hytale:NPC": "",
         "Ellie:HyUI": "",

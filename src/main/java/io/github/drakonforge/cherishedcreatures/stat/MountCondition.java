@@ -1,6 +1,5 @@
 package io.github.drakonforge.cherishedcreatures.stat;
 
-import com.hypixel.hytale.builtin.mounts.NPCMountComponent;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
@@ -8,14 +7,10 @@ import com.hypixel.hytale.codec.codecs.EnumCodec;
 import com.hypixel.hytale.component.ComponentAccessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
-import com.hypixel.hytale.server.core.modules.entitystats.asset.condition.Condition;
-import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.modules.entity.condition.Condition;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
-import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent.MountGait;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingNpcComponent;
-import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import java.time.Instant;
 import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;

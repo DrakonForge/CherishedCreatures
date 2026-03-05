@@ -5,6 +5,7 @@ plugins {
 
 
 import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import org.gradle.internal.os.OperatingSystem
 
 ext {
@@ -71,7 +72,7 @@ dependencies {
     if (use_local_install.toBoolean()) {
         implementation(files("$hytaleHome/install/$patchline/package/game/latest/Server/HytaleServer.jar"))
     } else {
-        implementation("com.hypixel.hytale:Server:+");
+        implementation("com.hypixel.hytale:Server:$hytale_version")
     }
     implementation "curse.maven:hyui-1431415:$hy_ui_version"
     implementation "curse.maven:hytalor-1440123:$hytalor_version"
@@ -92,10 +93,11 @@ tasks.register('updatePluginManifest') {
         if (!manifestFile.exists()) {
             throw new GradleException("Could not find manifest.json at ${manifestFile.path}!")
         }
-        def manifestJson = new groovy.json.JsonSlurper().parseText(manifestFile.text)
+        def manifestJson = new JsonSlurper().parseText(manifestFile.text)
         manifestJson.Version = version
         manifestJson.IncludesAssetPack = includes_pack.toBoolean()
-        manifestFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(manifestJson))
+        manifestJson.ServerVersion = hytale_version
+        manifestFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(manifestJson))
     }
 }
 
