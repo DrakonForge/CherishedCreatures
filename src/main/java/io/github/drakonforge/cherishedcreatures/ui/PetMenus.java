@@ -64,7 +64,7 @@ public final class PetMenus {
         for (PetUICard petCard : petCards) {
             PetMenuListeners.registerMenuEventListeners(new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCards, petCard));
         }
-        page.open(playerRef, store);
+        store.getExternalData().getWorld().execute(() -> page.open(playerRef, store));
     }
 
     public static boolean openPetDetails(PetMenuContext menuContext, UUID petUuid) {
@@ -105,7 +105,7 @@ public final class PetMenus {
         String id = petCard.id().toString();
 
         // TODO: Neither of these work for some reason >:(
-        // TODO: Maybe check if we're on the world thread?
+        // TODO: Maybe check if we're on the world thread? Nope that didn't work
         page.getById("pet-name-" + id, LabelBuilder.class).ifPresent(builder -> {
             builder.withText("MyCustomText").withBackground("#ff0000").withTextTooltipStyle(
                     DefaultStyles.buttonTextTooltipStyle()).withTooltipText("MyText").withTooltipTextSpans(null);
@@ -118,7 +118,7 @@ public final class PetMenus {
 
         PetMenuListeners.registerPetDetailsEventListeners(new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCardHolder, petCard));
 
-        page.open(playerRef, store);
+        store.getExternalData().getWorld().execute(() -> page.open(playerRef, store));
         return true;
     }
 }
