@@ -168,13 +168,13 @@ public record PetUICard(UUID id, String name, String roleName, String iconPath, 
         return -1;
     }
 
-    public void registerPetDetailsEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
-        builder.addEventListener("back", CustomUIEventBindingType.Activating, (_, _) -> {
+    public void registerPetDetailsEventListeners(PageBuilder page, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
+        page.addEventListener("back", CustomUIEventBindingType.Activating, (_, _) -> {
             PetMenus.openMenu(store, ref, playerRef);
         });
 
         if (status == Status.DEAD) {
-            builder.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating,
+            page.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating,
                     (_, ctx) -> {
                         int index = findPetCard(petCards, id);
                         if (index < 0 || petCards.get(index).status != Status.DEAD) {
@@ -223,7 +223,7 @@ public record PetUICard(UUID id, String name, String roleName, String iconPath, 
         //     LOGGER.atWarning().log("Exiting");
         // });
 
-        builder.addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
+        page.addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
             LOGGER.atInfo().log("Called");
             // Optional<GroupBuilder> changeBuilder = ctx.getById("change-name-container", GroupBuilder.class);
             // Optional<GroupBuilder> displayBuilder = ctx.getById("display-name-container", GroupBuilder.class);
@@ -240,7 +240,7 @@ public record PetUICard(UUID id, String name, String roleName, String iconPath, 
         });
 
         if (showSummonToggle) {
-            builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating,
+            page.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating,
                     (_, ctx) -> {
                         TrackedPetEntry entry = petTracker.getPetEntry(id);
                         boolean hasChanged = false;
@@ -275,9 +275,9 @@ public record PetUICard(UUID id, String name, String roleName, String iconPath, 
         }
     }
 
-    public void registerMenuEventListeners(PageBuilder builder, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
+    public void registerMenuEventListeners(PageBuilder page, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards) {
         if (showSummonToggle) {
-            builder.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
+            page.addEventListener("toggle-summon-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
                 TrackedPetEntry entry = petTracker.getPetEntry(id);
                 boolean hasChanged = false;
                 if (entry == null) {
@@ -309,7 +309,7 @@ public record PetUICard(UUID id, String name, String roleName, String iconPath, 
             });
         }
         if (status == Status.DEAD) {
-            builder.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
+            page.addEventListener("accept-death-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
                 int index = findPetCard(petCards, id);
                 if (index < 0 || petCards.get(index).status != Status.DEAD) {
                     playerRef.sendMessage(Message.raw("Pet does not exist or is not dead"));
@@ -328,7 +328,7 @@ public record PetUICard(UUID id, String name, String roleName, String iconPath, 
             });
         }
 
-        builder.addEventListener("view-details-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
+        page.addEventListener("view-details-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
             TrackedPetEntry entry = petTracker.getPetEntry(id);
             if (entry == null) {
                 LOGGER.atWarning().log("Entry is null");

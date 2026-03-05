@@ -1,12 +1,16 @@
 package io.github.drakonforge.cherishedcreatures.ui;
 
 import au.ellie.hyui.builders.GroupBuilder;
+import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.html.TemplateProcessor;
+import au.ellie.hyui.types.DefaultStyles;
+import au.ellie.hyui.types.TextTooltipStyle;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
@@ -44,19 +48,19 @@ public final class PetMenus {
                 .setVariable("numPets", petCards.size())
                 .setVariable("petCards", petCards);
 
-        PageBuilder builder = PageBuilder.detachedPage()
+        PageBuilder page = PageBuilder.detachedPage()
                 .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
                 .enableRuntimeTemplateUpdates(true)
                 .loadHtml("Pages/PetMenuGrid.html", template);
         // The data-hyui tags don't seem to work properly, so add the scroll position manually
-        builder.getById("pet-card-list", GroupBuilder.class).ifPresent(groupBuilder -> {
-            groupBuilder.withKeepScrollPosition(true);
+        page.getById("pet-card-list", GroupBuilder.class).ifPresent(builder -> {
+            builder.withKeepScrollPosition(true);
         });
 
         for (PetUICard petUICard : petCards) {
-            petUICard.registerMenuEventListeners(builder, store, ref, playerRef, playerPetTracker, petCards);
+            petUICard.registerMenuEventListeners(page, store, ref, playerRef, playerPetTracker, petCards);
         }
-        builder.open(playerRef, store);
+        page.open(playerRef, store);
     }
 
     public static boolean openPetDetails(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
@@ -85,19 +89,28 @@ public final class PetMenus {
                 .registerComponentFromFile("AttributeBar", "Components/AttributeBar.html")
                 .setVariable("petCard", petCardHolder);
 
-        PageBuilder builder = PageBuilder.detachedPage()
+        PageBuilder page = PageBuilder.detachedPage()
                 .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
+                .enablePersistentElementEdits(true)
                 .enableRuntimeTemplateUpdates(true)
                 .loadHtml("Pages/PetDetails.html", template);
-        // The data-hyui tags don't seem to work properly, so add the scroll position manually
-        builder.getById("pet-card-list", GroupBuilder.class).ifPresent(groupBuilder -> {
-            groupBuilder.withKeepScrollPosition(true);
+
+        String id = petCard.id().toString();
+
+        // TODO: Neither of these work for some reason >:(
+        page.getById("pet-name-" + id, LabelBuilder.class).ifPresent(builder -> {
+            builder.withText("MyCustomText").withBackground("#ff0000").withTextTooltipStyle(
+                    DefaultStyles.buttonTextTooltipStyle()).withTooltipText("MyText").withTooltipTextSpans(null);
+            builder.withVisible(false);
+            builder.addTextSpan(Message.raw("Hiiii"));
+        });
+        page.editById("pet-name-" + id, LabelBuilder.class, builder -> {
+            builder.withVisible(false);
         });
 
+        petCard.registerPetDetailsEventListeners(page, store, ref, playerRef, playerPetTracker, petCardHolder);
 
-        petCard.registerPetDetailsEventListeners(builder, store, ref, playerRef, playerPetTracker, petCardHolder);
-
-        builder.open(playerRef, store);
+        page.open(playerRef, store);
         return true;
     }
 }

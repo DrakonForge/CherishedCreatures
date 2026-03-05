@@ -184,11 +184,8 @@
               <div class="pet-header-info">
                 <div class="pet-header-details">
                   <div class="name-row name-container" id="display-name-container">
-                    <p class="pet-name">
+                    <p id="pet-name-{{$id}}" class="pet-name">
                       {{$name}}
-                      <tooltip>
-                        <span>{{$id}}</span>
-                      </tooltip>
                     </p>
                     <p class="role-name">{{$roleName|upper}}</p>
                     {{#if status != DEAD}}
