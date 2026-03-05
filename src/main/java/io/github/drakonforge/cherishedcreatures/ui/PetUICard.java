@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-public record PetUICard(UUID id, String name, String roleName, String iconPath, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo, @Nullable PetUIDetails details, @Nullable Integer index) {
+public record PetUICard(UUID id, String name, String roleName, String imagePath, String iconPath, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo, @Nullable PetUIDetails details, @Nullable Integer index) {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
@@ -42,6 +42,7 @@ public record PetUICard(UUID id, String name, String roleName, String iconPath, 
         Holder<EntityStore> holder = entry.getHolder(false);
         PetType petType = entry.getPetType();
         String roleName = "Unknown";
+        String imagePath = petType.getImagePath();
         String iconPath = petType.getIconPath();
 
         NPCEntity npcEntity =
@@ -63,7 +64,7 @@ public record PetUICard(UUID id, String name, String roleName, String iconPath, 
             details = PetUIDetails.fromTrackedPetEntry(entry, holder);
         }
         // If the pet has Status ALIVE but is unloaded, we basically treat it as un-summoned for our purposes.
-        return new PetUICard(entry.getUuid(), displayName, roleName, iconPath, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo, details, index);
+        return new PetUICard(entry.getUuid(), displayName, roleName, imagePath, iconPath, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo, details, index);
     }
 
     private static boolean canSummonPetWithStatus(Status status) {

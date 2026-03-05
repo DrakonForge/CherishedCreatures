@@ -1,5 +1,6 @@
 {
-  "IconPath": "Pages/Memories/npcs/Horse.png",
+  "ImagePath": "Pages/Memories/npcs/Horse.png",
+  "IconPath": "Assets/Pet_Horse_Icon.png",
   "PetActivities": [
     "DefaultAdventuring",
     "DefaultPetting",
