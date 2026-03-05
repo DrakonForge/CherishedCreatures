@@ -5,7 +5,6 @@ import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.html.TemplateProcessor;
 import au.ellie.hyui.types.DefaultStyles;
-import au.ellie.hyui.types.TextTooltipStyle;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
@@ -15,6 +14,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.ui.PetMenuListeners.PetMenuContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +26,11 @@ public final class PetMenus {
 
     private PetMenus() {}
 
-    public static void openMenu(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
+    public static void openPetMenu(PetMenuContext menuContext) {
+        openPetMenu(menuContext.store(), menuContext.ref(), menuContext.playerRef());
+    }
+
+    public static void openPetMenu(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
             @NonNullDecl PlayerRef playerRef) {
         PlayerPetTracker playerPetTracker = store.getComponent(ref, PlayerPetTracker.getComponentType());
         if (playerPetTracker == null) {
@@ -57,14 +61,17 @@ public final class PetMenus {
             builder.withKeepScrollPosition(true);
         });
 
-        for (PetUICard petUICard : petCards) {
-            petUICard.registerMenuEventListeners(page, store, ref, playerRef, playerPetTracker, petCards);
+        for (PetUICard petCard : petCards) {
+            PetMenuListeners.registerMenuEventListeners(new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCards, petCard));
         }
         page.open(playerRef, store);
     }
 
-    public static boolean openPetDetails(@NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
-            @NonNullDecl PlayerRef playerRef, UUID petUuid) {
+    public static boolean openPetDetails(PetMenuContext menuContext, UUID petUuid) {
+        return openPetDetails(menuContext.store(), menuContext.ref(), menuContext.playerRef(), petUuid);
+    }
+
+    public static boolean openPetDetails(Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, UUID petUuid) {
         PlayerPetTracker playerPetTracker = store.getComponent(ref, PlayerPetTracker.getComponentType());
         if (playerPetTracker == null) {
             LOGGER.atWarning().log("Pet tracker should not be null");
@@ -98,6 +105,7 @@ public final class PetMenus {
         String id = petCard.id().toString();
 
         // TODO: Neither of these work for some reason >:(
+        // TODO: Maybe check if we're on the world thread?
         page.getById("pet-name-" + id, LabelBuilder.class).ifPresent(builder -> {
             builder.withText("MyCustomText").withBackground("#ff0000").withTextTooltipStyle(
                     DefaultStyles.buttonTextTooltipStyle()).withTooltipText("MyText").withTooltipTextSpans(null);
@@ -108,7 +116,7 @@ public final class PetMenus {
             builder.withVisible(false);
         });
 
-        petCard.registerPetDetailsEventListeners(page, store, ref, playerRef, playerPetTracker, petCardHolder);
+        PetMenuListeners.registerPetDetailsEventListeners(new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCardHolder, petCard));
 
         page.open(playerRef, store);
         return true;

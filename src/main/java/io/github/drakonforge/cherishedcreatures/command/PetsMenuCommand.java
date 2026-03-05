@@ -20,6 +20,6 @@ public class PetsMenuCommand extends AbstractPlayerCommand {
     protected void execute(@NonNullDecl CommandContext commandContext,
             @NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
             @NonNullDecl PlayerRef playerRef, @NonNullDecl World world) {
-        PetMenus.openMenu(store, ref, playerRef);
+        PetMenus.openPetMenu(store, ref, playerRef);
     }
 }
