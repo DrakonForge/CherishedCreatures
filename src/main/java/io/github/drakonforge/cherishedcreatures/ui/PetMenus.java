@@ -5,6 +5,7 @@ import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.html.TemplateProcessor;
 import au.ellie.hyui.types.DefaultStyles;
+import au.ellie.hyui.types.TextTooltipStyle;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
@@ -15,6 +16,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.ui.PetMenuListeners.PetMenuContext;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -64,7 +66,7 @@ public final class PetMenus {
         for (PetUICard petCard : petCards) {
             PetMenuListeners.registerMenuEventListeners(new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCards, petCard));
         }
-        store.getExternalData().getWorld().execute(() -> page.open(playerRef, store));
+        page.open(playerRef, store);
     }
 
     public static boolean openPetDetails(PetMenuContext menuContext, UUID petUuid) {
@@ -100,25 +102,27 @@ public final class PetMenus {
                 .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
                 .enablePersistentElementEdits(true)
                 .enableRuntimeTemplateUpdates(true)
-                .loadHtml("Pages/PetDetails.html", template);
+                .loadHtml("Pages/PetDetails.html", template)
+                .addElement(LabelBuilder.label()
+                        .withText("Hey")
+                        .withTextTooltipStyle(TextTooltipStyle.buttonTextTooltipStyle())
+                        .withTooltipText("Someone help me")
+                        //.withTooltipTextSpans(List.of(Message.raw("Lol").bold(true), Message.raw("No").bold(false)))
+                        .addTextSpan(Message.raw("Hey3").bold(true).color(Color.RED))
+                        .addTextSpan(Message.raw("Hey4").bold(true).color(Color.RED))
+                        .addTextSpan(Message.raw("Hey5").bold(true).color(Color.YELLOW)));
 
         String id = petCard.id().toString();
 
-        // TODO: Neither of these work for some reason >:(
-        // TODO: Maybe check if we're on the world thread? Nope that didn't work
-        page.getById("pet-name-" + id, LabelBuilder.class).ifPresent(builder -> {
-            builder.withText("MyCustomText").withBackground("#ff0000").withTextTooltipStyle(
-                    DefaultStyles.buttonTextTooltipStyle()).withTooltipText("MyText").withTooltipTextSpans(null);
-            builder.withVisible(false);
-            builder.addTextSpan(Message.raw("Hiiii"));
-        });
         page.editById("pet-name-" + id, LabelBuilder.class, builder -> {
-            builder.withVisible(false);
+            builder.withText("MyCustomText").withBackground("#ff0000").withTextTooltipStyle(
+                    DefaultStyles.buttonTextTooltipStyle()).withTooltipText("MyText");
+            builder.addTextSpan(Message.raw("Hiiii"));
         });
 
         PetMenuListeners.registerPetDetailsEventListeners(new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCardHolder, petCard));
 
-        store.getExternalData().getWorld().execute(() -> page.open(playerRef, store));
+        page.open(playerRef, store);
         return true;
     }
 }
