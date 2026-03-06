@@ -28,6 +28,7 @@ public class MountStatusMeter {
     public void addHud(PlayerRef ref) {
         LOGGER.atInfo().log("Adding HUD for " + ref.getUsername());
         hudElement = hudBuilder.show(ref);
+        hide();
     }
 
     public void show() {
