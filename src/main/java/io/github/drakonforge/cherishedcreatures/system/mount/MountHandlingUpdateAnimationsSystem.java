@@ -13,13 +13,17 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.vector.Transform;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.AnimationSlot;
+import com.hypixel.hytale.server.core.asset.type.model.config.Model;
+import com.hypixel.hytale.server.core.asset.type.model.config.ModelAsset.AnimationSet;
 import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
+import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.physics.component.Velocity;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent.MountGait;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingNpcComponent;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -28,6 +32,14 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class MountHandlingUpdateAnimationsSystem extends EntityTickingSystem<EntityStore> {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+
+    private static String getAnimationWithFallback(Map<String, AnimationSet> animationStepMap, String animationId, String fallbackAnimationId) {
+        if (!animationStepMap.containsKey(animationId)) {
+            LOGGER.atInfo().log("Using fallback for " + animationId);
+            return fallbackAnimationId;
+        }
+        return animationId;
+    }
 
     @Override
     public void tick(float v, int i, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
@@ -38,10 +50,12 @@ public class MountHandlingUpdateAnimationsSystem extends EntityTickingSystem<Ent
         MountHandlingNpcComponent mountHandlingNpcComponent = archetypeChunk.getComponent(i, MountHandlingNpcComponent.getComponentType());
         TransformComponent transformComponent = archetypeChunk.getComponent(i, TransformComponent.getComponentType());
         MovementStatesComponent movementStatesComponent = archetypeChunk.getComponent(i, MovementStatesComponent.getComponentType());
+        ModelComponent modelComponent = archetypeChunk.getComponent(i, ModelComponent.getComponentType());
         assert mountHandlingNpcComponent != null;
         assert npcEntity != null;
         assert movementStatesComponent != null;
         assert transformComponent != null;
+        assert modelComponent != null;
 
         // Get dot product of facing direction and velocity.
         // Value near 1 indicates forward movement, near -1 indicates backward movement.
@@ -49,19 +63,20 @@ public class MountHandlingUpdateAnimationsSystem extends EntityTickingSystem<Ent
         Vector3d direction = transform.getDirection().clone().normalize();
         Vector3d velocity = mountHandlingNpcComponent.getVelocity().clone().normalize();
         double dot = direction.dot(velocity);
+        Map<String, AnimationSet> animationStepMap = modelComponent.getModel().getAnimationSetMap();
 
-        // TODO: Move this out to a data-driven system. Backward animation, then animations per gait
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
         MountGait currentGait = mountHandlingNpcComponent.getCurrentGait();
+        String animationId;
         if (movementStatesComponent.getMovementStates().idle) {
-            npcEntity.playAnimation(ref, AnimationSlot.Movement, null, store);
+            animationId = null;
         } else if(dot < 0) {
-            npcEntity.playAnimation(ref, AnimationSlot.Movement, "WalkBackward", store);
-        } else if (currentGait.ordinal() >= MountGait.Canter.ordinal()) {
-            npcEntity.playAnimation(ref, AnimationSlot.Movement, "Run", store);
+            animationId = "WalkBackward";
         } else {
-            npcEntity.playAnimation(ref, AnimationSlot.Movement, "Walk", store);
+            animationId = getAnimationWithFallback(animationStepMap, currentGait.getAnimationId(),
+                    currentGait.getFallbackAnimationId());
         }
+        npcEntity.playAnimation(ref, AnimationSlot.Movement, animationId, store);
     }
 
     @NonNullDecl

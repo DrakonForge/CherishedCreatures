@@ -1,0 +1,14 @@
+{
+  "_BaseAssetPath": "Server/Models/Livestock/Horse.json",
+  "$Comment": "Test file to validate Canter animations, may remove the Canter animations later.",
+  "AnimationSets": {
+    "Canter": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Canter.blockyanim",
+          "Speed": 1.8
+        }
+      ]
+    }
+  }
+}

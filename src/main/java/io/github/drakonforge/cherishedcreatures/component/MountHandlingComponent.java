@@ -13,11 +13,11 @@ public class MountHandlingComponent implements Component<EntityStore> {
 
     // Stamina drain is defined in Stamina.json
     public enum MountGait {
-        Walk(0.3f),
-        Trot(0.5f),
-        Canter(1.0f),
-        Gallop(1.25f),
-        FullGallop(1.65f);
+        Walk(0.3f, "Walk", "Walk"),
+        Trot(0.5f, "Trot", "Walk"),
+        Canter(1.0f, "Canter", "Run"),
+        Gallop(1.25f, "Gallop", "Run"),
+        FullGallop(1.65f, "FullGallop", "Run");
 
         private static final MountGait[] GAITS = { Walk, Trot, Canter, Gallop, FullGallop };
 
@@ -32,13 +32,25 @@ public class MountHandlingComponent implements Component<EntityStore> {
         }
 
         private final float desiredSpeedMultiplier;
+        private final String animationId;
+        private final String fallbackAnimationId;
 
-        MountGait(float desiredSpeedMultiplier) {
+        MountGait(float desiredSpeedMultiplier, String animationId, String fallbackAnimationId) {
             this.desiredSpeedMultiplier = desiredSpeedMultiplier;
+            this.animationId = animationId;
+            this.fallbackAnimationId = fallbackAnimationId;
         }
 
         public float getDesiredSpeedMultiplier() {
             return desiredSpeedMultiplier;
+        }
+
+        public String getAnimationId() {
+            return animationId;
+        }
+
+        public String getFallbackAnimationId() {
+            return fallbackAnimationId;
         }
     }
 
