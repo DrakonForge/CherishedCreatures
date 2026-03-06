@@ -1,2 +1,5 @@
 interactionHints.openPetDetails = Press [{key}] to open Pet Details
 interactionHints.denyNotPetOwner = You are not {name}'s owner
+
+items.DrakonForge_Tool_Taming_Collar.name = Pet Collar of Bonding
+items.DrakonForge_Tool_Taming_Collar.description = Forms a bond with a tamed animal
