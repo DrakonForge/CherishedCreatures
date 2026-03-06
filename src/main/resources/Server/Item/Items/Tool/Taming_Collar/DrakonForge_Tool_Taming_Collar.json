@@ -3,6 +3,12 @@
     "Name": "cherishedcreatures.items.DrakonForge_Tool_Taming_Collar.name",
     "Description": "cherishedcreatures.items.DrakonForge_Tool_Taming_Collar.description"
   },
+  "Categories": [
+    "Items.Tools"
+  ],
+  "Utility": {
+    "Compatible": true
+  },
   "Quality": "Uncommon",
   "ItemLevel": 8,
   "Icon": "Icons/ItemsGenerated/DrakonForge_Tool_Taming_Collar.png",
@@ -85,6 +91,16 @@
                 "LocalSoundEventId": "SFX_Bow_No_Ammo"
               }
             }
+          }
+        }
+      ]
+    },
+    "Ability2": {
+      "Interactions": [
+        {
+          "Type": "OpenPetMenu",
+          "Effects": {
+            "LocalSoundEventId": "SFX_Drag_Items_Cloth"
           }
         }
       ]

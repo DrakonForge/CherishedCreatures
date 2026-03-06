@@ -38,6 +38,7 @@ import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderAc
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderEntityFilterPetOwner;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetOwner;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.interactions.OpenPetMenuInteraction;
 import io.github.drakonforge.cherishedcreatures.interactions.TameInteraction;
 import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorBondingLevel;
@@ -246,6 +247,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         Condition.CODEC.register("Mount", MountCondition.class, MountCondition.CODEC);
 
         this.getCodecRegistry(Interaction.CODEC).register("Tame", TameInteraction.class, TameInteraction.CODEC);
+        this.getCodecRegistry(Interaction.CODEC).register("OpenPetMenu", OpenPetMenuInteraction.class, OpenPetMenuInteraction.CODEC);
 
         config.save();
     }
