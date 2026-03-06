@@ -14,7 +14,6 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.event.BondingXpEvent;
-import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class PetsBondCommand extends AbstractPlayerCommand {

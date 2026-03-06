@@ -20,6 +20,7 @@ import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import io.github.drakonforge.cherishedcreatures.asset.PetActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
+import io.github.drakonforge.cherishedcreatures.command.PetMenuCommand;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
 import io.github.drakonforge.cherishedcreatures.component.MountHandlingNpcComponent;
@@ -165,6 +166,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
         // Commands
         this.getCommandRegistry().registerCommand(new PetsCommand());
+        this.getCommandRegistry().registerCommand(new PetMenuCommand());
 
         // Components
         ComponentRegistryProxy<EntityStore> entityStoreRegistry = this.getEntityStoreRegistry();

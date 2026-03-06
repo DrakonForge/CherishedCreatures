@@ -22,7 +22,7 @@ public class PetsCommand extends AbstractPlayerCommand {
     public PetsCommand() {
         super("pets", "server.commands.cherished_creatures.pets.desc");
         this.addAliases("pet");
-        this.setPermissionGroup(GameMode.Adventure); // Allows the command to be used by anyone, not just OP
+        this.setPermissionGroup(GameMode.Creative);
         this.addSubCommand(new PetsTameCommand());
         this.addSubCommand(new PetsSummonCommand());
         this.addSubCommand(new PetsUnsummonCommand());
