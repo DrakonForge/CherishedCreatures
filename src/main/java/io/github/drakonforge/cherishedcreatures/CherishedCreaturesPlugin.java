@@ -38,7 +38,7 @@ import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderAc
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderEntityFilterPetOwner;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetOwner;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
-import io.github.drakonforge.cherishedcreatures.interactions.UseTamingCollarInteraction;
+import io.github.drakonforge.cherishedcreatures.interactions.TameInteraction;
 import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorBondingLevel;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetFollowMode;
@@ -245,7 +245,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         Condition.CODEC.register("Riding", RidingCondition.class, RidingCondition.CODEC);
         Condition.CODEC.register("Mount", MountCondition.class, MountCondition.CODEC);
 
-        this.getCodecRegistry(Interaction.CODEC).register("UseTamingCollar", UseTamingCollarInteraction.class, UseTamingCollarInteraction.CODEC);
+        this.getCodecRegistry(Interaction.CODEC).register("Tame", TameInteraction.class, TameInteraction.CODEC);
 
         config.save();
     }

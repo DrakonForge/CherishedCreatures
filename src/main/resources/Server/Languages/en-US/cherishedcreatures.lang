@@ -1,5 +1,12 @@
 interactionHints.openPetDetails = Press [{key}] to open Pet Details
 interactionHints.denyNotPetOwner = You are not {name}'s owner
 
+interactions.tame.invalidTarget = You cannot bond this entity!
+interactions.tame.alreadyTamedByOthers = This pet is already bonded by someone else!
+interactions.tame.alreadyTamedBySelf = You have already bonded with this pet!
+interactions.tame.success = You have bonded with {name}!
+
 items.DrakonForge_Tool_Taming_Collar.name = Pet Collar of Bonding
 items.DrakonForge_Tool_Taming_Collar.description = Forms a bond with a tamed animal
+
+pet.defaultName = Unknown Pet

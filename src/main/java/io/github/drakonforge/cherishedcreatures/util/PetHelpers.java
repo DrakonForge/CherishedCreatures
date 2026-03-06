@@ -22,6 +22,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
+import javax.annotation.Nonnull;
 
 public final class PetHelpers {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
@@ -30,6 +31,7 @@ public final class PetHelpers {
         SUCCESS,
         FAIL_MISSING_COMPONENTS,
         FAIL_NOT_TAMEABLE,
+        FAIL_ALREADY_TAMED_BY_OTHERS,
         FAIL_ALREADY_TAMED_BY_SELF
     }
 
@@ -41,7 +43,7 @@ public final class PetHelpers {
         FAIL_REMOVE_FROM_TRACKER,
     }
 
-    public static TameResult attemptTame(Store<EntityStore> store, Ref<EntityStore> playerRef, Ref<EntityStore> petRef) {
+    public static TameResult attemptTame(@Nonnull Store<EntityStore> store,  @Nonnull Ref<EntityStore> playerRef, @Nonnull Ref<EntityStore> petRef) {
         PlayerPetTracker playerPetTracker = store.getComponent(playerRef, PlayerPetTracker.getComponentType());
         UUIDComponent uuidComponent = store.getComponent(playerRef, UUIDComponent.getComponentType());
         if (playerPetTracker == null || uuidComponent == null) {
@@ -49,12 +51,15 @@ public final class PetHelpers {
         }
 
         PetTypeComponent petTypeComponent = store.getComponent(petRef, PetTypeComponent.getComponentType());
-        if (petTypeComponent == null) {
+        if (petTypeComponent == null || !petTypeComponent.isTameable()) {
             return TameResult.FAIL_NOT_TAMEABLE;
         }
         PetComponent existingPetComponent = store.getComponent(petRef, PetComponent.getComponentType());
-        if (existingPetComponent != null && uuidComponent.getUuid().equals(existingPetComponent.getOwnerUuid())) {
-            return TameResult.FAIL_ALREADY_TAMED_BY_SELF;
+        if (existingPetComponent != null) {
+            if (uuidComponent.getUuid().equals(existingPetComponent.getOwnerUuid())) {
+                return TameResult.FAIL_ALREADY_TAMED_BY_SELF;
+            }
+            return TameResult.FAIL_ALREADY_TAMED_BY_OTHERS;
         }
 
         TrackedPetEntry entry = TrackedPetEntry.createEntryFor(store, petRef);

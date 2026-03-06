@@ -265,8 +265,8 @@
             {{#if status == DEAD}}
               {{@DestructiveButton:id=accept-death-{{$id}},text=Accept}}
             {{else}}
-              {{#if isLoaded}}
-                {{#if showSummonToggle}}
+              {{#if showSummonToggle}}
+                {{#if isLoaded}}
                 <button class="pet-control-button tertiary-button" id="toggle-summon-{{$id}}">Unsummon
                 </button>
                 {{else}}

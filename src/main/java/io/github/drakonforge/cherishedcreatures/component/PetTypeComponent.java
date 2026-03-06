@@ -47,6 +47,11 @@ public class PetTypeComponent implements Component<EntityStore> {
         return petType != null ? petType : PetType.DEFAULT;
     }
 
+    public boolean isTameable() {
+        // TODO: May change this depending on assets
+        return true;
+    }
+
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
