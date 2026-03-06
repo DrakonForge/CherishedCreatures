@@ -3,9 +3,7 @@
     "Name": "cherishedcreatures.items.DrakonForge_Tool_Taming_Collar.name",
     "Description": "cherishedcreatures.items.DrakonForge_Tool_Taming_Collar.description"
   },
-  "Categories": [
-    "Blocks.Deco"
-  ],
+  "Quality": "Uncommon",
   "ItemLevel": 8,
   "Icon": "Icons/ItemsGenerated/DrakonForge_Tool_Taming_Collar.png",
   "Model": "Items/Tools/DrakonForge_Tool_Taming_Collar.blockymodel",
@@ -46,6 +44,28 @@
       8.5
     ]
   },
-  "Tool": {},
-  "Quality": "Uncommon"
+  "Interactions":  {
+    "Secondary": {
+      "Interactions": [
+        {
+          "Type": "Simple",
+          "Effects": {
+            "ItemAnimationId": "Interact"
+          },
+          "RunTime": 0.05,
+          "Next": {
+            "Type": "UseTamingCollar",
+            "Next": {
+              "Type": "SendMessage",
+              "Message": "Tame success"
+            },
+            "Failed": {
+              "Type": "SendMessage",
+              "Message": "Tame failed"
+            }
+          }
+        }
+      ]
+    }
+  }
 }

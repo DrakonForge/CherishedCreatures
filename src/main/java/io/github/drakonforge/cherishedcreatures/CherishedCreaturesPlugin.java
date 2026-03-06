@@ -10,6 +10,7 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.modules.entity.condition.Condition;
+import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 
@@ -37,6 +38,7 @@ import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderAc
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderEntityFilterPetOwner;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetOwner;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.interactions.UseTamingCollarInteraction;
 import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorBondingLevel;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetFollowMode;
@@ -242,6 +244,8 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         // Entity Stats
         Condition.CODEC.register("Riding", RidingCondition.class, RidingCondition.CODEC);
         Condition.CODEC.register("Mount", MountCondition.class, MountCondition.CODEC);
+
+        this.getCodecRegistry(Interaction.CODEC).register("UseTamingCollar", UseTamingCollarInteraction.class, UseTamingCollarInteraction.CODEC);
 
         config.save();
     }
