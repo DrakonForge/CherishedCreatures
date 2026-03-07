@@ -53,14 +53,35 @@
     "Secondary": {
       "Interactions": [
         {
-          "Type": "Simple",
+          "Type": "Charging",
           "Effects": {
             "ItemAnimationId": "Play"
           },
-          "RunTime": 0.05,
+          "AllowIndefiniteHold": false,
           "Next": {
-            "Type": "Simple"
+            "0": {
+              "Type": "Simple",
+              "Effects": {
+                "ItemAnimationId": "Play",
+                "LocalSoundEventId": "SFX_DrakonForge_Player_Short_Whistle",
+                "WorldSoundEventId": "SFX_DrakonForge_Player_Short_Whistle"
+              }
+            },
+            "0.5": {
+              "Type": "Simple",
+              "RunTime": 0,
+              "Effects": {
+                "ItemAnimationId": "Play",
+                "LocalSoundEventId": "SFX_DrakonForge_Player_Long_Whistle",
+                "WorldSoundEventId": "SFX_DrakonForge_Player_Long_Whistle"
+              }
+            }
           }
+        },
+        {
+          "Type": "Simple",
+          "$Comment": "Chaining cooldown",
+          "RunTime": 0.35
         }
       ]
     },

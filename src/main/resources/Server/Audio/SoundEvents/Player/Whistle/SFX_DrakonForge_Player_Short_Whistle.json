@@ -1,0 +1,17 @@
+{
+  "Layers": [
+    {
+      "Files": [
+        "Sounds/PlayerActions/Whistle/DrakonForge_Player_Whistle_02.ogg"
+      ],
+      "RandomSettings": {
+        "MinPitch": -1,
+        "MaxPitch": 1
+      },
+      "Volume": 10
+    }
+  ],
+  "PreventSoundInterruption": true,
+  "MaxInstance": 1,
+  "Parent": "SFX_Attn_Moderate"
+}
