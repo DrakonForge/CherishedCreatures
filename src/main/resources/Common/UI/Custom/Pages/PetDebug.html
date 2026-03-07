@@ -1,0 +1,258 @@
+<style>
+
+  .pet-card {
+    layout-mode: Top;
+    anchor-width: 1200;
+    anchor-height: 700;
+  }
+
+  .pet-contents {
+    layout-mode: Left;
+    flex-weight: 1;
+  }
+
+  .content-wrapper {
+    anchor-horizontal: 10;
+    anchor-vertical: 10;
+    flex-weight: 1;
+  }
+
+  .content-wrapper-info {
+    layout-mode: Top;
+  }
+
+  .content-wrapper-controls {
+    layout-mode: TopScrolling;
+    anchor-horizontal: 50;
+  }
+
+  .pet-info-container {
+    flex-weight: 6;
+    anchor-right: 20;
+  }
+
+  .pet-controls-container {
+    flex-weight: 4;
+    anchor-left: 20;
+  }
+
+  .pet-header {
+    layout-mode: Left;
+    anchor-bottom: 15;
+  }
+
+  .pet-header-info {
+    layout-mode: Top;
+    flex-weight: 1;
+    anchor-left: 15;
+  }
+
+  .pet-header-details {
+    flex-weight: 1;
+    layout-mode: Top;
+  }
+
+  .name-row {
+    layout-mode: Left;
+  }
+
+  .pet-name {
+    font-weight: bold;
+    font-size: 24;
+    flex-weight: 1;
+  }
+
+  .role-name {
+    font-weight: bold;
+    color: #b4c8c9;
+    font-size: 14;
+    vertical-align: center;
+  }
+
+  .pet-edit-name {
+    /* visibility: hidden; */
+    anchor-top: 10;
+  }
+
+  .name-change-button {
+    visibility: hidden;
+  }
+
+  .name-input-container {
+    flex-weight: 1;
+    anchor-right: 10;
+  }
+
+  .name-input {
+    anchor-width: 300;
+    anchor-left: 0;
+  }
+
+  .pet-image-container {
+    anchor-width: 160;
+    anchor-height: 160;
+    background-color: #111922;
+  }
+
+  .pet-info {
+    layout-mode: Top;
+    flex-weight: 1;
+  }
+
+  .pet-main-stats {
+    layout-mode: Top;
+    anchor-width: 250;
+    anchor-top: 10;
+    flex-weight: 1;
+  }
+  .pet-main-stat {
+    layout-mode: Left;
+    vertical-align: center;
+  }
+  .pet-main-stat-label {
+    flex-weight: 1;
+    text-align: left;
+    horizontal-align: left;
+  }
+  .pet-main-stat-value {
+  }
+
+  .pet-secondary-stats {
+    anchor-height: 200;
+    layout-mode: Left;
+
+  }
+  .pet-secondary-stats-column {
+    layout-mode: TopScrolling;
+    flex-weight: 1;
+  }
+  .pet-numeric-stats {
+    anchor-right: 10;
+  }
+
+  .pet-numeric-stat {
+    layout-mode: Right;
+    justify-content: space-between;
+    anchor-bottom: 5;
+    anchor-horizontal: 0;
+  }
+  .pet-numeric-label {
+    flex-weight: 1;
+  }
+  .pet-numeric-value {
+    anchor-right: 0;
+    anchor-width: 200;
+  }
+
+  .status-label {
+    anchor-right: 5;
+  }
+
+  .pet-status-meters {
+    layout-mode: Center;
+    anchor-top: 5;
+    anchor-bottom: -10;
+  }
+  .footer {
+    anchor-top: 40;
+    layout-mode: Center;
+  }
+
+</style>
+<div class="page-overlay">
+  <div id="pet-card" class="pet-card">
+    {{#each petCard}}
+    <div class="pet-contents">
+      <div class="pet-info-container decorated-container" data-hyui-title="Pet Details">
+        <div class="container-contents">
+          <div class="content-wrapper content-wrapper-info" data-hyui-scrollbar-style="DefaultScrollbarStyle"
+               data-hyui-keep-scroll-position="true">
+            <div class="pet-header">
+              <div class="pet-image-container">
+                <img src="{{$imagePath}}" width="140" height="140" />
+              </div>
+              <div class="pet-header-info">
+                <div class="pet-header-details">
+                  <div class="name-row name-container" id="display-name-container">
+                    <p id="pet-name-{{$id}}" class="pet-name">
+                      {{$name}}
+                    </p>
+                    <p class="role-name">{{$roleName|upper}}</p>
+                    {{#if status != DEAD}}
+                    <button class="name-change-button small-secondary-button"
+                            id="change-name-{{$id}}">Change Name
+                    </button>
+                    {{/if}}
+                  </div>
+                  <div class="name-row pet-edit-name" id="change-name-container">
+                    <div class="name-input-container">
+                      <input type="text" class="name-input" id="change-name-input-{{$id}}"
+                             placeholder="{{$name}}" maxlength="32"/>
+                    </div>
+                    <button class="name-change-submit-button small-secondary-button"
+                            id="change-name-submit-{{$id}}">Change Name
+                    </button>
+                  </div>
+
+                </div>
+                <div class="pet-status-meters">
+                  {{#if bondingInfo != null}}
+                  <div>
+                    {{@CircularStatusMeter:iconPath={{$iconPath}},size=75,fillProgress={{$bondingInfo.fillProgress}},fillColor=#05e52e,meter={{$bondingInfo.type}}}}
+                    <tooltip>
+                      <span>Bonding Level {{$bondingInfo.bondingLevel}}</span>
+                    </tooltip>
+                  </div>
+                  {{/if}}
+
+                  {{#if healthInfo != null}}
+                  <div>
+                    {{#if status == DEAD}}
+                    {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Dead_Core.png,size=75,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                    {{else}}
+                    {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Core.png,size=75,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
+                    {{/if}}
+                    <tooltip>
+                      <span>Health: </span>
+                      <span data-hyui-bold=true>{{$healthInfo.value}}/{{$healthInfo.max}}</span>
+                    </tooltip>
+                  </div>
+                  {{/if}}
+                </div>
+              </div>
+
+            </div>
+            <div class="pet-info">
+              <div class="pet-main-stats">
+                <div class="pet-main-stat">
+                  <div class="pet-main-stat-label">Status</div>
+                  <div class="pet-main-stat-value">{{@PetStatus:status={{$status}},fontSize=16}}</div>
+                </div>
+              </div>
+              <div class="pet-secondary-stats">
+                <div class="pet-secondary-stats-column pet-numeric-stats">
+                  {{#each details.numericAttributes}}
+                    <div class="pet-numeric-stat">
+                      <p class="pet-numeric-label">{{$label}}</p>
+                      <div class="pet-numeric-value">
+                        {{@AttributeBar:percentage={{$percentage}},potentialPercentage={{$potentialPercentage}}}}
+                      </div>
+                    </div>
+                  {{/each}}
+                </div>
+                <div class="pet-secondary-stats-column panel pet-text-stats">
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+    <div class="footer">
+      <button id="back" class="secondary-button">Back</button>
+    </div>
+  </div>
+
+</div>

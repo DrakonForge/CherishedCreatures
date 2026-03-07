@@ -125,4 +125,54 @@ public final class PetMenus {
         page.open(playerRef, store);
         return true;
     }
+
+    public static boolean openPetDebug(Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, UUID petUuid) {
+        PlayerPetTracker playerPetTracker = store.getComponent(ref, PlayerPetTracker.getComponentType());
+        if (playerPetTracker == null) {
+            LOGGER.atWarning().log("Pet tracker should not be null");
+            return false;
+        }
+
+        TrackedPetEntry petEntry = playerPetTracker.getPetEntry(petUuid);
+        if (petEntry == null) {
+            LOGGER.atWarning().log("Cannot find entity " + petUuid + " for player " + playerRef.getUsername());
+            return false;
+        }
+
+        PetUICard petCard = PetUICard.fromTrackedPetEntry(petEntry, store,true, -1);
+        // Making a list so we can change the contents later
+        List<PetUICard> petCardHolder = new ArrayList<>();
+        petCardHolder.add(petCard);
+
+        TemplateProcessor template = new TemplateProcessor()
+                .registerComponentFromFile("PetStatus", "Components/PetStatus.html")
+                .registerComponentFromFile("CircularStatusMeter", "Components/CircularStatusMeter.html")
+                .registerComponentFromFile("DestructiveButton", "Components/DestructiveButton.html")
+                .registerComponentFromFile("AttributeBar", "Components/AttributeBar.html")
+                .setVariable("petCard", petCardHolder);
+
+        PageBuilder page = PageBuilder.detachedPage()
+                .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
+                .enablePersistentElementEdits(true)
+                .enableRuntimeTemplateUpdates(true)
+                .loadHtml("Pages/PetDebug.html", template)
+                .addElement(LabelBuilder.label()
+                        .withText("Hey")
+                        .withTextTooltipStyle(TextTooltipStyle.buttonTextTooltipStyle())
+                        .withTooltipText("Someone help me")
+                        .addTextSpan(Message.raw("Hey3").bold(true).color(Color.RED))
+                        .addTextSpan(Message.raw("Hey4").bold(true).color(Color.RED))
+                        .addTextSpan(Message.raw("Hey5").bold(true).color(Color.YELLOW)));
+
+        String id = petCard.id().toString();
+
+        page.editById("pet-name-" + id, LabelBuilder.class, builder -> {
+            builder.withText("MyCustomText").withBackground("#ff0000").withTextTooltipStyle(
+                    DefaultStyles.buttonTextTooltipStyle()).withTooltipText("MyText");
+            builder.addTextSpan(Message.raw("Hiiii"));
+        });
+
+        page.open(playerRef, store);
+        return true;
+    }
 }

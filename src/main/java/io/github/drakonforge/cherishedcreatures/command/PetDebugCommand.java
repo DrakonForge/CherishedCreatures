@@ -8,13 +8,15 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
+import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.ui.PetMenus;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-public class PetMenuCommand extends AbstractPlayerCommand {
+public class PetDebugCommand extends AbstractPlayerCommand {
 
-    public PetMenuCommand() {
-        super("petmenu", "TODO");
+    public PetDebugCommand() {
+        super("debug", "TODO");
         this.setPermissionGroup(GameMode.Adventure);
     }
 
@@ -22,6 +24,11 @@ public class PetMenuCommand extends AbstractPlayerCommand {
     protected void execute(@NonNullDecl CommandContext commandContext,
             @NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
             @NonNullDecl PlayerRef playerRef, @NonNullDecl World world) {
-        PetMenus.openPetMenu(store, ref, playerRef);
+        PlayerPetTracker petTracker = store.getComponent(ref, PlayerPetTracker.getComponentType());
+        if (petTracker == null) {
+            return;
+        }
+        TrackedPetEntry entry = petTracker.getPetEntry(0);
+        PetMenus.openPetDebug(store, ref, playerRef, entry.getUuid());
     }
 }
