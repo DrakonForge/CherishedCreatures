@@ -1,20 +1,26 @@
 package io.github.drakonforge.cherishedcreatures.util;
 
 import com.hypixel.hytale.component.AddReason;
+import com.hypixel.hytale.component.ComponentAccessor;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.RemoveReason;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.spatial.SpatialResource;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
+import com.hypixel.hytale.server.core.modules.entity.EntityModule;
 import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
+import com.hypixel.hytale.server.core.universe.world.ParticleUtil;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.npc.components.messaging.BeaconSupport;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.AbandonBehavior;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
@@ -23,10 +29,13 @@ import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import javax.annotation.Nonnull;
 
 public final class PetHelpers {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    private static final double LONG_WHISTLE_RANGE = 200.0;
+    private static final float BEACON_EXPIRATION_TIME = 1.0f;
 
     public enum TameResult {
         SUCCESS,
@@ -210,5 +219,55 @@ public final class PetHelpers {
             petComponent.setPetName(newName);
         }
         return true;
+    }
+
+    public static void doShortWhistle(ComponentAccessor<EntityStore> store, Ref<EntityStore> ref) {
+        Ref<EntityStore> nearest = TargetLookHelpers.getEntityNearestToCrosshair(ref, 64.0, Math.toRadians(15.0), store);
+        if (nearest != null) {
+            DisplayNameComponent nearestDisplayName = store.getComponent(nearest, DisplayNameComponent.getComponentType());
+            TransformComponent nearestTransform = store.getComponent(nearest, TransformComponent.getComponentType());
+
+            if (nearestDisplayName == null || nearestTransform == null) {
+                LOGGER.atWarning().log("Missing components for whistle target");
+                return;
+            }
+            String mobName = nearestDisplayName.getDisplayName() != null ? nearestDisplayName.getDisplayName().getAnsiMessage() : null;
+            LOGGER.atInfo().log("Whistled at " + mobName);
+            ObjectList<Ref<EntityStore>> results = SpatialResource.getThreadLocalReferenceList();
+            SpatialResource<Ref<EntityStore>, EntityStore> playerSpatialResource = store.getResource(
+                    EntityModule.get().getPlayerSpatialResourceType());
+            playerSpatialResource.getSpatialStructure().collect(nearestTransform.getPosition(),
+                    75.0F, results);
+            ParticleUtil.spawnParticleEffect("Angry", nearestTransform.getPosition().clone().add(new Vector3d(0, 2, 0)), nearestTransform.getRotation(), results, store);
+        } else {
+            LOGGER.atInfo().log("No whistle target");
+        }
+    }
+
+    public static void doLongWhistle(ComponentAccessor<EntityStore> store, Ref<EntityStore> ref) {
+        PlayerPetTracker petTracker = store.getComponent(ref, PlayerPetTracker.getComponentType());
+        TransformComponent transformComponent = store.getComponent(ref, TransformComponent.getComponentType());
+        if (petTracker == null || transformComponent == null) {
+            LOGGER.atWarning().log("Missing components on whistling player");
+            return;
+        }
+
+        for (TrackedPetEntry petEntry : petTracker.getPetEntries()) {
+            Ref<EntityStore> petRef = petEntry.getEntityRef();
+            if (petRef == null || !petRef.isValid()) {
+                continue;
+            }
+            TransformComponent petTransform = store.getComponent(petRef, TransformComponent.getComponentType());
+            BeaconSupport beaconSupport = store.getComponent(petRef, BeaconSupport.getComponentType());
+            if (petTransform == null || beaconSupport == null) {
+                continue;
+            }
+            double distSq = petTransform.getPosition().distanceSquaredTo(transformComponent.getPosition());
+            if (distSq <= LONG_WHISTLE_RANGE * LONG_WHISTLE_RANGE) {
+                beaconSupport.postMessage("Whistle_Recall", ref, BEACON_EXPIRATION_TIME);
+            }
+        }
+
+
     }
 }

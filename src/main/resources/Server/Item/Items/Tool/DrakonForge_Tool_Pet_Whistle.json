@@ -60,18 +60,17 @@
           "AllowIndefiniteHold": false,
           "Next": {
             "0": {
-              "Type": "Simple",
+              "Type": "ShortWhistle",
               "Effects": {
                 "ItemAnimationId": "Play",
                 "LocalSoundEventId": "SFX_DrakonForge_Player_Short_Whistle",
                 "WorldSoundEventId": "SFX_DrakonForge_Player_Short_Whistle"
               }
             },
-            "0.5": {
-              "Type": "Simple",
-              "RunTime": 0,
+            "0.7": {
+              "Type": "LongWhistle",
+              "RunTime": 0.5,
               "Effects": {
-                "ItemAnimationId": "Play",
                 "LocalSoundEventId": "SFX_DrakonForge_Player_Long_Whistle",
                 "WorldSoundEventId": "SFX_DrakonForge_Player_Long_Whistle"
               }

@@ -1,5 +1,6 @@
 package io.github.drakonforge.cherishedcreatures;
 
+import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.component.Ref;
@@ -14,6 +15,7 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Int
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 
+import com.hypixel.hytale.server.core.plugin.registry.CodecMapRegistry.Assets;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.Config;
@@ -39,7 +41,9 @@ import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderAc
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderEntityFilterPetOwner;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorPetOwner;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
+import io.github.drakonforge.cherishedcreatures.interactions.LongWhistleInteraction;
 import io.github.drakonforge.cherishedcreatures.interactions.OpenPetMenuInteraction;
+import io.github.drakonforge.cherishedcreatures.interactions.ShortWhistleInteraction;
 import io.github.drakonforge.cherishedcreatures.interactions.TameInteraction;
 import io.github.drakonforge.cherishedcreatures.resource.PetUpdateQueue;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderSensorBondingLevel;
@@ -239,8 +243,11 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         Condition.CODEC.register("Riding", RidingCondition.class, RidingCondition.CODEC);
         Condition.CODEC.register("Mount", MountCondition.class, MountCondition.CODEC);
 
-        this.getCodecRegistry(Interaction.CODEC).register("Tame", TameInteraction.class, TameInteraction.CODEC);
-        this.getCodecRegistry(Interaction.CODEC).register("OpenPetMenu", OpenPetMenuInteraction.class, OpenPetMenuInteraction.CODEC);
+        Assets<Interaction, ? extends Codec<? extends Interaction>> interactionCodecRegistry = this.getCodecRegistry(Interaction.CODEC);
+        interactionCodecRegistry.register("Tame", TameInteraction.class, TameInteraction.CODEC);
+        interactionCodecRegistry.register("OpenPetMenu", OpenPetMenuInteraction.class, OpenPetMenuInteraction.CODEC);
+        interactionCodecRegistry.register("LongWhistle", LongWhistleInteraction.class, LongWhistleInteraction.CODEC);
+        interactionCodecRegistry.register("ShortWhistle", ShortWhistleInteraction.class, ShortWhistleInteraction.CODEC);
 
         config.save();
     }
