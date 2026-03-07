@@ -273,6 +273,12 @@
       "FirstPerson": "Characters/Animations/Items/Main_Handed/Item/Attacks/Swing_Down/Swing_Down_FPS.blockyanim",
       "Speed": 1.5,
       "BlendingDuration": 0.1
+    },
+    "Play": {
+      "FirstPerson": "Characters/Animations/Items/Main_Handed/DrakonForge_Pet_Whistle/Play_FPS.blockyanim",
+      "ThirdPerson": "Characters/Animations/Items/Main_Handed/DrakonForge_Pet_Whistle/Play.blockyanim",
+      "Speed": 1,
+      "Looping": false
     }
   },
   "Camera": {

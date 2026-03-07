@@ -55,7 +55,7 @@
         {
           "Type": "Simple",
           "Effects": {
-            "ItemAnimationId": "Consume"
+            "ItemAnimationId": "Play"
           },
           "RunTime": 0.05,
           "Next": {
