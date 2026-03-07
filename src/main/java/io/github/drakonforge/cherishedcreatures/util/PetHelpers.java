@@ -8,6 +8,7 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
+import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
@@ -192,14 +193,22 @@ public final class PetHelpers {
         return true;
     }
 
-    // TODO: Implement
     public static boolean renamePet(TrackedPetEntry entry, Store<EntityStore> store, String newName) {
         Ref<EntityStore> ref = entry.getEntityRef();
         if (entry.isLoaded() && ref != null) {
-            // TODO: Rename pet ref
+            PetComponent petComponent = store.getComponent(ref, PetComponent.getComponentType());
+            if (petComponent != null) {
+                petComponent.setPetName(newName);
+            }
+            entry.saveEntityFromRef(store, ref);
+            return true;
         }
 
+        Holder<EntityStore> holder = entry.getHolder(false);
+        PetComponent petComponent = holder.getComponent(PetComponent.getComponentType());
+        if (petComponent != null) {
+            petComponent.setPetName(newName);
+        }
         return true;
-        // TODO: Rename pet holder too, or just save it
     }
 }

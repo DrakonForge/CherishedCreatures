@@ -1,6 +1,7 @@
 package io.github.drakonforge.cherishedcreatures.ui;
 
 import au.ellie.hyui.builders.PageBuilder;
+import au.ellie.hyui.builders.TextFieldBuilder;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 public final class PetMenuListeners {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    private static final int MAX_PET_NAME_LENGTH = 16;
 
     public record PetMenuContext(PageBuilder page, Store<EntityStore> store, Ref<EntityStore> ref, PlayerRef playerRef, PlayerPetTracker petTracker, List<PetUICard> petCards, PetUICard petCard) {}
 
@@ -89,25 +91,46 @@ public final class PetMenuListeners {
         //     LOGGER.atWarning().log("Exiting");
         // });
 
-        page.addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating, (data, ctx) -> {
-            LOGGER.atInfo().log("Called");
-            // Optional<GroupBuilder> changeBuilder = ctx.getById("change-name-container", GroupBuilder.class);
-            // Optional<GroupBuilder> displayBuilder = ctx.getById("display-name-container", GroupBuilder.class);
-
-            // if (changeBuilder.isPresent() && displayBuilder.isPresent()) {
-            //     LOGGER.atInfo().log("Success");
-            //     changeBuilder.get().withVisible(true);
-            //     displayBuilder.get().withVisible(false);
-            //     ctx.updatePage(true);
-            // } else {
-            //     LOGGER.atWarning().log("Fail");
-            // }
-            // TODO: Change name
-        });
+        addNameChangeListener(menuContext);
 
         if (petCard.showSummonToggle()) {
             addSummonToggleListener(menuContext);
         }
+    }
+
+    private static void addNameChangeListener(PetMenuContext menuContext) {
+        UUID id = menuContext.petCard().id();
+        PlayerPetTracker petTracker = menuContext.petTracker();
+        TrackedPetEntry entry = petTracker.getPetEntry(id);
+        Store<EntityStore> store = menuContext.store();
+        menuContext.page().addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating, (_, ctx) -> {
+            if (entry == null) {
+                return;
+            }
+            ctx.getValue("change-name-input-" + id, String.class).ifPresent(newName -> {
+                newName = newName.trim();
+                if (newName.length() > MAX_PET_NAME_LENGTH) {
+                    newName = newName.substring(0, MAX_PET_NAME_LENGTH);
+                }
+                if (!newName.isEmpty()) {
+                    PetHelpers.renamePet(entry, store, newName);
+                    refreshPetCard(menuContext, true);
+                    ctx.updatePage(true);
+                }
+                // editById is not working at all for some reason
+                ctx.editById("change-name-input-" + id, TextFieldBuilder.class, builder -> {
+                   builder.withValue("");
+                });
+            });
+        });
+    }
+
+    private static void refreshPetCard(PetMenuContext menuContext, boolean generateDetails) {
+        Store<EntityStore> store = menuContext.store();
+        PlayerPetTracker petTracker = menuContext.petTracker();
+        List<PetUICard> petCards = menuContext.petCards();
+        UUID petUuid = menuContext.petCard().id();
+        refreshPetCard(store, petTracker, petCards, generateDetails, petUuid);
     }
 
     private static void refreshPetCard(
@@ -132,7 +155,6 @@ public final class PetMenuListeners {
 
     private static void addSummonToggleListener(PetMenuContext menuContext) {
         PetUICard petCard = menuContext.petCard();
-        List<PetUICard> petCards = menuContext.petCards();
         PlayerRef playerRef = menuContext.playerRef();
         PlayerPetTracker petTracker = menuContext.petTracker();
         Store<EntityStore> store = menuContext.store();
@@ -163,7 +185,7 @@ public final class PetMenuListeners {
             }
             if (hasChanged) {
                 store.getExternalData().getWorld().execute(() -> {
-                    refreshPetCard(store, petTracker, petCards, false, id);
+                    refreshPetCard(menuContext, false);
                     ctx.updatePage(false);
                 });
             }
