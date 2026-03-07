@@ -2,28 +2,9 @@
   "nodes": [
     {
       "id": "1",
-      "name": "Origin",
-      "position": {"x": -7.47633, "y": -1.66604, "z": 7.21554},
-      "orientation": {"x": -0.02014, "y": 0.7926, "z": 0.03869, "w": 0.60818},
-      "shape": {
-        "type": "none",
-        "offset": {"x": 0, "y": 0, "z": 0},
-        "stretch": {"x": 1, "y": 1, "z": 1},
-        "settings": {
-          "isPiece": false
-        },
-        "textureLayout": {},
-        "unwrapMode": "custom",
-        "visible": true,
-        "doubleSided": false,
-        "shadingMode": "flat"
-      }
-    },
-    {
-      "id": "2",
       "name": "R-Attachment",
       "position": {"x": 0, "y": 0, "z": 0},
-      "orientation": {"x": 0.07899, "y": -0.03683, "z": 0.34071, "w": 0.93612},
+      "orientation": {"x": 0, "y": 0, "z": 0, "w": 1},
       "shape": {
         "type": "none",
         "offset": {"x": 0, "y": 0, "z": 0},
@@ -39,73 +20,65 @@
       },
       "children": [
         {
-          "id": "3",
-          "name": "Collar",
-          "position": {"x": 11.81024, "y": -5.11801, "z": -0.2754},
-          "orientation": {"x": -0.26776, "y": -0.46846, "z": -0.24881, "w": 0.80433},
+          "id": "2",
+          "name": "Origin_Item",
+          "position": {"x": 0, "y": -14, "z": 0},
+          "orientation": {"x": 0.18613, "y": -0.15376, "z": 0.88396, "w": 0.4004},
           "shape": {
-            "type": "box",
-            "offset": {"x": 3.36665, "y": -1.84175, "z": -0.23566},
+            "type": "none",
+            "offset": {"x": 0, "y": 0, "z": 0},
             "stretch": {"x": 1, "y": 1, "z": 1},
             "settings": {
-              "isPiece": false,
-              "size": {"x": 20, "y": 6, "z": 20}
+              "isPiece": false
             },
-            "textureLayout": {
-              "back": {
-                "offset": {"x": 0, "y": 20},
-                "mirror": {"x": false, "y": false},
-                "angle": 0
-              },
-              "right": {
-                "offset": {"x": 0, "y": 26},
-                "mirror": {"x": false, "y": false},
-                "angle": 0
-              },
-              "front": {
-                "offset": {"x": 0, "y": 20},
-                "mirror": {"x": false, "y": false},
-                "angle": 0
-              },
-              "left": {
-                "offset": {"x": 0, "y": 26},
-                "mirror": {"x": false, "y": false},
-                "angle": 0
-              },
-              "top": {
-                "offset": {"x": 0, "y": 0},
-                "mirror": {"x": false, "y": false},
-                "angle": 0
-              },
-              "bottom": {
-                "offset": {"x": 0, "y": 0},
-                "mirror": {"x": false, "y": false},
-                "angle": 0
-              }
-            },
+            "textureLayout": {},
             "unwrapMode": "custom",
             "visible": true,
-            "doubleSided": true,
+            "doubleSided": false,
             "shadingMode": "flat"
           },
           "children": [
             {
-              "id": "4",
-              "name": "Medal",
-              "position": {"x": -0.20062, "y": -1.25012, "z": -10.73488},
-              "orientation": {"x": 0.03181, "y": 0.01717, "z": 0.40327, "w": 0.91437},
+              "id": "3",
+              "name": "Collar",
+              "position": {"x": 10.81024, "y": -5.11801, "z": -0.2754},
+              "orientation": {"x": -0.26776, "y": -0.46846, "z": -0.24881, "w": 0.80433},
               "shape": {
-                "type": "quad",
-                "offset": {"x": 1, "y": 1, "z": 0},
+                "type": "box",
+                "offset": {"x": 3.36665, "y": -1.84175, "z": -0.23566},
                 "stretch": {"x": 1, "y": 1, "z": 1},
                 "settings": {
                   "isPiece": false,
-                  "size": {"x": 9, "y": 9},
-                  "normal": "+Z"
+                  "size": {"x": 20, "y": 6, "z": 20}
                 },
                 "textureLayout": {
+                  "back": {
+                    "offset": {"x": 0, "y": 20},
+                    "mirror": {"x": false, "y": false},
+                    "angle": 0
+                  },
+                  "right": {
+                    "offset": {"x": 0, "y": 26},
+                    "mirror": {"x": false, "y": false},
+                    "angle": 0
+                  },
                   "front": {
-                    "offset": {"x": 20, "y": 23},
+                    "offset": {"x": 0, "y": 20},
+                    "mirror": {"x": false, "y": false},
+                    "angle": 0
+                  },
+                  "left": {
+                    "offset": {"x": 0, "y": 26},
+                    "mirror": {"x": false, "y": false},
+                    "angle": 0
+                  },
+                  "top": {
+                    "offset": {"x": 0, "y": 0},
+                    "mirror": {"x": false, "y": false},
+                    "angle": 0
+                  },
+                  "bottom": {
+                    "offset": {"x": 0, "y": 0},
                     "mirror": {"x": false, "y": false},
                     "angle": 0
                   }
@@ -114,7 +87,36 @@
                 "visible": true,
                 "doubleSided": true,
                 "shadingMode": "flat"
-              }
+              },
+              "children": [
+                {
+                  "id": "4",
+                  "name": "Medal",
+                  "position": {"x": -0.20062, "y": -1.25012, "z": -10.73488},
+                  "orientation": {"x": 0.03181, "y": 0.01717, "z": 0.40327, "w": 0.91437},
+                  "shape": {
+                    "type": "quad",
+                    "offset": {"x": 1, "y": 1, "z": 0},
+                    "stretch": {"x": 1, "y": 1, "z": 1},
+                    "settings": {
+                      "isPiece": false,
+                      "size": {"x": 9, "y": 9},
+                      "normal": "+Z"
+                    },
+                    "textureLayout": {
+                      "front": {
+                        "offset": {"x": 20, "y": 23},
+                        "mirror": {"x": false, "y": false},
+                        "angle": 0
+                      }
+                    },
+                    "unwrapMode": "custom",
+                    "visible": true,
+                    "doubleSided": true,
+                    "shadingMode": "flat"
+                  }
+                }
+              ]
             }
           ]
         }

@@ -1,0 +1,80 @@
+{
+  "TranslationProperties": {
+    "Name": "cherishedcreatures.items.DrakonForge_Tool_Pet_Whistle.name",
+    "Description": "cherishedcreatures.items.DrakonForge_Tool_Pet_Whistle.description"
+  },
+  "Categories": [
+    "Items.Tools"
+  ],
+  "Utility": {
+    "Compatible": true
+  },
+  "Quality": "Uncommon",
+  "ItemLevel": 8,
+  "Model": "Items/Tools/DrakonForge_Tool_Pet_Whistle.blockymodel",
+  "Texture": "Items/Tools/DrakonForge_Tool_Pet_Whistle.png",
+  "Recipe": {
+    "TimeSeconds": 1,
+    "Input": [
+      {
+        "ItemId": "Ingredient_Leather_Light",
+        "Quantity": 3
+      },
+      {
+        "ItemId": "Ingredient_Bar_Gold",
+        "Quantity": 1
+      }
+    ],
+    "BenchRequirement": [
+      {
+        "RequiredTierLevel": 2,
+        "Type": "Crafting",
+        "Categories": [
+          "Farming"
+        ],
+        "Id": "Farmingbench"
+      }
+    ]
+  },
+  "PlayerAnimationsId": "DrakonForge_Whistle",
+  "IconProperties": {
+    "Scale": 1,
+    "Rotation": [
+      51,
+      292,
+      331
+    ],
+    "Translation": [
+      0,
+      4
+    ]
+  },
+  "Interactions": {
+    "Secondary": {
+      "Interactions": [
+        {
+          "Type": "Simple",
+          "Effects": {
+            "ItemAnimationId": "Consume"
+          },
+          "RunTime": 0.05,
+          "Next": {
+            "Type": "Simple"
+          }
+        }
+      ]
+    },
+    "Ability2": {
+      "Interactions": [
+        {
+          "Type": "OpenPetMenu",
+          "Effects": {
+            "LocalSoundEventId": "SFX_Drag_Items_Cloth"
+          }
+        }
+      ]
+    }
+  },
+  "MaxStack": 1,
+  "Icon": "Icons/ItemsGenerated/DrakonForge_Tool_Pet_Whistle.png"
+}

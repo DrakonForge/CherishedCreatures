@@ -152,15 +152,6 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
                 } else {
                     LOGGER.atWarning().log("Pet tracker not found for " + playerName);
                 }
-
-                MountStatusMetersComponent statusMeters = store.getComponent(playerRef,
-                        MountStatusMetersComponent.getComponentType());
-                if (statusMeters != null) {
-                    statusMeters.getStaminaMeter().hide();
-                    statusMeters.getHealthMeter().hide();
-                } else {
-                    LOGGER.atWarning().log("Mount status meter component not found for " + playerName);
-                }
             });
         });
 

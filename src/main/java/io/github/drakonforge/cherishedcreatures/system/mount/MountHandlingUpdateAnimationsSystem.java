@@ -35,7 +35,6 @@ public class MountHandlingUpdateAnimationsSystem extends EntityTickingSystem<Ent
 
     private static String getAnimationWithFallback(Map<String, AnimationSet> animationStepMap, String animationId, String fallbackAnimationId) {
         if (!animationStepMap.containsKey(animationId)) {
-            LOGGER.atInfo().log("Using fallback for " + animationId);
             return fallbackAnimationId;
         }
         return animationId;
