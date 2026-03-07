@@ -17,12 +17,8 @@
     "TimeSeconds": 1,
     "Input": [
       {
-        "ItemId": "Ingredient_Leather_Light",
-        "Quantity": 3
-      },
-      {
-        "ItemId": "Ingredient_Bar_Gold",
-        "Quantity": 1
+        "ItemId": "Ingredient_Bar_Copper",
+        "Quantity": 2
       }
     ],
     "BenchRequirement": [
@@ -40,12 +36,12 @@
   "IconProperties": {
     "Scale": 1,
     "Rotation": [
-      51,
-      292,
-      331
+      9,
+      236,
+      282
     ],
     "Translation": [
-      0,
+      2,
       4
     ]
   },

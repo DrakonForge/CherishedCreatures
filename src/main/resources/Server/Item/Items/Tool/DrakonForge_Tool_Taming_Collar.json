@@ -41,13 +41,13 @@
   "IconProperties": {
     "Scale": 0.85,
     "Rotation": [
-      0,
-      215,
-      317.435
+      16,
+      239,
+      231
     ],
     "Translation": [
-      11.5,
-      8.5
+      6,
+      1
     ]
   },
   "Interactions": {
@@ -83,7 +83,6 @@
                 }
               }
             },
-
             "Failed": {
               "Type": "Simple",
               "RunTime": 0.25,
