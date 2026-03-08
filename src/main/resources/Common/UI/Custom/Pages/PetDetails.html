@@ -70,12 +70,7 @@
   }
 
   .pet-edit-name {
-    /* visibility: hidden; */
     anchor-top: 10;
-  }
-
-  .name-change-button {
-    visibility: hidden;
   }
 
   .name-input-container {
@@ -187,7 +182,6 @@
                     <p id="pet-name-{{$id}}" class="pet-name">
                       {{$name}}
                     </p>
-                    <p class="role-name">{{$roleName|upper}}</p>
                     {{#if status != DEAD}}
                     <button class="name-change-button small-secondary-button"
                             id="change-name-{{$id}}">Change Name
@@ -200,32 +194,25 @@
                              placeholder="{{$name}}" maxlength="32"/>
                     </div>
                     <button class="name-change-submit-button small-secondary-button"
-                            id="change-name-submit-{{$id}}">Change Name
+                            id="change-name-submit-{{$id}}">Submit
                     </button>
                   </div>
-
+                  <p class="role-name">{{$roleName|upper}}</p>
                 </div>
                 <div class="pet-status-meters">
                   {{#if bondingInfo != null}}
-                  <div>
+                  <div id="bonding-meter-{{$id}}">
                     {{@CircularStatusMeter:iconPath={{$iconPath}},size=75,fillProgress={{$bondingInfo.fillProgress}},fillColor=#05e52e,meter={{$bondingInfo.type}}}}
-                    <tooltip>
-                      <span>Bonding Level {{$bondingInfo.bondingLevel}}</span>
-                    </tooltip>
                   </div>
                   {{/if}}
 
                   {{#if healthInfo != null}}
-                  <div>
+                  <div id="health-meter-{{$id}}">
                     {{#if status == DEAD}}
                     {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Dead_Core.png,size=75,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
                     {{else}}
                     {{@CircularStatusMeter:iconPath=Assets/HealthMeter_Core.png,size=75,fillProgress={{$healthInfo.fillProgress}},fillColor=#fc005b,meter=LINEAR}}
                     {{/if}}
-                    <tooltip>
-                      <span>Health: </span>
-                      <span data-hyui-bold=true>{{$healthInfo.value}}/{{$healthInfo.max}}</span>
-                    </tooltip>
                   </div>
                   {{/if}}
                 </div>
