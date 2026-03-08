@@ -3,7 +3,6 @@ package io.github.drakonforge.cherishedcreatures.ui.page;
 import au.ellie.hyui.builders.GroupBuilder;
 import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.builders.PageBuilder;
-import au.ellie.hyui.builders.TextFieldBuilder;
 import au.ellie.hyui.types.DefaultStyles;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
@@ -50,58 +49,7 @@ public final class PetCommonUI {
         }
     }
 
-    public static void addNameChangeListeners(PetMenuContext menuContext) {
-        PageBuilder page = menuContext.page();
-        UUID id = menuContext.petCard().id();
-        PlayerPetTracker petTracker = menuContext.petTracker();
-        TrackedPetEntry entry = petTracker.getPetEntry(id);
-        Store<EntityStore> store = menuContext.store();
-
-        page.addEventListener("change-name-" + id, CustomUIEventBindingType.Activating,
-                (_, ctx) -> {
-                    ctx.editById("change-name-container", GroupBuilder.class, changeBuilder -> {
-                        changeBuilder.withVisible(true);
-                        ctx.updatePage(false);
-                    });
-                    ctx.editById("display-name-container", GroupBuilder.class, displayBuilder -> {
-                        displayBuilder.withVisible(false);
-                        ctx.updatePage(false);
-                    });
-                });
-
-        page.addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating,
-                (_, ctx) -> {
-                    if (entry == null) {
-                        return;
-                    }
-                    ctx.getValue("change-name-input-" + id, String.class).ifPresent(newName -> {
-                        newName = newName.trim();
-                        if (newName.length() > MAX_PET_NAME_LENGTH) {
-                            newName = newName.substring(0, MAX_PET_NAME_LENGTH);
-                        }
-                        if (!newName.isEmpty()) {
-                            PetHelpers.renamePet(entry, store, newName);
-                            refreshPetCard(menuContext, true);
-                            ctx.updatePage(true);
-                        }
-                        // editById is not working at all for some reason
-                        ctx.editById("change-name-input-" + id, TextFieldBuilder.class, builder -> {
-                            builder.withValue("");
-                            ctx.updatePage(true);
-                        });
-                    });
-                    ctx.editById("change-name-container", GroupBuilder.class, changeBuilder -> {
-                        changeBuilder.withVisible(false);
-                        ctx.updatePage(true);
-                    });
-                    ctx.editById("display-name-container", GroupBuilder.class, displayBuilder -> {
-                        displayBuilder.withVisible(true);
-                        ctx.updatePage(true);
-                    });
-                });
-    }
-
-    private static void refreshPetCard(PetMenuContext menuContext, boolean generateDetails) {
+    public static void refreshPetCard(PetMenuContext menuContext, boolean generateDetails) {
         Store<EntityStore> store = menuContext.store();
         PlayerPetTracker petTracker = menuContext.petTracker();
         List<PetUICard> petCards = menuContext.petCards();

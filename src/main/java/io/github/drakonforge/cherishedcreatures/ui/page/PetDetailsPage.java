@@ -2,6 +2,7 @@ package io.github.drakonforge.cherishedcreatures.ui.page;
 
 import au.ellie.hyui.builders.GroupBuilder;
 import au.ellie.hyui.builders.PageBuilder;
+import au.ellie.hyui.builders.TextFieldBuilder;
 import au.ellie.hyui.html.TemplateProcessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -15,6 +16,7 @@ import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
 import io.github.drakonforge.cherishedcreatures.ui.data.PetMenuContext;
 import io.github.drakonforge.cherishedcreatures.ui.data.PetUICard;
+import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -60,8 +62,8 @@ public final class PetDetailsPage {
 
         PageBuilder page = PageBuilder.detachedPage()
                 .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
-                .enablePersistentElementEdits(true)
-                // .enableRuntimeTemplateUpdates(true) // Temporarily disabling this to make show/hide work properly
+                // .enablePersistentElementEdits(true)
+                .enableRuntimeTemplateUpdates(true) // Temporarily disabling this to make show/hide work properly
                 .loadHtml("Pages/PetDetails.html", template);
 
         registerPetDetailsEventListeners(
@@ -93,11 +95,62 @@ public final class PetDetailsPage {
             return;
         }
 
-        PetCommonUI.addNameChangeListeners(menuContext);
+        addNameChangeListeners(menuContext);
 
         if (petCard.showSummonToggle()) {
             PetCommonUI.addSummonToggleListener(menuContext);
         }
+    }
+
+    private static void addNameChangeListeners(PetMenuContext menuContext) {
+        PageBuilder page = menuContext.page();
+        UUID id = menuContext.petCard().id();
+        PlayerPetTracker petTracker = menuContext.petTracker();
+        TrackedPetEntry entry = petTracker.getPetEntry(id);
+        Store<EntityStore> store = menuContext.store();
+
+        page.addEventListener("change-name-" + id, CustomUIEventBindingType.Activating,
+                (_, ctx) -> {
+                    ctx.editById("change-name-container", GroupBuilder.class, changeBuilder -> {
+                        changeBuilder.withVisible(true);
+                        ctx.updatePage(false);
+                    });
+                    ctx.editById("display-name-container", GroupBuilder.class, displayBuilder -> {
+                        displayBuilder.withVisible(false);
+                        ctx.updatePage(false);
+                    });
+                });
+
+        page.addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating,
+                (_, ctx) -> {
+                    if (entry == null) {
+                        return;
+                    }
+                    ctx.getValue("change-name-input-" + id, String.class).ifPresent(newName -> {
+                        newName = newName.trim();
+                        if (newName.length() > PetCommonUI.MAX_PET_NAME_LENGTH) {
+                            newName = newName.substring(0, PetCommonUI.MAX_PET_NAME_LENGTH);
+                        }
+                        if (!newName.isEmpty()) {
+                            PetHelpers.renamePet(entry, store, newName);
+                            PetCommonUI.refreshPetCard(menuContext, true);
+                            ctx.updatePage(false);
+                        }
+                        // editById is not working at all for some reason
+                        ctx.editById("change-name-input-" + id, TextFieldBuilder.class, builder -> {
+                            builder.withValue("");
+                            ctx.updatePage(false);
+                        });
+                    });
+                    ctx.editById("change-name-container", GroupBuilder.class, changeBuilder -> {
+                        changeBuilder.withVisible(false);
+                        ctx.updatePage(false);
+                    });
+                    ctx.editById("display-name-container", GroupBuilder.class, displayBuilder -> {
+                        displayBuilder.withVisible(true);
+                        ctx.updatePage(false);
+                    });
+                });
     }
 
     private PetDetailsPage() {}
