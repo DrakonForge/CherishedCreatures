@@ -1,4 +1,4 @@
-package io.github.drakonforge.cherishedcreatures.ui;
+package io.github.drakonforge.cherishedcreatures.ui.data;
 
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -8,7 +8,7 @@ import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.asset.PetType.PetFeatureFlag;
 import io.github.drakonforge.cherishedcreatures.component.PetAttributes;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
-import io.github.drakonforge.cherishedcreatures.ui.PetUIDetails.PetNumericAttributeDisplay.BarType;
+import io.github.drakonforge.cherishedcreatures.ui.data.PetUIDetails.PetNumericAttributeDisplay.BarType;
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;

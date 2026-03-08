@@ -1,0 +1,29 @@
+<style>
+
+</style>
+<div class="page-overlay">
+  <div class="decorated-container" data-hyui-title="Transfer Pet">
+    <div class="container-contents">
+      <div data-hyui-scrollbar-style="DefaultScrollbarStyle"
+           data-hyui-keep-scroll-position="true">
+        <div class="pet-header">
+          <div class="pet-header-info">
+            <div class="pet-header-details">
+              <div class="name-row name-container" id="display-name-container">
+                <p id="pet-name-{{$id}}" class="pet-name">
+                  {{$name}}
+                </p>
+                {{#if status != DEAD}}
+                <button class="name-change-button small-secondary-button"
+                        id="change-name-{{$id}}">Change Name
+                </button>
+                {{/if}}
+              </div>
+            </div>
+            <p>Choose a player to transfer your pet to.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

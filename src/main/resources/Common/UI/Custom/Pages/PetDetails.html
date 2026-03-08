@@ -275,9 +275,11 @@
                   <progress value="75" max="100"></progress>
                 </div>
               </div>
-
-
-              {{@DestructiveButton:id=abandon-{{$id}},text=Abandon}}
+              {{#if showTransferButton}}
+              <button class="pet-control-button tertiary-button" id="transfer-pet-{{$id}}">Transfer
+              </button>
+              {{/if}}
+              {{@DestructiveButton:id=abandon-pet-{{$id}},text=Abandon}}
             {{/if}}
           </div>
         </div>

@@ -30,6 +30,7 @@ import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+import java.util.UUID;
 import javax.annotation.Nonnull;
 
 public final class PetHelpers {
@@ -268,6 +269,51 @@ public final class PetHelpers {
             }
         }
 
+
+    }
+
+    public enum TransferPetResult {
+        SUCCESS,
+        FAIL_INVALID_PLAYER, // Possibly due to one of the UUIDs never having been online
+        FAIL_INVALID_PET, // Original owner does not own that pet
+        FAIL_MISSING_COMPONENTS
+    }
+
+    // If a transferred pet is in an unloaded chunk and spawns in, it should detect the PetComponent no longer matches and then despawn immediately
+    public static TransferPetResult transferPet(Store<EntityStore> store, UUID originalOwnerId, UUID newOwnerId, UUID petId) {
+        PlayerPetTracker originalPetTracker = OfflinePlayerHelpers.getComponent(store, originalOwnerId, PlayerPetTracker.getComponentType());
+        PlayerPetTracker newPetTracker = OfflinePlayerHelpers.getComponent(store, newOwnerId, PlayerPetTracker.getComponentType());
+        if (originalPetTracker == null || newPetTracker == null) {
+            return TransferPetResult.FAIL_INVALID_PLAYER;
+        }
+
+        TrackedPetEntry entryToTransfer = originalPetTracker.getPetEntry(petId);
+        if (entryToTransfer == null) {
+            return TransferPetResult.FAIL_INVALID_PET;
+        }
+        // TODO: Check for if the original owner and new owner are the same and prevent transfer if so
+        originalPetTracker.removePetEntry(petId);
+        newPetTracker.addPetEntry(entryToTransfer);
+
+        Ref<EntityStore> petRef = entryToTransfer.getEntityRef();
+        if (petRef != null && petRef.isValid()) {
+            // Pet is loaded, modify it directly
+            PetComponent petComponent = store.getComponent(petRef, PetComponent.getComponentType());
+            if (petComponent == null) {
+                return TransferPetResult.FAIL_MISSING_COMPONENTS;
+            }
+            petComponent.setOwnerUuid(newOwnerId);
+            entryToTransfer.saveEntityFromRef(store, petRef);
+        } else {
+            // Pet is not loaded, modify the holder
+            Holder<EntityStore> holder = entryToTransfer.getHolder(false);
+            PetComponent petComponent = holder.getComponent(PetComponent.getComponentType());
+            if (petComponent == null) {
+                return TransferPetResult.FAIL_MISSING_COMPONENTS;
+            }
+            petComponent.setOwnerUuid(newOwnerId);
+        }
+        return TransferPetResult.SUCCESS;
 
     }
 }

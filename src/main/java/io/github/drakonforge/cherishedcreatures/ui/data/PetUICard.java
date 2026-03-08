@@ -1,4 +1,4 @@
-package io.github.drakonforge.cherishedcreatures.ui;
+package io.github.drakonforge.cherishedcreatures.ui.data;
 
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Store;
@@ -17,7 +17,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
-import io.github.drakonforge.cherishedcreatures.ui.PetUICard.PetUIBondingInfo.Type;
+import io.github.drakonforge.cherishedcreatures.ui.data.PetUICard.PetUIBondingInfo.Type;
 import io.github.drakonforge.cherishedcreatures.util.BondingHelpers;
 import java.util.Objects;
 import java.util.UUID;
@@ -25,9 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-public record PetUICard(UUID id, String name, String roleName, String imagePath, String iconPath, Status status, boolean isLoaded, boolean showSummonToggle, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo, @Nullable PetUIDetails details, @Nullable Integer index) {
-
-    private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+public record PetUICard(UUID id, String name, String roleName, String imagePath, String iconPath, Status status, boolean isLoaded, boolean showSummonToggle, boolean showTransferButton, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo, @Nullable PetUIDetails details, @Nullable Integer index) {
 
     public record PetUIBondingInfo(Type type, float fillProgress, int bondingLevel) {
         public enum Type {
@@ -58,13 +56,14 @@ public record PetUICard(UUID id, String name, String roleName, String imagePath,
         Status status = entry.getStatus();
         PetUIBondingInfo bondingInfo = getBondingInfo(petType, holder);
         PetUIHealthInfo healthInfo = getHealthInfo(petType, status, holder);
-        boolean showSummonToggle = petType.hasFeatureFlag(PetFeatureFlag.SummonControls) && canSummonPetWithStatus(entry.getStatus());
+        boolean showSummonToggle = petType.hasFeatureFlag(PetFeatureFlag.SummonControls) && canSummonPetWithStatus(status);
+        boolean showTransferButton = petType.hasFeatureFlag(PetFeatureFlag.CanTransfer) && status != Status.DEAD;
         PetUIDetails details = null;
         if (generateDetails) {
             details = PetUIDetails.fromTrackedPetEntry(entry, holder);
         }
         // If the pet has Status ALIVE but is unloaded, we basically treat it as un-summoned for our purposes.
-        return new PetUICard(entry.getUuid(), displayName, roleName, imagePath, iconPath, status, entry.isLoaded(), showSummonToggle, healthInfo, bondingInfo, details, index);
+        return new PetUICard(entry.getUuid(), displayName, roleName, imagePath, iconPath, status, entry.isLoaded(), showSummonToggle, showTransferButton, healthInfo, bondingInfo, details, index);
     }
 
     private static boolean canSummonPetWithStatus(Status status) {

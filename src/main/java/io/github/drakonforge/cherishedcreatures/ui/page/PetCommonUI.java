@@ -1,11 +1,10 @@
-package io.github.drakonforge.cherishedcreatures.ui;
+package io.github.drakonforge.cherishedcreatures.ui.page;
 
 import au.ellie.hyui.builders.GroupBuilder;
 import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.builders.TextFieldBuilder;
 import au.ellie.hyui.types.DefaultStyles;
-import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
@@ -16,72 +15,18 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
+import io.github.drakonforge.cherishedcreatures.ui.data.PetMenuContext;
+import io.github.drakonforge.cherishedcreatures.ui.data.PetUICard;
 import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import java.util.List;
 import java.util.UUID;
 
-public final class PetMenuListeners {
+public final class PetCommonUI {
 
+    public static final int MAX_PET_NAME_LENGTH = 16;
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
-    private static final int MAX_PET_NAME_LENGTH = 16;
 
-    public static void registerMenuEventListeners(PetMenuContext menuContext) {
-        PageBuilder page = menuContext.page();
-        PetUICard petCard = menuContext.petCard();
-        PlayerPetTracker petTracker = menuContext.petTracker();
-        UUID id = petCard.id();
-        Status status = petCard.status();
-
-        addPetCardTooltips(menuContext);
-
-        if (petCard.showSummonToggle()) {
-            addSummonToggleListener(menuContext);
-        }
-        if (status == Status.DEAD) {
-            addAcceptDeathListener(menuContext);
-        }
-
-        page.addEventListener("view-details-" + id, CustomUIEventBindingType.Activating,
-                (_, ctx) -> {
-                    TrackedPetEntry entry = petTracker.getPetEntry(id);
-                    if (entry == null) {
-                        LOGGER.atWarning().log("Entry is null");
-                        return;
-                    }
-                    PetMenus.openPetDetails(menuContext, entry.getUuid());
-                });
-    }
-
-    public static void registerPetDetailsEventListeners(PetMenuContext menuContext) {
-        PageBuilder page = menuContext.page();
-        PetUICard petCard = menuContext.petCard();
-
-        page.addEventListener("back", CustomUIEventBindingType.Activating, (_, _) -> {
-            PetMenus.openPetMenu(menuContext);
-        });
-
-        UUID id = petCard.id();
-        Status status = petCard.status();
-
-        addPetCardTooltips(menuContext);
-
-        page.editById("change-name-container", GroupBuilder.class, changeBuilder -> {
-            changeBuilder.withVisible(false);
-        });
-
-        if (status == Status.DEAD) {
-            addAcceptDeathListener(menuContext);
-            return;
-        }
-
-        addNameChangeListeners(menuContext);
-
-        if (petCard.showSummonToggle()) {
-            addSummonToggleListener(menuContext);
-        }
-    }
-
-    private static void addPetCardTooltips(PetMenuContext menuContext) {
+    public static void addPetCardTooltips(PetMenuContext menuContext) {
         PageBuilder page = menuContext.page();
         PetUICard petCard = menuContext.petCard();
         UUID id = petCard.id();
@@ -105,7 +50,7 @@ public final class PetMenuListeners {
         }
     }
 
-    private static void addNameChangeListeners(PetMenuContext menuContext) {
+    public static void addNameChangeListeners(PetMenuContext menuContext) {
         PageBuilder page = menuContext.page();
         UUID id = menuContext.petCard().id();
         PlayerPetTracker petTracker = menuContext.petTracker();
@@ -185,7 +130,7 @@ public final class PetMenuListeners {
         return -1;
     }
 
-    private static void addSummonToggleListener(PetMenuContext menuContext) {
+    public static void addSummonToggleListener(PetMenuContext menuContext) {
         PetUICard petCard = menuContext.petCard();
         PlayerRef playerRef = menuContext.playerRef();
         PlayerPetTracker petTracker = menuContext.petTracker();
@@ -202,7 +147,8 @@ public final class PetMenuListeners {
                                 return;
                             }
                             if (entry.isLoaded()) {
-                                LOGGER.atInfo().log("Calling unsummon pet from summon toggle");
+                                LOGGER.atInfo()
+                                        .log("Calling unsummon pet from summon toggle");
                                 if (PetHelpers.unsummonPet(entry, store)) {
                                     playerRef.sendMessage(
                                             Message.raw("Unsummoned pet " + name + "!"));
@@ -212,7 +158,8 @@ public final class PetMenuListeners {
                                 TransformComponent transformComponent = store.getComponent(
                                         menuContext.ref(), TransformComponent.getComponentType());
                                 if (transformComponent == null) {
-                                    LOGGER.atWarning().log("Transform should not be null");
+                                    LOGGER.atWarning()
+                                            .log("Transform should not be null");
                                     return;
                                 }
                                 PetHelpers.summonPet(entry, store, transformComponent);
@@ -228,7 +175,7 @@ public final class PetMenuListeners {
                         });
     }
 
-    private static void addAcceptDeathListener(PetMenuContext menuContext) {
+    public static void addAcceptDeathListener(PetMenuContext menuContext) {
         PetUICard petCard = menuContext.petCard();
         List<PetUICard> petCards = menuContext.petCards();
         PlayerRef playerRef = menuContext.playerRef();
@@ -258,7 +205,6 @@ public final class PetMenuListeners {
                         });
     }
 
-    public record PetMenuContext(PageBuilder page, Store<EntityStore> store, Ref<EntityStore> ref,
-                                 PlayerRef playerRef, PlayerPetTracker petTracker,
-                                 List<PetUICard> petCards, PetUICard petCard) {}
+    private PetCommonUI() {}
+
 }

@@ -10,7 +10,7 @@ import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderActionOpenPetMenu;
-import io.github.drakonforge.cherishedcreatures.ui.PetMenus;
+import io.github.drakonforge.cherishedcreatures.ui.page.PetDetailsPage;
 import java.util.UUID;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -37,6 +37,6 @@ public class ActionOpenPetMenu extends ActionBase {
         assert playerRefComponent != null;
         UUID petUuid = uuidComponent.getUuid();
 
-        return PetMenus.openPetDetails(store, playerRef, playerRefComponent, petUuid);
+        return PetDetailsPage.openPetDetails(store, playerRef, playerRefComponent, petUuid);
     }
 }

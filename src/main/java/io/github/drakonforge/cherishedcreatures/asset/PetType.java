@@ -105,7 +105,6 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
     protected float[] bondingLevelValuesOverride;
     protected JoinsFlock joinsFlock = JoinsFlock.FollowOnly;
     protected AbandonBehavior abandonBehavior = AbandonBehavior.UntameIfSpawned;
-    // TODO: Actually go apply these
     protected NumericAttribute baseHealthModifier = new NumericAttribute(-5.0f, 5.0f, 0.0f, 1.0f, -1.0f);
     protected NumericAttribute baseStaminaModifier = new NumericAttribute(-5.0f, 5.0f, 0.0f, 1.0f, -1.0f);
     protected NumericAttribute mountBaseSpeed = new NumericAttribute(5.0f, 15.0f, 10.0f, 2.0f, 1.0f);
@@ -172,7 +171,8 @@ public class PetType implements JsonAssetWithMap<String, DefaultAssetMap<String,
         FollowModeControls(true, "Whether this pet's follow mode can be toggled via UI."),
         SummonControls(true, "Whether this pet can be summoned or unsummoned via UI."),
         AdvancedMountHandling(false, "If this is a mount, uses the advanced mount handling system."),
-        HealsOnSpawn(false, "Whether this pet should fully heal upon being spawned in.");
+        HealsOnSpawn(false, "Whether this pet should fully heal upon being spawned in."),
+        CanTransfer(true, "Whether this pet can be transferred to another player via UI.");
 
         private final boolean defaultValue;
         private final String description;

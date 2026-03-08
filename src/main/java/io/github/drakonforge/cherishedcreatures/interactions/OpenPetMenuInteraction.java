@@ -12,7 +12,7 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Sim
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.cherishedcreatures.ui.PetMenus;
+import io.github.drakonforge.cherishedcreatures.ui.page.PetMenuPage;
 import javax.annotation.Nonnull;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -44,7 +44,7 @@ public class OpenPetMenuInteraction extends SimpleInstantInteraction {
         if (playerRef == null) {
             return;
         }
-        PetMenus.openPetMenu(store, ref, playerRef);
+        PetMenuPage.openPetMenu(store, ref, playerRef);
     }
 
     public boolean needsRemoteSync() {

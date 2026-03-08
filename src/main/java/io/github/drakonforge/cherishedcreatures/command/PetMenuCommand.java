@@ -8,7 +8,7 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.cherishedcreatures.ui.PetMenus;
+import io.github.drakonforge.cherishedcreatures.ui.page.PetMenuPage;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class PetMenuCommand extends AbstractPlayerCommand {
@@ -22,6 +22,6 @@ public class PetMenuCommand extends AbstractPlayerCommand {
     protected void execute(@NonNullDecl CommandContext commandContext,
             @NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
             @NonNullDecl PlayerRef playerRef, @NonNullDecl World world) {
-        PetMenus.openPetMenu(store, ref, playerRef);
+        PetMenuPage.openPetMenu(store, ref, playerRef);
     }
 }
