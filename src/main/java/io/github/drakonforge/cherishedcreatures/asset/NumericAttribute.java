@@ -26,6 +26,12 @@ public class NumericAttribute {
             .append(new KeyedCodec<>("RoundToNearest", Codec.FLOAT), (obj, value) -> obj.roundToNearest = value, NumericAttribute::getRoundToNearest)
             .documentation("TODO")
             .add()
+            .append(new KeyedCodec<>("RoundToNearestDisplay", Codec.FLOAT), (obj, value) -> obj.roundToNearestDisplay = value, NumericAttribute::getRoundToNearestDisplay)
+            .documentation("TODO")
+            .add()
+            .append(new KeyedCodec<>("IncreasePerLevel", Codec.FLOAT), (obj, value) -> obj.increasePerLevel = value, NumericAttribute::getIncreasePerLevel)
+            .documentation("TODO")
+            .add()
             .documentation("TODO")
             .build();
 
@@ -39,6 +45,8 @@ public class NumericAttribute {
     private float average = 0.5f;
     private float standardDeviation = 0.25f;
     private float roundToNearest = -1.0f;
+    private float roundToNearestDisplay = -1.0f;
+    private float increasePerLevel = 0.0f;
 
     private NumericAttribute() {}
 
@@ -69,6 +77,17 @@ public class NumericAttribute {
         return Math.clamp(value, min, max);
     }
 
+    public float getDisplayValue(float value) {
+        if (roundToNearestDisplay > 0) {
+            value = roundToNearestDisplay * Math.round(value / roundToNearestDisplay);
+        }
+        return Math.clamp(value, min, max);
+    }
+
+    public float getIncreasePerLevel() {
+        return increasePerLevel;
+    }
+
     public float getAverage() {
         return average;
     }
@@ -79,5 +98,9 @@ public class NumericAttribute {
 
     public float getRoundToNearest() {
         return roundToNearest;
+    }
+
+    public float getRoundToNearestDisplay() {
+        return roundToNearestDisplay;
     }
 }

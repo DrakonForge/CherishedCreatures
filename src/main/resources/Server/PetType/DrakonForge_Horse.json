@@ -18,7 +18,8 @@
     "Max": 16,
     "Average": 10.0,
     "StandardDeviation": 1,
-    "RoundToNearest": 1.0
+    "RoundToNearest": 0.1,
+    "IncreasePerLevel": 0.1
   },
   "MountGaitAcceleration": {
     "Mode": "Internal",
@@ -26,15 +27,17 @@
     "Average": 1.0,
     "Min": 0.75,
     "Max": 2.0,
-    "RoundToNearest": -1.0
+    "RoundToNearest": -1.0,
+    "IncreasePerLevel": 0.5
   },
   "BaseStaminaModifier": {
     "Mode": "Display",
-    "RoundToNearest": 0.5,
+    "RoundToNearest": 0.01,
     "Average": 0,
     "StandardDeviation": 1,
     "Min": -5,
-    "Max": 5
+    "Max": 5,
+    "IncreasePerLevel": 0.75
   },
   "BaseHealthModifier": {
     "Mode": "Display",
@@ -42,6 +45,7 @@
     "StandardDeviation": 20,
     "RoundToNearest": 1,
     "Min": -50,
-    "Max": 50
+    "Max": 50,
+    "IncreasePerLevel": 5
   }
 }

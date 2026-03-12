@@ -9,7 +9,7 @@ public class BondingLevelChangeEvent extends EcsEvent {
         this.levelChangedTo = levelChangedTo;
     }
 
-    public float getLevelChangedTo() {
+    public int getLevelChangedTo() {
         return this.levelChangedTo;
     }
 

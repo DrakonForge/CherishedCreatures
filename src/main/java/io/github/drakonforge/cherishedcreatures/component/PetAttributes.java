@@ -24,7 +24,10 @@ public class PetAttributes implements Component<EntityStore> {
     public static final PetAttributes EMPTY = new PetAttributes();
     public static final BuilderCodec<PetAttributes> CODEC = BuilderCodec.builder(
             PetAttributes.class, PetAttributes::new)
-            .append(new KeyedCodec<>("Attributes", new Object2FloatMapCodec<>(Codec.STRING, Object2FloatOpenHashMap::new, false)), (petAttributes, attributeMap) -> petAttributes.attributes = attributeMap, petAttributes -> petAttributes.attributes)
+            .append(new KeyedCodec<>("BaseAttributes", new Object2FloatMapCodec<>(Codec.STRING, Object2FloatOpenHashMap::new, false), true), (petAttributes, attributeMap) -> petAttributes.attributes = attributeMap, petAttributes -> petAttributes.attributes)
+            .documentation("TODO")
+            .add()
+            .append(new KeyedCodec<>("AttributeModifiers", new Object2FloatMapCodec<>(Codec.STRING, Object2FloatOpenHashMap::new, false)), (petAttributes, attributeMap) -> petAttributes.modifiers = attributeMap, petAttributes -> petAttributes.modifiers)
             .documentation("TODO")
             .add()
             .documentation("TODO")
@@ -34,10 +37,18 @@ public class PetAttributes implements Component<EntityStore> {
         return CherishedCreaturesPlugin.get().getPetAttributesComponentType();
     }
 
+    // TODO: Definitely a better way to do this but it works lmao
     private Object2FloatMap<String> attributes = new Object2FloatOpenHashMap<>();
+    private Object2FloatMap<String> modifiers = new Object2FloatOpenHashMap<>();
 
-    public void putAttribute(String key, float value) {
+    public void putBaseAttribute(String key, float value) {
         attributes.put(key, value);
+    }
+
+    public void putAttributeModifier(String key, float value) {
+        if (attributes.containsKey(key)) {
+            modifiers.put(key, value);
+        }
     }
 
     public boolean hasAttribute(String key) {
@@ -45,11 +56,18 @@ public class PetAttributes implements Component<EntityStore> {
     }
 
     public float get(String key) {
+        return attributes.getFloat(key) + modifiers.getOrDefault(key, 0.0f);
+    }
+
+    public float getBase(String key) {
         return attributes.getFloat(key);
     }
 
     public float getOrDefault(String key, float defaultValue) {
-        return attributes.getOrDefault(key, defaultValue);
+        if (attributes.containsKey(key)) {
+            return get(key);
+        }
+        return defaultValue;
     }
 
     public Collection<String> getKeys() {
