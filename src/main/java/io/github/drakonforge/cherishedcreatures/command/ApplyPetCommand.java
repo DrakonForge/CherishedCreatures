@@ -14,7 +14,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.data.PetActivityType;
 import io.github.drakonforge.cherishedcreatures.event.TriggerPetActivityEvent;
-import it.unimi.dsi.fastutil.objects.ObjectList;
+import java.util.List;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class ApplyPetCommand extends AbstractTargetEntityCommand {
@@ -26,7 +26,7 @@ public class ApplyPetCommand extends AbstractTargetEntityCommand {
 
     @Override
     protected void execute(@NonNullDecl CommandContext commandContext,
-                           @NonNullDecl ObjectList<Ref<EntityStore>> objectList,
+                           @NonNullDecl List<Ref<EntityStore>> objectList,
                            @NonNullDecl World world,
                            @NonNullDecl Store<EntityStore> store) {
 
@@ -62,6 +62,4 @@ public class ApplyPetCommand extends AbstractTargetEntityCommand {
             commandContext.sendMessage(Message.raw("Successfully applied pet"));
         }
     }
-
-
 }

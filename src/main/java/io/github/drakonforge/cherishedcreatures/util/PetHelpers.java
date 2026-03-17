@@ -9,7 +9,6 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.component.spatial.SpatialResource;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.modules.entity.EntityModule;
 import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
@@ -29,7 +28,7 @@ import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
-import it.unimi.dsi.fastutil.objects.ObjectList;
+import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 
@@ -234,7 +233,7 @@ public final class PetHelpers {
             }
             String mobName = nearestDisplayName.getDisplayName() != null ? nearestDisplayName.getDisplayName().getAnsiMessage() : null;
             LOGGER.atInfo().log("Whistled at " + mobName);
-            ObjectList<Ref<EntityStore>> results = SpatialResource.getThreadLocalReferenceList();
+            List<Ref<EntityStore>> results = SpatialResource.getThreadLocalReferenceList();
             SpatialResource<Ref<EntityStore>, EntityStore> playerSpatialResource = store.getResource(
                     EntityModule.get().getPlayerSpatialResourceType());
             playerSpatialResource.getSpatialStructure().collect(nearestTransform.getPosition(),

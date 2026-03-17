@@ -62,8 +62,8 @@ public final class PetDetailsPage {
 
         PageBuilder page = PageBuilder.detachedPage()
                 .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
-                // .enablePersistentElementEdits(true)
-                .enableRuntimeTemplateUpdates(true) // Temporarily disabling this to make show/hide work properly
+                .enablePersistentElementEdits(true)
+                .enableRuntimeTemplateUpdates(true)
                 .loadHtml("Pages/PetDetails.html", template);
 
         registerPetDetailsEventListeners(
@@ -109,6 +109,7 @@ public final class PetDetailsPage {
         TrackedPetEntry entry = petTracker.getPetEntry(id);
         Store<EntityStore> store = menuContext.store();
 
+        // TODO: Clicking this button triggers a stack overflow -- maybe due to calling updatePage and applying the updates again?
         page.addEventListener("change-name-" + id, CustomUIEventBindingType.Activating,
                 (_, ctx) -> {
                     ctx.editById("change-name-container", GroupBuilder.class, changeBuilder -> {

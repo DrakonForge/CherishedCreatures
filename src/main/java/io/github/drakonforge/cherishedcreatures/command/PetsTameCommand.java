@@ -7,12 +7,10 @@ import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractTargetEntityCommand;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
-import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.event.UpdatePetTrackerEvent;
 import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
 import io.github.drakonforge.cherishedcreatures.util.PetHelpers.TameResult;
-import it.unimi.dsi.fastutil.objects.ObjectList;
+import java.util.List;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public class PetsTameCommand extends AbstractTargetEntityCommand {
@@ -23,7 +21,7 @@ public class PetsTameCommand extends AbstractTargetEntityCommand {
 
     @Override
     protected void execute(@NonNullDecl CommandContext commandContext,
-            @NonNullDecl ObjectList<Ref<EntityStore>> objectList, @NonNullDecl World world,
+            @NonNullDecl List<Ref<EntityStore>> objectList, @NonNullDecl World world,
             @NonNullDecl Store<EntityStore> store) {
         if (!commandContext.isPlayer()) {
             commandContext.sendMessage(Message.raw("Must be player to run this command"));
