@@ -109,17 +109,15 @@ public final class PetDetailsPage {
         TrackedPetEntry entry = petTracker.getPetEntry(id);
         Store<EntityStore> store = menuContext.store();
 
-        // TODO: Clicking this button triggers a stack overflow -- maybe due to calling updatePage and applying the updates again?
         page.addEventListener("change-name-" + id, CustomUIEventBindingType.Activating,
                 (_, ctx) -> {
                     ctx.editById("change-name-container", GroupBuilder.class, changeBuilder -> {
                         changeBuilder.withVisible(true);
-                        ctx.updatePage(false);
                     });
                     ctx.editById("display-name-container", GroupBuilder.class, displayBuilder -> {
                         displayBuilder.withVisible(false);
-                        ctx.updatePage(false);
                     });
+                    ctx.updatePage(false);
                 });
 
         page.addEventListener("change-name-submit-" + id, CustomUIEventBindingType.Activating,
@@ -135,22 +133,19 @@ public final class PetDetailsPage {
                         if (!newName.isEmpty()) {
                             PetHelpers.renamePet(entry, store, newName);
                             PetCommonUI.refreshPetCard(menuContext, true);
-                            ctx.updatePage(false);
                         }
                         // editById is not working at all for some reason
                         ctx.editById("change-name-input-" + id, TextFieldBuilder.class, builder -> {
                             builder.withValue("");
-                            ctx.updatePage(false);
                         });
                     });
                     ctx.editById("change-name-container", GroupBuilder.class, changeBuilder -> {
                         changeBuilder.withVisible(false);
-                        ctx.updatePage(false);
                     });
                     ctx.editById("display-name-container", GroupBuilder.class, displayBuilder -> {
                         displayBuilder.withVisible(true);
-                        ctx.updatePage(false);
                     });
+                    ctx.updatePage(false);
                 });
     }
 
