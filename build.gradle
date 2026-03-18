@@ -115,6 +115,9 @@ def createServerRunArguments(String srcDir) {
     if (load_user_mods.toBoolean()) {
         modPaths << "${hytaleHome}/UserData/Mods"
     }
+    if (load_project_mods.toBoolean()) {
+        modPaths << "${project.projectDir}/mods"
+    }
     if (!modPaths.isEmpty()) {
         programParameters += ' --mods="' + modPaths.join(',') + '"'
     }

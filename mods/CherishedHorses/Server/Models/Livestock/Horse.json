@@ -1,0 +1,699 @@
+{
+  "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+  "Texture": "NPC/Livestock/Horse/Models/Texture.png",
+  "EyeHeight": 2.1,
+  "CrouchOffset": -0.5,
+  "HitBox": {
+    "Max": {
+      "X": 0.45,
+      "Y": 2.5,
+      "Z": 0.45
+    },
+    "Min": {
+      "X": -0.45,
+      "Y": 0,
+      "Z": -0.45
+    }
+  },
+  "Camera": {
+    "Pitch": {
+      "AngleRange": {
+        "Max": 30,
+        "Min": -15
+      },
+      "TargetNodes": [
+        "Head"
+      ]
+    },
+    "Yaw": {
+      "AngleRange": {
+        "Max": 15,
+        "Min": -15
+      },
+      "TargetNodes": [
+        "Head"
+      ]
+    }
+  },
+  "AnimationSets": {
+    "Idle": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Idle.blockyanim",
+          "SoundEventId": "SFX_Horse_Idle",
+          "Speed": 1
+        }
+      ]
+    },
+    "Walk": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Trot.blockyanim",
+          "SoundEventId": "SFX_Horse_Idle",
+          "Speed": 1
+        }
+      ]
+    },
+    "WalkBackward": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Walk_Backward.blockyanim"
+        }
+      ]
+    },
+    "Run": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Gallop2.blockyanim",
+          "Speed": 1
+        }
+      ]
+    },
+    "Crouch": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Crouch.blockyanim",
+          "BlendingDuration": 0.1
+        }
+      ]
+    },
+    "CrouchWalk": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Crouch_Walk.blockyanim",
+          "BlendingDuration": 0.1
+        }
+      ]
+    },
+    "CrouchWalkBackward": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Crouch_Walk_Backward.blockyanim",
+          "BlendingDuration": 0.1
+        }
+      ]
+    },
+    "Jump": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Jump.blockyanim",
+          "BlendingDuration": 0.1,
+          "Looping": false,
+          "Speed": 0.8
+        }
+      ]
+    },
+    "JumpWalk": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Jump_Far.blockyanim",
+          "BlendingDuration": 0.1,
+          "Looping": false,
+          "Speed": 0.8
+        }
+      ]
+    },
+    "JumpRun": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Jump_Far.blockyanim",
+          "BlendingDuration": 0.1,
+          "Looping": false,
+          "Speed": 0.8
+        }
+      ]
+    },
+    "Fall": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Fall.blockyanim",
+          "BlendingDuration": 0.4
+        }
+      ]
+    },
+    "Alerted": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Rear.blockyanim",
+          "Looping": false,
+          "SoundEventId": "SFX_Horse_Alerted"
+        }
+      ]
+    },
+    "Curious": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Flavor/Curious.blockyanim"
+        }
+      ]
+    },
+    "Hurt": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Damage/Hurt.blockyanim",
+          "BlendingDuration": 0.1,
+          "Looping": false,
+          "SoundEventId": "SFX_Horse_Hurt"
+        },
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Damage/Hurt2.blockyanim",
+          "BlendingDuration": 0.1,
+          "Looping": false,
+          "SoundEventId": "SFX_Horse_Hurt"
+        }
+      ]
+    },
+    "Death": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Damage/Death.blockyanim",
+          "Looping": false,
+          "SoundEventId": "SFX_Horse_Death"
+        }
+      ]
+    },
+    "Laydown": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Laydown.blockyanim",
+          "Looping": false
+        }
+      ]
+    },
+    "Sleep": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Sleep.blockyanim",
+          "SoundEventId": "SFX_Horse_Sleep"
+        }
+      ]
+    },
+    "Wake": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Wake.blockyanim",
+          "Looping": false,
+          "SoundEventId": "SFX_Horse_Wake"
+        }
+      ]
+    },
+    "Spawn": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Spawn.blockyanim",
+          "BlendingDuration": 0,
+          "Looping": false
+        }
+      ]
+    },
+    "Eat": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Eat.blockyanim"
+        }
+      ]
+    },
+    "LookAround": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Flavor/Look_Around.blockyanim",
+          "Looping": false
+        }
+      ]
+    },
+    "Neigh": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Flavor/Neigh.blockyanim",
+          "Looping": false
+        }
+      ]
+    },
+    "FlyIdle": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Fly/Fly_Idle.blockyanim"
+        }
+      ]
+    },
+    "Fly": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Fly/Fly.blockyanim"
+        }
+      ]
+    },
+    "FlyFast": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Fly/Fly_Fast.blockyanim"
+        }
+      ]
+    },
+    "FlyBackward": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Fly/Fly_Backward.blockyanim"
+        }
+      ]
+    },
+    "SwimIdle": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim_Idle.blockyanim"
+        }
+      ]
+    },
+    "Swim": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim.blockyanim"
+        }
+      ]
+    },
+    "SwimBackward": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim_Backward.blockyanim"
+        }
+      ]
+    },
+    "SwimFast": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim_Fast.blockyanim"
+        }
+      ]
+    },
+    "SwimJump": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim_Jump.blockyanim",
+          "BlendingDuration": 0.1,
+          "Looping": false
+        }
+      ]
+    },
+    "SwimSink": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim_Sink.blockyanim"
+        }
+      ]
+    },
+    "SwimFloat": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim_Float.blockyanim"
+        }
+      ]
+    },
+    "FluidIdle": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Idle.blockyanim",
+          "Speed": 0.6
+        }
+      ]
+    },
+    "FluidWalk": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Walk.blockyanim",
+          "Speed": 0.6
+        }
+      ]
+    },
+    "FluidWalkBackward": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Walk_Backward.blockyanim",
+          "Speed": 0.6
+        }
+      ]
+    },
+    "FluidRun": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Run.blockyanim",
+          "Speed": 0.6
+        }
+      ]
+    },
+    "SwimDive": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim.blockyanim"
+        }
+      ]
+    },
+    "SwimDiveBackward": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim_Backward.blockyanim"
+        }
+      ]
+    },
+    "SwimDiveFast": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Swim/Swim_Fast.blockyanim"
+        }
+      ]
+    },
+    "GreetAnimation": {
+      "Animations": [
+        {
+          "Animation": "NPC/Livestock/Horse/Animations/Default/Idle.blockyanim",
+          "Looping": false,
+          "Speed": 1.0
+        }
+      ]
+    }
+  },
+  "RandomAttachmentSets": {
+    "Hair": {
+      "Grey": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_Grey.png"
+      },
+      "Black": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_Black.png"
+      },
+      "1": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_1.png"
+      },
+      "2": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_2.png",
+        "Weight": 30
+      },
+      "3": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_3.png",
+        "Weight": 30
+      },
+      "4": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_4.png",
+        "Weight": 30
+      },
+      "5": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_5.png",
+        "Weight": 30
+      },
+      "6": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_6.png",
+        "Weight": 30
+      },
+      "7": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_7.png",
+        "Weight": 30
+      },
+      "8": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_8.png",
+        "Weight": 30
+      },
+      "9": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_9.png",
+        "Weight": 30
+      },
+      "10": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane_2.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_11.png",
+        "Weight": 30
+      },
+      "11": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane_2.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_11.png",
+        "Weight": 30
+      },
+      "12": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane_2.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_12.png",
+        "Weight": 30
+      },
+      "13": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane_2.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_13.png",
+        "Weight": 30
+      },
+      "14": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane_2.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_14.png",
+        "Weight": 30
+      },
+      "15": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Mane_3.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Mane_15.png",
+        "Weight": 30
+      }
+    },
+    "2Eyes": {
+      "0": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_0.png"
+      },
+      "1": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_1.png"
+      },
+      "2": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_2.png"
+      },
+      "3": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_3.png"
+      },
+      "4": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_4.png"
+      },
+      "5": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_5.png"
+      },
+      "6": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_6.png"
+      },
+      "7": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_7.png"
+      },
+      "8": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_8.png"
+      },
+      "9": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_9.png"
+      },
+      "10": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_10.png"
+      },
+      "11": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_11.png"
+      },
+      "12": {
+        "Model": "NPC/Livestock/Horse/Models/Attachments/Eyes.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Eyes_12.png"
+      }
+    },
+    "3HeadMark": {
+      "0": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Empty.png",
+        "Weight": 5
+      },
+      "1": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Head_Pattern_1.png"
+      },
+      "2": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Head_Pattern_2.png"
+      },
+      "3": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Head_Pattern_3.png"
+      },
+      "4": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Head_Pattern_4.png"
+      },
+      "5": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Head_Pattern_5.png"
+      },
+      "6": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Head_Pattern_6.png"
+      },
+      "7": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Head_Pattern_7.png"
+      }
+    },
+    "4BodyPattern": {
+      "0": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Empty.png",
+        "Weight": 10
+      },
+      "1": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Body_Pattern_1.png",
+        "Weight": 1
+      },
+      "2": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Body_Pattern_2.png",
+        "Weight": 1
+      }
+    },
+    "5LegPatterns": {
+      "0": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Empty.png"
+      },
+      "1": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Leg_Pattern_1.png"
+      },
+      "2": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Leg_Pattern_2.png"
+      },
+      "3": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Leg_Pattern_3.png"
+      },
+      "4": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Leg_Pattern_4.png"
+      },
+      "5": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Leg_Pattern_5.png"
+      },
+      "6": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Leg_Pattern_6.png"
+      },
+      "7": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Leg_Pattern_7.png"
+      }
+    },
+    "66BaseColor": {
+      "0": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Empty.png",
+        "Weight": 3
+      },
+      "1": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_1.png"
+      },
+      "2": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_2.png"
+      },
+      "3": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_3.png"
+      },
+      "4": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_4.png"
+      },
+      "5": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_5.png"
+      },
+      "6": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_6.png"
+      },
+      "7": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_7.png"
+      },
+      "8": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_8.png"
+      },
+      "9": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_9.png"
+      },
+      "10": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_10.png"
+      },
+      "11": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_11.png"
+      },
+      "12": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_12.png"
+      },
+      "13": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_13.png"
+      },
+      "14": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_14.png"
+      },
+      "15": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_15.png"
+      },
+      "16": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_16.png"
+      },
+      "17": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_17.png"
+      },
+      "18": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_18.png"
+      },
+      "19": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_19.png"
+      },
+      "20": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_20.png"
+      },
+      "21": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_21.png"
+      },
+      "22": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_22.png"
+      },
+      "23": {
+        "Model": "NPC/Livestock/Horse/Models/Model.blockymodel",
+        "Texture": "NPC/Livestock/Horse/Models/Attachments/Base_23.png"
+      }
+    }
+  }
+}

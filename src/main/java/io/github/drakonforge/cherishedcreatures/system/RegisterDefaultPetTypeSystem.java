@@ -29,7 +29,7 @@ public class RegisterDefaultPetTypeSystem extends HolderSystem<EntityStore> {
         idToPetTypeId.put("Cow", "DrakonForge_Generic");
         idToPetTypeId.put("Crab", "DrakonForge_Generic");
         idToPetTypeId.put("Rabbit", "DrakonForge_Generic");
-        idToPetTypeId.put("Tamed_Horse", "DrakonForge_Generic");
+        idToPetTypeId.put("Tamed_Horse", "DrakonForge_Horse"); // TODO: Move to an asset in CherishedHorses
         idToPetTypeId.put("DrakonForge_Test_Mount", "DrakonForge_Horse");
         return idToPetTypeId;
     }

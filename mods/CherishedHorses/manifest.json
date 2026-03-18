@@ -1,0 +1,26 @@
+{
+    "Group": "DrakonForge",
+    "Name": "Cherished Horses",
+    "Version": "1.0.0",
+    "Description": "An example plugin for Hytale modding.",
+    "Authors": [
+        {
+            "Name": "Soulhorsee"
+        },
+        {
+            "Name": "Drakon",
+            "Url": "https://github.com/Drakonkinst"
+        }
+    ],
+    "Website": "https://github.com/DrakonForge",
+    "ServerVersion": "*",
+    "Dependencies": {
+        "DrakonForge:CherishedCreatures": "",
+        "com.hypersonicsharkz:Hytalor": ""
+    },
+    "OptionalDependencies": {
+        "BlackAures:Aures - Horse Skins": ""
+    },
+    "DisabledByDefault": false,
+    "IncludesAssetPack": true
+}
