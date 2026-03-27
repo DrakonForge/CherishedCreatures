@@ -4,6 +4,7 @@ import au.ellie.hyui.builders.GroupBuilder;
 import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.types.DefaultStyles;
+import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.vector.Vector3d;
@@ -12,7 +13,10 @@ import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import io.github.drakonforge.cherishedcreatures.component.PetComponent;
+import io.github.drakonforge.cherishedcreatures.component.PetStateComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
+import io.github.drakonforge.cherishedcreatures.data.PetFollowMode;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
 import io.github.drakonforge.cherishedcreatures.ui.data.PetMenuContext;
@@ -78,6 +82,46 @@ public final class PetCommonUI {
             }
         }
         return -1;
+    }
+
+    private static final String VALUE_STAY = "Stay";
+    private static final String VALUE_FOLLOW = "Follow";
+
+    public static void addStayFollowToggleListener(PetMenuContext menuContext) {
+        // TODO: Set initial value
+        PetUICard petCard = menuContext.petCard();
+        PlayerPetTracker petTracker = menuContext.petTracker();
+        UUID id = petCard.id();
+        menuContext.page().addEventListener("follow-mode-select-" + id, CustomUIEventBindingType.ValueChanged, (_, ctx) -> {
+            ctx.getValue("follow-mode-select-" + id, String.class).ifPresent(mode -> {
+                PetFollowMode followMode;
+                if (mode.equals(VALUE_STAY)) {
+                    LOGGER.atInfo().log("Set to stay");
+                    followMode = PetFollowMode.Stay;
+                } else if (mode.equals(VALUE_FOLLOW)) {
+                    LOGGER.atInfo().log("Set to follow");
+                    followMode = PetFollowMode.Follow;
+                } else {
+                    LOGGER.atWarning().log("Unrecognized follow mode: " + mode);
+                    return;
+                }
+                TrackedPetEntry entry = petTracker.getPetEntry(id);
+                if (entry == null) {
+                    LOGGER.atWarning().log("Entry is null");
+                    return;
+                }
+                Holder<EntityStore> holder = entry.getHolder(false);
+                PetStateComponent petStateComponent = holder.getComponent(PetStateComponent.getComponentType());
+                if (petStateComponent == null) {
+                    LOGGER.atWarning().log("Pet state component should not be null");
+                    return;
+                }
+                petStateComponent.setFollowMode(followMode);
+
+            });
+        });
+
+        // TODO: Roaming Radius checks
     }
 
     public static void addSummonToggleListener(PetMenuContext menuContext) {

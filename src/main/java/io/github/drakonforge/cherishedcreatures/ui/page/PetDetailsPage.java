@@ -101,10 +101,12 @@ public final class PetDetailsPage {
         }
 
         addNameChangeListeners(menuContext);
+        PetCommonUI.addStayFollowToggleListener(menuContext);
 
         if (petCard.showSummonToggle()) {
             PetCommonUI.addSummonToggleListener(menuContext);
         }
+
     }
 
     private static void addNameChangeListeners(PetMenuContext menuContext) {
