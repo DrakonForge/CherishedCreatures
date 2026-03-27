@@ -102,6 +102,7 @@
   .pet-text-stat {
     layout-mode: Left;
     vertical-align: center;
+    anchor-bottom: 10;
   }
   .pet-text-stat-label {
     font-weight: bold;
@@ -111,11 +112,12 @@
   }
   .pet-text-stat-value {
     layout-mode: Top;
+    anchor-right: 10;
   }
 
   .pet-info {
-    anchor-height: 200;
     layout-mode: Left;
+    flex-weight: 1;
 
   }
   .pet-stats-column {
@@ -138,8 +140,9 @@
   }
   .pet-numeric-value {
     anchor-right: 0;
+    anchor-left: 10;
     anchor-height: 10;
-    anchor-width: 200;
+    anchor-width: 175;
   }
 
   .status-label {
@@ -223,7 +226,8 @@
             </div>
             <div class="pet-info-wrapper">
               <div class="pet-info">
-                <div class="pet-stats-column pet-numeric-stats">
+                <div class="pet-stats-column pet-numeric-stats" data-hyui-scrollbar-style="DefaultScrollbarStyle"
+                     data-hyui-keep-scroll-position="true">
                   {{#each details.numericAttributes}}
                     <div class="pet-numeric-stat">
                       <p class="pet-numeric-label">{{$label}}</p>
@@ -233,7 +237,8 @@
                     </div>
                   {{/each}}
                 </div>
-                <div class="pet-stats-column pet-text-stats">
+                <div class="pet-stats-column pet-text-stats" data-hyui-scrollbar-style="DefaultScrollbarStyle"
+                     data-hyui-keep-scroll-position="true">
                   <div class="pet-text-stat">
                     <div class="pet-text-stat-label">Status</div>
                     <div class="pet-text-stat-value">

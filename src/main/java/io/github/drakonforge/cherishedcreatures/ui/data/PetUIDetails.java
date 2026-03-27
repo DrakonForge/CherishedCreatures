@@ -25,8 +25,8 @@ public record PetUIDetails(List<PetNumericAttributeDisplay> numericAttributes, L
         List<PetNumericAttributeDisplay> numericAttributes = new ArrayList<>();
 
         // TODO: L10n support
-        addNumericAttribute(numericAttributes, petType.getBaseHealthModifier(), PetAttributes.HEALTH, "Health", petAttributes);
-        addNumericAttribute(numericAttributes, petType.getBaseStaminaModifier(), PetAttributes.STAMINA, "Stamina", petAttributes);
+        addNumericAttribute(numericAttributes, petType.getBaseHealthModifier(), PetAttributes.HEALTH, "Max Health", petAttributes);
+        addNumericAttribute(numericAttributes, petType.getBaseStaminaModifier(), PetAttributes.STAMINA, "Max Stamina", petAttributes);
         if (petType.hasFeatureFlag(PetFeatureFlag.AdvancedMountHandling)) {
             addNumericAttribute(numericAttributes, petType.getMountBaseSpeed(), PetAttributes.MOUNT_BASE_SPEED, "Speed", petAttributes);
             addNumericAttribute(numericAttributes, petType.getMountGaitAcceleration(), PetAttributes.MOUNT_GAIT_ACCELERATION, "Acceleration", petAttributes);
