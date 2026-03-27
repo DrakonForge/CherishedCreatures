@@ -6,6 +6,7 @@ import au.ellie.hyui.html.TemplateProcessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -18,6 +19,7 @@ import io.github.drakonforge.cherishedcreatures.ui.data.PetUICard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 public final class PetMenuPage {
@@ -25,11 +27,11 @@ public final class PetMenuPage {
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
     public static void openPetMenu(PetMenuContext menuContext) {
-        openPetMenu(menuContext.store(), menuContext.ref(), menuContext.playerRef());
+        openPetMenu(menuContext.store(), menuContext.ref(), menuContext.playerRef(), menuContext.origin());
     }
 
     public static void openPetMenu(@NonNullDecl Store<EntityStore> store,
-            @NonNullDecl Ref<EntityStore> ref, @NonNullDecl PlayerRef playerRef) {
+            @NonNullDecl Ref<EntityStore> ref, @NonNullDecl PlayerRef playerRef, @Nullable Vector3d origin) {
         PlayerPetTracker playerPetTracker = store.getComponent(ref,
                 PlayerPetTracker.getComponentType());
         if (playerPetTracker == null) {
@@ -41,7 +43,7 @@ public final class PetMenuPage {
         List<TrackedPetEntry> trackedPetEntries = playerPetTracker.getPetEntries();
         for (int i = 0; i < trackedPetEntries.size(); i++) {
             TrackedPetEntry petEntry = trackedPetEntries.get(i);
-            petCards.add(PetUICard.fromTrackedPetEntry(petEntry, store, false, i % 3));
+            petCards.add(PetUICard.fromTrackedPetEntry(petEntry, store, origin, false, i % 3));
         }
 
         TemplateProcessor template = new TemplateProcessor().registerComponentFromFile("PetStatus",
@@ -65,7 +67,7 @@ public final class PetMenuPage {
         for (PetUICard petCard : petCards) {
             registerMenuEventListeners(
                     new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCards,
-                            petCard));
+                            petCard, origin));
         }
         page.open(playerRef, store);
     }

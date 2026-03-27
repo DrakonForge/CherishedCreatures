@@ -4,8 +4,10 @@ import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.util.MathUtil;
+import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.modules.entity.component.DisplayNameComponent;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
@@ -25,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-public record PetUICard(UUID id, String name, String roleName, String imagePath, String iconPath, Status status, boolean isLoaded, boolean showSummonToggle, boolean showTransferButton, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo, @Nullable PetUIDetails details, @Nullable Integer index) {
+public record PetUICard(UUID id, String name, String roleName, String imagePath, String iconPath, Status status, String locationStr, boolean isLoaded, boolean showSummonToggle, boolean showTransferButton, @Nullable PetUIHealthInfo healthInfo, @Nullable PetUIBondingInfo bondingInfo, @Nullable PetUIDetails details, @Nullable Integer index) {
 
     public record PetUIBondingInfo(Type type, float fillProgress, int bondingLevel) {
         public enum Type {
@@ -35,7 +37,7 @@ public record PetUICard(UUID id, String name, String roleName, String imagePath,
 
     public record PetUIHealthInfo(float fillProgress, int value, int max) {}
 
-    public static PetUICard fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, @NonNullDecl Store<EntityStore> store, boolean generateDetails, int index) {
+    public static PetUICard fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, @NonNullDecl Store<EntityStore> store, @Nullable Vector3d pos, boolean generateDetails, int index) {
         entry.attemptSaveEntityFromLive(store);
         Holder<EntityStore> holder = entry.getHolder(false);
         PetType petType = entry.getPetType();
@@ -63,7 +65,20 @@ public record PetUICard(UUID id, String name, String roleName, String imagePath,
             details = PetUIDetails.fromTrackedPetEntry(entry, holder);
         }
         // If the pet has Status ALIVE but is unloaded, we basically treat it as un-summoned for our purposes.
-        return new PetUICard(entry.getUuid(), displayName, roleName, imagePath, iconPath, status, entry.isLoaded(), showSummonToggle, showTransferButton, healthInfo, bondingInfo, details, index);
+        String locationStr = getLocationStr(entry, pos);
+        return new PetUICard(entry.getUuid(), displayName, roleName, imagePath, iconPath, status, locationStr, entry.isLoaded(), showSummonToggle, showTransferButton, healthInfo, bondingInfo, details, index);
+    }
+
+    private static String getLocationStr(TrackedPetEntry entry, @Nullable Vector3d origin) {
+        Vector3d lastKnownPos = entry.getLastKnownPos();
+        if (origin == null || lastKnownPos == null) {
+            return "";
+        }
+
+        Vector3d delta = origin.clone().subtract(lastKnownPos);
+        double distance = delta.length();
+        int blocks = (int) Math.round(distance);
+        return blocks + "m away"; // TODO: Localize
     }
 
     private static boolean canSummonPetWithStatus(Status status) {

@@ -56,6 +56,10 @@
     layout-mode: Left;
   }
 
+  .name-container {
+    anchor-bottom: 9;
+  }
+
   .pet-name {
     font-weight: bold;
     font-size: 24;
@@ -89,35 +93,32 @@
     background-color: #111922;
   }
 
-  .pet-info {
+  .pet-info-wrapper {
     layout-mode: Top;
+    anchor-top: 20;
     flex-weight: 1;
   }
 
-  .pet-main-stats {
-    layout-mode: Top;
-    anchor-width: 250;
-    anchor-top: 10;
-    flex-weight: 1;
-  }
-  .pet-main-stat {
+  .pet-text-stat {
     layout-mode: Left;
     vertical-align: center;
   }
-  .pet-main-stat-label {
+  .pet-text-stat-label {
+    font-weight: bold;
     flex-weight: 1;
     text-align: left;
     horizontal-align: left;
   }
-  .pet-main-stat-value {
+  .pet-text-stat-value {
+    layout-mode: Top;
   }
 
-  .pet-secondary-stats {
+  .pet-info {
     anchor-height: 200;
     layout-mode: Left;
 
   }
-  .pet-secondary-stats-column {
+  .pet-stats-column {
     layout-mode: TopScrolling;
     flex-weight: 1;
   }
@@ -128,14 +129,16 @@
   .pet-numeric-stat {
     layout-mode: Right;
     justify-content: space-between;
-    anchor-bottom: 5;
+    anchor-bottom: 10;
     anchor-horizontal: 0;
   }
   .pet-numeric-label {
     flex-weight: 1;
+    font-weight: bold;
   }
   .pet-numeric-value {
     anchor-right: 0;
+    anchor-height: 10;
     anchor-width: 200;
   }
 
@@ -217,17 +220,10 @@
                   {{/if}}
                 </div>
               </div>
-
             </div>
-            <div class="pet-info">
-              <div class="pet-main-stats">
-                <div class="pet-main-stat">
-                  <div class="pet-main-stat-label">Status</div>
-                  <div class="pet-main-stat-value">{{@PetStatus:status={{$status}},fontSize=16}}</div>
-                </div>
-              </div>
-              <div class="pet-secondary-stats">
-                <div class="pet-secondary-stats-column pet-numeric-stats">
+            <div class="pet-info-wrapper">
+              <div class="pet-info">
+                <div class="pet-stats-column pet-numeric-stats">
                   {{#each details.numericAttributes}}
                     <div class="pet-numeric-stat">
                       <p class="pet-numeric-label">{{$label}}</p>
@@ -237,8 +233,20 @@
                     </div>
                   {{/each}}
                 </div>
-                <div class="pet-secondary-stats-column panel pet-text-stats">
-
+                <div class="pet-stats-column panel pet-text-stats">
+                  <div class="pet-text-stat">
+                    <div class="pet-text-stat-label">Status</div>
+                    <div class="pet-text-stat-value">
+                      <div>{{@PetStatus:status={{$status}},fontSize=16}}</div>
+                      {{#if status == ALIVE}}
+                        {{#if isLoaded}}
+                          <div>Location: {{$locationStr}}</div>
+                        {{else}}
+                          <div>Last seen: {{$locationStr}}</div>
+                        {{/if}}
+                      {{/if}}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

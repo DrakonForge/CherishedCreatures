@@ -6,6 +6,7 @@ import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.types.DefaultStyles;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
@@ -54,17 +55,18 @@ public final class PetCommonUI {
         PlayerPetTracker petTracker = menuContext.petTracker();
         List<PetUICard> petCards = menuContext.petCards();
         UUID petUuid = menuContext.petCard().id();
-        refreshPetCard(store, petTracker, petCards, generateDetails, petUuid);
+        Vector3d origin = menuContext.origin();
+        refreshPetCard(store, petTracker, petCards, origin, generateDetails, petUuid);
     }
 
     private static void refreshPetCard(Store<EntityStore> store, PlayerPetTracker petTracker,
-            List<PetUICard> petCards, boolean generateDetails, UUID petUuid) {
+            List<PetUICard> petCards, Vector3d origin, boolean generateDetails, UUID petUuid) {
         int index = findPetCard(petCards, petUuid);
         if (index > -1) {
             TrackedPetEntry entry = petTracker.getPetEntry(petUuid);
             if (entry != null) {
                 petCards.set(index,
-                        PetUICard.fromTrackedPetEntry(entry, store, generateDetails, index));
+                        PetUICard.fromTrackedPetEntry(entry, store, origin, generateDetails, index));
             }
         }
     }

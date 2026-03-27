@@ -52,6 +52,11 @@ import io.github.drakonforge.cherishedcreatures.stat.MountCondition;
 import io.github.drakonforge.cherishedcreatures.stat.RidingCondition;
 import io.github.drakonforge.cherishedcreatures.system.*;
 
+import io.github.drakonforge.cherishedcreatures.system.bonding.ApplyBondingXpSystem;
+import io.github.drakonforge.cherishedcreatures.system.bonding.NotifyBondingXpSystem;
+import io.github.drakonforge.cherishedcreatures.system.bonding.UpdateAttributesOnLevelUpSystem;
+import io.github.drakonforge.cherishedcreatures.system.bonding.UpdateBondingLevelSystem;
+import io.github.drakonforge.cherishedcreatures.system.bonding.UpdateExplorationMarkerSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.AddMountHandlingSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.DetectNpcMountSystem;
 import io.github.drakonforge.cherishedcreatures.system.mount.DismountOnNpcMountDeath;
@@ -209,6 +214,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         entityStoreRegistry.registerSystem(new EnsurePetAttributesSystem());
         entityStoreRegistry.registerSystem(new ApplyPetAttributesSystem());
         entityStoreRegistry.registerSystem(new UpdateAttributesOnLevelUpSystem());
+        entityStoreRegistry.registerSystem(new PetUpdateLastKnownPosSystem());
         // Mounts
         entityStoreRegistry.registerSystem(new RegisterNpcMountDetectionSystem());
         entityStoreRegistry.registerSystem(new DetectNpcMountSystem());

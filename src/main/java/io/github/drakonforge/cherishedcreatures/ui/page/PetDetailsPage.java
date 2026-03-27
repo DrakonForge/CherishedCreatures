@@ -7,8 +7,10 @@ import au.ellie.hyui.html.TemplateProcessor;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
@@ -34,6 +36,8 @@ public final class PetDetailsPage {
             PlayerRef playerRef, UUID petUuid) {
         PlayerPetTracker playerPetTracker = store.getComponent(ref,
                 PlayerPetTracker.getComponentType());
+        TransformComponent transformComponent = store.getComponent(ref, TransformComponent.getComponentType());
+        assert transformComponent != null;
         if (playerPetTracker == null) {
             LOGGER.atWarning().log("Pet tracker should not be null");
             return false;
@@ -47,7 +51,8 @@ public final class PetDetailsPage {
             return false;
         }
 
-        PetUICard petCard = PetUICard.fromTrackedPetEntry(petEntry, store, true, -1);
+        Vector3d origin = transformComponent.getPosition().clone();
+        PetUICard petCard = PetUICard.fromTrackedPetEntry(petEntry, store, origin, true, -1);
         // Making a list so we can change the contents later
         List<PetUICard> petCardHolder = new ArrayList<>();
         petCardHolder.add(petCard);
@@ -68,7 +73,7 @@ public final class PetDetailsPage {
 
         registerPetDetailsEventListeners(
                 new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCardHolder,
-                        petCard));
+                        petCard, origin));
         page.open(playerRef, store);
         return true;
     }

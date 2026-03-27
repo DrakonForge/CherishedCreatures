@@ -1,4 +1,4 @@
-package io.github.drakonforge.cherishedcreatures.system;
+package io.github.drakonforge.cherishedcreatures.system.bonding;
 
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;

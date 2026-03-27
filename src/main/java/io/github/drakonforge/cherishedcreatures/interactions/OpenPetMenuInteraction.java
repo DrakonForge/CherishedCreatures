@@ -7,6 +7,7 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.InteractionType;
 import com.hypixel.hytale.protocol.WaitForDataFrom;
 import com.hypixel.hytale.server.core.entity.InteractionContext;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.CooldownHandler;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.SimpleInstantInteraction;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -41,10 +42,11 @@ public class OpenPetMenuInteraction extends SimpleInstantInteraction {
         Store<EntityStore> store = world.getEntityStore().getStore();
         Ref<EntityStore> ref = context.getEntity();
         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
-        if (playerRef == null) {
+        TransformComponent transformComponent = store.getComponent(ref, TransformComponent.getComponentType());
+        if (playerRef == null || transformComponent == null) {
             return;
         }
-        PetMenuPage.openPetMenu(store, ref, playerRef);
+        PetMenuPage.openPetMenu(store, ref, playerRef, transformComponent.getPosition().clone());
     }
 
     public boolean needsRemoteSync() {
