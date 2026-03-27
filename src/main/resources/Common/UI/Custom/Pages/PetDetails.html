@@ -233,7 +233,7 @@
                     </div>
                   {{/each}}
                 </div>
-                <div class="pet-stats-column panel pet-text-stats">
+                <div class="pet-stats-column pet-text-stats">
                   <div class="pet-text-stat">
                     <div class="pet-text-stat-label">Status</div>
                     <div class="pet-text-stat-value">
@@ -247,6 +247,12 @@
                       {{/if}}
                     </div>
                   </div>
+                  {{#each details.randomAttachments}}
+                    <div class="pet-text-stat">
+                      <div class="pet-text-stat-label">{{$label}}</div>
+                      <div class="pet-text-stat-value">{{$value}}</div>
+                    </div>
+                  {{/each}}
                 </div>
               </div>
             </div>

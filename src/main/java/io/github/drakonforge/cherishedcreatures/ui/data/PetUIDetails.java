@@ -1,6 +1,7 @@
 package io.github.drakonforge.cherishedcreatures.ui.data;
 
 import com.hypixel.hytale.component.Holder;
+import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.asset.NumericAttribute;
 import io.github.drakonforge.cherishedcreatures.asset.NumericAttribute.Mode;
@@ -11,10 +12,12 @@ import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.ui.data.PetUIDetails.PetNumericAttributeDisplay.BarType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 // Additional details when viewing the pet
-public record PetUIDetails(List<PetNumericAttributeDisplay> numericAttributes) {
+public record PetUIDetails(List<PetNumericAttributeDisplay> numericAttributes, List<PetRandomAttachmentEntry> randomAttachments) {
     public static PetUIDetails fromTrackedPetEntry(@NonNullDecl TrackedPetEntry entry, Holder<EntityStore> holder) {
         // TODO
         PetType petType = entry.getPetType();
@@ -28,8 +31,30 @@ public record PetUIDetails(List<PetNumericAttributeDisplay> numericAttributes) {
             addNumericAttribute(numericAttributes, petType.getMountBaseSpeed(), PetAttributes.MOUNT_BASE_SPEED, "Speed", petAttributes);
             addNumericAttribute(numericAttributes, petType.getMountGaitAcceleration(), PetAttributes.MOUNT_GAIT_ACCELERATION, "Acceleration", petAttributes);
         }
-        return new PetUIDetails(numericAttributes);
+
+        List<PetRandomAttachmentEntry> randomAttachments = getRandomAttachments(holder);
+
+        return new PetUIDetails(numericAttributes, randomAttachments);
     }
+
+    private static List<PetRandomAttachmentEntry> getRandomAttachments(Holder<EntityStore> holder) {
+        List<PetRandomAttachmentEntry> randomAttachments = new ArrayList<>();
+
+        ModelComponent modelComponent = holder.getComponent(ModelComponent.getComponentType());
+        if (modelComponent == null) {
+            return randomAttachments;
+        }
+
+        Map<String, String> randomAttachmentIds = modelComponent.getModel()
+                .getRandomAttachmentIds();
+        for (Entry<String, String> entry : randomAttachmentIds.entrySet()) {
+            randomAttachments.add(new PetRandomAttachmentEntry(entry.getKey(), entry.getValue()));
+        }
+
+        return randomAttachments;
+    }
+
+    public record PetRandomAttachmentEntry(String label, String value) {}
 
     // TODO: Tooltip, maybe color?
     public record PetNumericAttributeDisplay(String label, BarType barType, float percentage, float potentialPercentage) {
