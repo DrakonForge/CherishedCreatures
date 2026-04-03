@@ -1,0 +1,45 @@
+<style>
+  .container-contents {
+    layout-mode: Top;
+    anchor-horizontal: 100;
+  }
+
+  .pet-controls-container {
+    anchor-width: 600;
+    anchor-height: 350;
+  }
+
+  .confirm-description {
+    text-align: center;
+    anchor-vertical: 25;
+    font-weight: bold;
+  }
+
+  .controls {
+    flex-weight: 1;
+    layout-mode: Left;
+  }
+
+  .pet-control-button {
+    anchor-horizontal: 10;
+    flex-weight: 1;
+    anchor-height: 50
+  }
+</style>
+
+<div class="page-overlay">
+  <div class="container" data-hyui-title="Abandon Pet?">
+    <div class="container-contents">
+        {{#each petCard}}
+        <p class="confirm-description">
+          Are you sure you want to abandon your pet, {{$name}}?
+        </p>
+        <div class="controls">
+            <button class="pet-control-button tertiary-button" id="cancel-abandon">Cancel</button>
+          {{@DestructiveButton:id=confirm-abandon,text=Confirm,height=50}}
+        </div>
+
+        {{/each}}
+    </div>
+  </div>
+</div>

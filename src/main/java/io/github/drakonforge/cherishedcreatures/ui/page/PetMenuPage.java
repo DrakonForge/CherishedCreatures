@@ -58,7 +58,7 @@ public final class PetMenuPage {
                 .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
                 .enablePersistentElementEdits(true)
                 .enableRuntimeTemplateUpdates(true)
-                .loadHtml("Pages/PetMenuGrid.html", template);
+                .loadHtml("Pages/PetMenuList.html", template);
         // The data-hyui tags don't seem to work properly, so add the scroll position manually
         page.editById("pet-card-list", GroupBuilder.class, builder -> {
             builder.withKeepScrollPosition(true);

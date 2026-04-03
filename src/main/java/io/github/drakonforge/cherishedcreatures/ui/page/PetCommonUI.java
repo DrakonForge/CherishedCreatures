@@ -199,6 +199,13 @@ public final class PetCommonUI {
                         });
     }
 
+    public static void addAbandonListener(PetMenuContext menuContext) {
+        UUID id = menuContext.petCard().id();
+        menuContext.page().addEventListener("abandon-pet-" + id, CustomUIEventBindingType.Activating, (_, _) -> {
+            PetAbandonConfirmPage.openPetAbandonConfirm(menuContext, id);
+        });
+    }
+
     private PetCommonUI() {}
 
 }
