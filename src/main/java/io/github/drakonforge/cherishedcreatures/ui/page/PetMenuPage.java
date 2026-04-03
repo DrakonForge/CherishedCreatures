@@ -12,6 +12,7 @@ import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
+import io.github.drakonforge.cherishedcreatures.component.PlayerUIPreferencesComponent;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
 import io.github.drakonforge.cherishedcreatures.ui.data.PetMenuContext;
@@ -34,6 +35,15 @@ public final class PetMenuPage {
             @NonNullDecl Ref<EntityStore> ref, @NonNullDecl PlayerRef playerRef, @Nullable Vector3d origin) {
         PlayerPetTracker playerPetTracker = store.getComponent(ref,
                 PlayerPetTracker.getComponentType());
+
+        PlayerUIPreferencesComponent playerUIPreferencesComponent = store.getComponent(ref, PlayerUIPreferencesComponent.getComponentType());
+        assert playerUIPreferencesComponent != null;
+
+        String htmlPage = "Pages/PetMenuList.html";
+        if (playerUIPreferencesComponent.petListLayoutPreference == PlayerUIPreferencesComponent.PetLayoutGrid) {
+            htmlPage = "Pages/PetMenuGrid.html";
+        }
+
         if (playerPetTracker == null) {
             LOGGER.atWarning().log("Pet tracker should not be null");
             return;
@@ -58,12 +68,15 @@ public final class PetMenuPage {
                 .withLifetime(CustomPageLifetime.CanDismissOrCloseThroughInteraction)
                 .enablePersistentElementEdits(true)
                 .enableRuntimeTemplateUpdates(true)
-                .loadHtml("Pages/PetMenuList.html", template);
+                .loadHtml(htmlPage, template);
         // The data-hyui tags don't seem to work properly, so add the scroll position manually
         page.editById("pet-card-list", GroupBuilder.class, builder -> {
             builder.withKeepScrollPosition(true);
         });
 
+
+
+        PetCommonUI.addToggleUILayoutPreference(ref,page,store);
         for (PetUICard petCard : petCards) {
             registerMenuEventListeners(
                     new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCards,

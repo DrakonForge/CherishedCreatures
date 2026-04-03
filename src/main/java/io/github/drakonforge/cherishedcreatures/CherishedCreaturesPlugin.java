@@ -24,17 +24,7 @@ import io.github.drakonforge.cherishedcreatures.asset.PetActivity;
 import io.github.drakonforge.cherishedcreatures.asset.PetType;
 import io.github.drakonforge.cherishedcreatures.command.PetMenuCommand;
 import io.github.drakonforge.cherishedcreatures.command.PetsCommand;
-import io.github.drakonforge.cherishedcreatures.component.MountHandlingComponent;
-import io.github.drakonforge.cherishedcreatures.component.MountHandlingNpcComponent;
-import io.github.drakonforge.cherishedcreatures.component.MountStatusMetersComponent;
-import io.github.drakonforge.cherishedcreatures.component.MountedActiveComponent;
-import io.github.drakonforge.cherishedcreatures.component.PetAttributes;
-import io.github.drakonforge.cherishedcreatures.component.PetBondComponent;
-import io.github.drakonforge.cherishedcreatures.component.PetComponent;
-import io.github.drakonforge.cherishedcreatures.component.PetStateComponent;
-import io.github.drakonforge.cherishedcreatures.component.PetTypeComponent;
-import io.github.drakonforge.cherishedcreatures.component.PlayerNpcMountDetection;
-import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
+import io.github.drakonforge.cherishedcreatures.component.*;
 
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderActionOpenPetMenu;
 import io.github.drakonforge.cherishedcreatures.corecomponents.builder.BuilderActionTriggerPetActivity;
@@ -104,6 +94,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
     private ComponentType<EntityStore, MountedActiveComponent> mountedActiveComponentType;
     private ComponentType<EntityStore, MountHandlingNpcComponent> mountHandlingNpcComponentType;
     private ComponentType<EntityStore, PetAttributes> petAttributesComponentType;
+    private ComponentType<EntityStore, PlayerUIPreferencesComponent> playerUIPreferencesComponent;
 
     private SystemGroup<EntityStore> filterBondingXpEventGroup;
     private SystemGroup<EntityStore> inspectBondingXpEventGroup;
@@ -175,6 +166,8 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
         this.playerPetTrackerComponentType = entityStoreRegistry.registerComponent(
                 PlayerPetTracker.class, "PlayerPetTracker", PlayerPetTracker.CODEC);
+        this.playerUIPreferencesComponent = entityStoreRegistry.registerComponent(
+                PlayerUIPreferencesComponent.class, "PlayerUIPreferencesComponent", PlayerUIPreferencesComponent.CODEC);
         this.petComponentType = entityStoreRegistry.registerComponent(PetComponent.class,
                 "PetComponent", PetComponent.CODEC);
         this.petStateComponentType = entityStoreRegistry.registerComponent(PetStateComponent.class,
@@ -199,6 +192,7 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
 
         // Systems
         entityStoreRegistry.registerSystem(new RegisterPlayerPetTracker());
+        entityStoreRegistry.registerSystem(new RegisterPlayerUIPreferencesComponentSystem());
         entityStoreRegistry.registerSystem(new PetUpdateTrackerSystem());
         entityStoreRegistry.registerSystem(new RegisterPetComponentsSystem());
         entityStoreRegistry.registerSystem(new ResolvePetUpdatesPetSystem());
@@ -312,6 +306,10 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
         return this.petUpdateQueueResourceType;
     }
 
+    public ComponentType<EntityStore, PlayerUIPreferencesComponent> getPlayerUIPreferencesComponent() {
+        return this.playerUIPreferencesComponent;
+    }
+
     public SystemGroup<EntityStore> getFilterBondingXpEventGroup() {
         return filterBondingXpEventGroup;
     }
@@ -323,4 +321,5 @@ public class CherishedCreaturesPlugin extends JavaPlugin {
     public Config<CherishedCreaturesConfig> getConfig() {
         return config;
     }
+
 }

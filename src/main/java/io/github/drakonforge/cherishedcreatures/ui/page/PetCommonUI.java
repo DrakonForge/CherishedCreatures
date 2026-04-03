@@ -5,23 +5,28 @@ import au.ellie.hyui.builders.LabelBuilder;
 import au.ellie.hyui.builders.PageBuilder;
 import au.ellie.hyui.types.DefaultStyles;
 import com.hypixel.hytale.component.Holder;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.github.drakonforge.cherishedcreatures.component.PetComponent;
 import io.github.drakonforge.cherishedcreatures.component.PetStateComponent;
 import io.github.drakonforge.cherishedcreatures.component.PlayerPetTracker;
+import io.github.drakonforge.cherishedcreatures.component.PlayerUIPreferencesComponent;
 import io.github.drakonforge.cherishedcreatures.data.PetFollowMode;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry;
 import io.github.drakonforge.cherishedcreatures.data.TrackedPetEntry.Status;
 import io.github.drakonforge.cherishedcreatures.ui.data.PetMenuContext;
 import io.github.drakonforge.cherishedcreatures.ui.data.PetUICard;
 import io.github.drakonforge.cherishedcreatures.util.PetHelpers;
+import org.jline.utils.Log;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -204,6 +209,17 @@ public final class PetCommonUI {
         menuContext.page().addEventListener("abandon-pet-" + id, CustomUIEventBindingType.Activating, (_, _) -> {
             PetAbandonConfirmPage.openPetAbandonConfirm(menuContext, id);
         });
+    }
+    public static void addToggleUILayoutPreference(Ref<EntityStore> ref, PageBuilder page, Store<EntityStore> store) {
+        // Invalidate current UI and rerender
+        page
+           .addEventListener("toggle-layout", CustomUIEventBindingType.Activating, (_, ctx) -> {
+               PlayerUIPreferencesComponent playerUIPreferencesComponent = store.getComponent(ref, PlayerUIPreferencesComponent.getComponentType());
+               assert playerUIPreferencesComponent != null;
+
+               Log.info("CHANGING UI PREFERENCE");
+               playerUIPreferencesComponent.toggleLayoutPreference();
+           });
     }
 
     private PetCommonUI() {}
