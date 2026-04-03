@@ -76,12 +76,13 @@ public final class PetMenuPage {
 
 
 
-        PetCommonUI.addToggleUILayoutPreference(ref,page,store);
+        PetCommonUI.addToggleUILayoutPreference(new PetMenuContext(page,store,ref,playerRef,playerPetTracker,petCards,null,origin));
         for (PetUICard petCard : petCards) {
             registerMenuEventListeners(
                     new PetMenuContext(page, store, ref, playerRef, playerPetTracker, petCards,
                             petCard, origin));
         }
+
         page.open(playerRef, store);
     }
 

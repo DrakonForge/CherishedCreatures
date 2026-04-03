@@ -19,7 +19,7 @@ public class PlayerUIPreferencesComponent implements Component<EntityStore> {
             .add()
             .build();
 
-    public int petListLayoutPreference = 0;
+    public int petListLayoutPreference = 1;
     public static int PetLayoutList = 0;
     public static int PetLayoutGrid = 1;
     public static ComponentType<EntityStore, PlayerUIPreferencesComponent> getComponentType() {

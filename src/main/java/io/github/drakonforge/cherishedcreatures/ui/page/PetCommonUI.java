@@ -210,15 +210,26 @@ public final class PetCommonUI {
             PetAbandonConfirmPage.openPetAbandonConfirm(menuContext, id);
         });
     }
-    public static void addToggleUILayoutPreference(Ref<EntityStore> ref, PageBuilder page, Store<EntityStore> store) {
+    public static void addToggleUILayoutPreference(PetMenuContext petMenuContext) {
         // Invalidate current UI and rerender
-        page
+
+        Store<EntityStore> store = petMenuContext.store();
+        PlayerRef playerRef = petMenuContext.playerRef();
+
+        petMenuContext.page()
            .addEventListener("toggle-layout", CustomUIEventBindingType.Activating, (_, ctx) -> {
+               Ref<EntityStore> ref = playerRef.getReference();
+               assert ref != null;
+
                PlayerUIPreferencesComponent playerUIPreferencesComponent = store.getComponent(ref, PlayerUIPreferencesComponent.getComponentType());
                assert playerUIPreferencesComponent != null;
 
                Log.info("CHANGING UI PREFERENCE");
                playerUIPreferencesComponent.toggleLayoutPreference();
+
+
+               PetMenuPage.openPetMenu(petMenuContext);
+
            });
     }
 
