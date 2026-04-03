@@ -81,13 +81,18 @@
   .pet-card-row {
     layout-mode: Left;
   }
+  .menu-control {
+    anchor-right: 10;
+    anchor-width: 80;
+    anchor-height: 40;
+  }
 </style>
 <div class="page-overlay">
   <div class="container" data-hyui-title="Your Pets">
     <div class="container-contents">
       <div class="menu-description">
         <p>Displaying {{$numPets}} pets</p>
-        <button class="pet-control small-tertiary-button" id="toggle-layout"> Toggle Grid/List </button>
+        <button class="menu-control small-tertiary-button" id="toggle-layout"> List </button>
       </div>
       <div id="pet-card-list" class="pet-card-list"
            data-hyui-scrollbar-style="DefaultScrollbarStyle" data-hyui-keep-scroll-position="true">
